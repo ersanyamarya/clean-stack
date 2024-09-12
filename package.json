@@ -9,8 +9,8 @@
     "graph": "nx dep-graph",
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
-    "test": "nx run-many --target=test --all --parallel",
-    "test:merge-coverage": "node ./tools/merge-coverage.js"
+    "test": "npm run clean && nx run-many --target=test --all --parallel",
+    "test:merge:coverage": "npm run test && node ./tools/merge-coverage.js"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.11.2",

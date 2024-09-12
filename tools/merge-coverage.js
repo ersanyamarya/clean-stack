@@ -23,12 +23,18 @@ execSync(`find ${coverageDir} -type d -empty -delete`);
 
 execSync(`${nycPath} merge ${coverageDir} ${outputFile}`);
 
-execSync(`${nycPath} report --reporter=html --reporter=text -t coverage --report-dir=./coverage/merged`, {
+execSync(`${nycPath} report --reporter=html --reporter=text -t coverage --report-dir=./coverage`, {
   stdio: 'inherit',
 });
 
-// run and expose on port 9999
+coverageFiles.forEach(file => {
+  const newFileName = file.replaceAll('/', '-');
+  // delete the file
+  execSync(`rm ${coverageDir}/${newFileName}`);
+});
 
-execSync(`${httpServerPath} ./coverage/merged -p 9999 -o`, {
+execSync(`rm -rf ${outputFile}`);
+
+execSync(`${httpServerPath} ./coverage -p 9999 -o`, {
   stdio: 'inherit',
 });
