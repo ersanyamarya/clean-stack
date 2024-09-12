@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "nx reset && nx run-many --target=clean --all --parallel && rm -rf dist coverage tmp .nx",
+    "dep-graph": "nx graph",
     "format": "prettier --write \"**/*.{ts,js,json,md,tsx,jsx}\"",
     "graph": "nx dep-graph",
     "lint": "nx run-many --target=lint --all --parallel",

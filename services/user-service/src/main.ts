@@ -5,10 +5,9 @@ import { ServiceControllerErrorHandler } from '@clean-stack/grpc-essentials';
 import { ServiceUserService } from '@clean-stack/grpc-proto';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 import { userServiceServer } from './service';
-const HOST = process.env.HOST || '0.0.0.0';
-const PORT = Number(process.env.PORT) || 50051;
 
-const address = `${HOST}:${PORT}`;
+import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
+import { config, loadConfig } from './config';
 
 const ConsoleTextColorLogger: Logger = {
   info: (...optionalParams: unknown[]) => console.log('\x1b[32m', 'ℹ️ ', ...optionalParams, '\x1b[0m'),
@@ -16,9 +15,6 @@ const ConsoleTextColorLogger: Logger = {
   error: (...optionalParams: unknown[]) => console.log('\x1b[31m', '❌ ', ...optionalParams, '\x1b[0m'),
   debug: (...optionalParams: unknown[]) => console.log('\x1b[34m', '🐛 ', ...optionalParams, '\x1b[0m'),
 };
-
-const server = new Server();
-
 const handleError: ServiceControllerErrorHandler = (error, logger) => {
   logger.error(error);
   const metadata = new Metadata();
@@ -30,23 +26,48 @@ const handleError: ServiceControllerErrorHandler = (error, logger) => {
   return metadata;
 };
 
-const userUseCase = localUserUseCase();
+exceptions(ConsoleTextColorLogger);
 
-try {
-  const userService = userServiceServer(userUseCase, handleError, ConsoleTextColorLogger);
+async function main() {
+  loadConfig();
+  const server = new Server();
 
-  server.addService(ServiceUserService, userService);
-} catch (error) {
-  console.log('----------------------------------> error <----------------------------------');
+  const userUseCase = localUserUseCase();
 
-  ConsoleTextColorLogger.error(`Failed to add service: ${error}`);
+  const address = config.address;
+  try {
+    const userService = userServiceServer(userUseCase, handleError, ConsoleTextColorLogger);
+
+    server.addService(ServiceUserService, userService);
+  } catch (error) {
+    console.log('----------------------------------> error <----------------------------------');
+
+    ConsoleTextColorLogger.error(`Failed to add service: ${error}`);
+  }
+  server.bindAsync(address, ServerCredentials.createInsecure(), (err, port) => {
+    if (err) {
+      ConsoleTextColorLogger.error(`Failed to bind server to ${address}: ${err}`);
+      process.exit(1);
+    }
+
+    ConsoleTextColorLogger.info(`Server bound on port ${port}`);
+    ConsoleTextColorLogger.info(`Server listening on ${address}`);
+  });
+
+  const onsShutdown = () => {
+    ConsoleTextColorLogger.info('Shutting down server');
+    server.forceShutdown();
+  };
+
+  gracefulShutdown(ConsoleTextColorLogger, onsShutdown);
 }
-server.bindAsync(address, ServerCredentials.createInsecure(), (err, port) => {
-  if (err) {
-    ConsoleTextColorLogger.error(`Failed to bind server to ${address}: ${err}`);
+
+main().catch(error => {
+  if (error instanceof Error) {
+    console.error(error.message);
+    process.exit(1);
+  } else {
+    console.error('An unknown error occurred');
     process.exit(1);
   }
-
-  ConsoleTextColorLogger.info(`Server bound on port ${port}`);
-  ConsoleTextColorLogger.info(`Server listening on ${address}`);
 });

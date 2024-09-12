@@ -21,7 +21,7 @@ export function loadConfigFromEnv<ConfigShape extends ZodRawShape, EnvMapping ex
       // Parse the environment variable or use the default
       const data = schemaType.safeParse(envValue);
       if (data.success) config[key] = data.data;
-      else throw new Error(`Invalid value for ${key}/${envKey}: ${data.error.errors[0].message}`);
+      else throw new Error(`Invalid env value for ${key}/${envKey}: ${data.error.errors[0].message}`);
     }
   }
 
