@@ -1,0 +1,9 @@
+{
+  "name": "domain_user",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "domain/domain_user/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project domain_user --web",
+  "targets": {}
+}

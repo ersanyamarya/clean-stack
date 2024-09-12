@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service ServiceUser {
+  rpc GetUser(UserIdMessage) returns (UserGenericResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserGenericResponse);
+  rpc DeleteUser(UserIdMessage) returns (UserIdMessage);
+}
+
+message UserIdMessage{
+    string id = 1;
+}
+
+message UserGenericResponse {
+    string firstName = 1;
+    string lastName = 2;
+    string email = 3;
+    optional string photoUrl = 4;
+    string id = 5;
+    google.protobuf.Timestamp createdAt = 6;
+    google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreateUserRequest {
+    string firstName = 1;
+    string lastName = 2;
+    string email = 3;
+    string password = 4;
+    optional string photoUrl = 5;
+}
+
+message CreateUserResponse {
+    string id = 1;
+    google.protobuf.Timestamp createdAt = 2;
+    google.protobuf.Timestamp updatedAt = 3;
+}
+
+message ListUsersRequest {
+    int32 page = 1;
+    int32 limit = 2;
+}
+
+message ListUsersResponse {
+    repeated UserGenericResponse users = 1;
+    int32 total = 2;
+}
+
+message UpdateUserRequest {
+    string id = 1;
+    optional string firstName = 2;
+    optional string lastName = 3;
+    optional string email = 4;
+    optional string photoUrl = 5;
+}
+

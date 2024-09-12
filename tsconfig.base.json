@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
+      "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
+      "@clean-stack/global_types": ["infra/global_types/src/index.ts"],
+      "@clean-stack/grpc-essentials": ["infra/grpc-essentials/src/index.ts"],
+      "@clean-stack/grpc-proto": ["domain/grpc-proto/src/index.ts"],
+      "@clean-stack/koa-server-essentials": ["infra/koa-server-essentials/src/index.ts"],
+      "@clean-stack/utilities": ["infra/utilities/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
