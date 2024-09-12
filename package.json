@@ -10,7 +10,7 @@
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
     "test": "nx run-many --target=test --all --parallel",
-    "test:merge": "vitest --merge-reports --reporter=json"
+    "test:merge-coverage": "node ./tools/merge-coverage.js"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.11.2",
@@ -49,6 +49,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-security": "^3.0.1",
     "grpc-tools": "^1.12.4",
+    "http-server": "^14.1.1",
     "nx": "19.7.2",
     "nyc": "^17.0.0",
     "prettier": "^2.6.2",
