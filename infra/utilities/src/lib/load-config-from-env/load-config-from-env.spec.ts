@@ -61,7 +61,7 @@ describe('loadConfigFromEnv', () => {
   describe('with invalid environment variables', () => {
     it('should throw an error for invalid number', () => {
       process.env['TEST_SERVICE_PORT'] = 'not-a-number';
-      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid value for port');
+      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid env value for port');
     });
 
     it('should throw an error for invalid boolean', () => {
@@ -82,7 +82,7 @@ describe('loadConfigFromEnv', () => {
   describe('with missing environment variables', () => {
     it('should throw an error for missing required variables', () => {
       delete process.env['TEST_SERVICE_NAME'];
-      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid value for name');
+      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid env value for name');
     });
 
     it('should use the Key to uppercase if environmentMapping is missing a key', () => {
