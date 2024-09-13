@@ -100,7 +100,19 @@ const shutdown = async (logger: Logger, onShutdown?: Function, server?: Server, 
   }
 };
 
-/* When the process receives SIGINT or SIGTERM, it will gracefully shutdown the server. */
+/**
+ * The `gracefulShutdown` function handles graceful shutdown of a server in response to SIGINT and
+ * SIGTERM signals.
+ * @param {Logger} logger - The `logger` parameter is an instance of a Logger class that is used for
+ * logging messages and warnings in the application.
+ * @param {Function} [onShutdown] - The `onShutdown` parameter is a function that can be passed to the
+ * `gracefulShutdown` function. It represents a callback function that will be executed during the
+ * shutdown process. This function can be used to perform any necessary cleanup or final actions before
+ * the server shuts down completely.
+ * @param {Server} [server] - The `server` parameter is a reference to the server instance that you
+ * want to gracefully shut down. It is used to close the server and release any resources associated
+ * with it during the shutdown process.
+ */
 export const gracefulShutdown = (logger: Logger, onShutdown?: Function, server?: Server): void => {
   let sockets: SocketsMap = {};
 

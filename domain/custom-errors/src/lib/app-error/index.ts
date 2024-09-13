@@ -9,6 +9,11 @@ type AppErrorOptions<ErrorCode extends ERROR_CODE_KEYS> = {
   metadata?: z.infer<ErrorCode extends ERROR_CODE_KEYS ? (typeof errorCodes)[ErrorCode]['metaData'] : ZodTypeAny>;
 };
 
+/**
+ * Represents an application-specific error with additional metadata and context.
+ *
+ * @template ErrorCode - The type of the error code, extending from ERROR_CODE_KEYS.
+ */
 export class AppError<ErrorCode extends ERROR_CODE_KEYS> extends Error {
   public errorCode: ErrorCode;
   public where: string | undefined;
@@ -34,6 +39,12 @@ export class AppError<ErrorCode extends ERROR_CODE_KEYS> extends Error {
   }
 }
 
+/**
+ * Checks if the provided error is an instance of `AppError` and has a defined error code.
+ *
+ * @param error - The error to check.
+ * @returns A boolean indicating whether the error is an `AppError` with a defined error code.
+ */
 export function isAppError(error: unknown): error is AppError<ERROR_CODE_KEYS> {
   return error instanceof AppError && error.errorCode !== undefined;
 }

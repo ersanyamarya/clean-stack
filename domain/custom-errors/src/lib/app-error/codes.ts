@@ -32,4 +32,9 @@ export const errorCodes = {
   },
 };
 
+/**
+ * Represents the keys of the `errorCodes` object.
+ * This type is derived from the keys of the `errorCodes` object,
+ * ensuring that only valid error code keys are used.
+ */
 export type ERROR_CODE_KEYS = keyof typeof errorCodes;

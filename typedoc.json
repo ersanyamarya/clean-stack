@@ -1,0 +1,21 @@
+{
+  "entryPoints": ["infra/**/src", "domain/**/src"],
+  "out": "docs",
+  "tsconfig": "tsconfig.base.json",
+  "plugin": ["typedoc-material-theme"],
+  "themeColor": "#dcf5af",
+  "name": "Clean Stack",
+  "categorizeByGroup": false,
+  "highlightLanguages": ["typescript", "tsx", "css", "json", "jsonc", "python", "yaml"],
+  "markdownItOptions": {
+    "html": true
+  },
+  "includeVersion": true,
+  "sort": ["static-first", "kind", "enum-value-ascending"],
+  "navigationLinks": {
+    "GitHub": "https://github.com/mengxinssfd/typedoc-theme"
+  },
+  "readme": "README.md",
+  "hideGenerator": true,
+  "titleLink": "https://sanyamarya.com"
+}

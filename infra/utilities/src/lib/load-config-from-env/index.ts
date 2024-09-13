@@ -2,19 +2,19 @@
 import { z, ZodObject, ZodRawShape } from 'zod';
 
 /**
- * Loads configuration from environment variables based on a Zod schema and an optional environment variable mapping.
- *
- * @template ConfigShape - The shape of the configuration schema.
- * @template EnvMapping - The mapping of environment variable names to configuration keys.
- *
- * @param {ZodObject<ConfigShape>} schema - The Zod schema object that defines the configuration shape.
- * @param {EnvMapping} envMapping - An optional mapping of environment variable names to configuration keys.
- *
- * @returns {z.infer<typeodf schema>} - The configuration object populated with values from environment variables.
- *
- * @throws {Error} - Throws an error if an environment variable does not match the schema.
+ * The function `loadConfigFromEnv` loads configuration values from environment variables based on a
+ * specified schema and mapping.
+ * @param schema - The `schema` parameter in the `loadConfigFromEnv` function is a Zod schema that
+ * defines the shape of the configuration object you want to load from environment variables. It
+ * specifies the structure of the configuration object and the types of its properties.
+ * @param {EnvMapping} envMapping - The `envMapping` parameter is a mapping object that associates
+ * configuration keys with their corresponding environment variable names. It allows you to specify
+ * custom environment variable names for each configuration key. If a key is not found in the
+ * `envMapping`, the function will default to using the uppercase version of the key as
+ * @returns The `loadConfigFromEnv` function returns a configuration object inferred from the provided
+ * Zod schema. The shape of the returned object matches the shape defined in the Zod schema passed to
+ * the function.
  */
-
 export function loadConfigFromEnv<ConfigShape extends ZodRawShape, EnvMapping extends Record<string, unknown>>(
   schema: ZodObject<ConfigShape>,
   envMapping: EnvMapping
