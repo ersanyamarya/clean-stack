@@ -1,7 +1,20 @@
 /* eslint-disable security/detect-object-injection */
 import { z, ZodObject, ZodRawShape } from 'zod';
 
-// Function to load configuration using a schema and a mapping
+/**
+ * Loads configuration from environment variables based on a Zod schema and an optional environment variable mapping.
+ *
+ * @template ConfigShape - The shape of the configuration schema.
+ * @template EnvMapping - The mapping of environment variable names to configuration keys.
+ *
+ * @param {ZodObject<ConfigShape>} schema - The Zod schema object that defines the configuration shape.
+ * @param {EnvMapping} envMapping - An optional mapping of environment variable names to configuration keys.
+ *
+ * @returns {z.infer<typeodf schema>} - The configuration object populated with values from environment variables.
+ *
+ * @throws {Error} - Throws an error if an environment variable does not match the schema.
+ */
+
 export function loadConfigFromEnv<ConfigShape extends ZodRawShape, EnvMapping extends Record<string, unknown>>(
   schema: ZodObject<ConfigShape>,
   envMapping: EnvMapping

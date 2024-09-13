@@ -1,4 +1,5 @@
 /* eslint-disable security/detect-object-injection */
+import { Logger } from '@clean-stack/global_types';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { Socket as NetSocket } from 'net';
 
@@ -10,12 +11,6 @@ interface Socket extends NetSocket {
 
 interface SocketsMap {
   [key: number]: Socket;
-}
-
-interface Logger {
-  info: (message: string, data?: object) => void;
-  warn: (message: string, data?: object) => void;
-  error: (message: string, data?: object) => void;
 }
 
 /**
