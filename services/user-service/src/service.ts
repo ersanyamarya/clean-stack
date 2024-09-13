@@ -38,8 +38,9 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
     listUsers: serviceController<ListUsersRequest, ListUsersResponse>(
       async (request, logger) => {
         const { page, limit } = request;
-        logger.debug('Listing users');
+
         const users = await userRepository.listUsers();
+
         const total = users.length;
         return { users: users.map(user => UserGenericResponse.fromJSON(user)), total };
       },
