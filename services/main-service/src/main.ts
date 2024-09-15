@@ -1,16 +1,10 @@
+import { AppLogger } from '@clean-stack/appLogger';
 import { errorHandler } from '@clean-stack/custom-errors';
-import { Logger } from '@clean-stack/global_types';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
 import Router from '@koa/router';
 import controllers from './controllers';
 import clients from './service-clients';
-const ConsoleTextColorLogger: Logger = {
-  info: (...optionalParams: unknown[]) => console.log('\x1b[32m', 'ℹ️ ', ...optionalParams, '\x1b[0m'),
-  warn: (...optionalParams: unknown[]) => console.log('\x1b[33m', '🚧 ', ...optionalParams, '\x1b[0m'),
-  error: (...optionalParams: unknown[]) => console.log('\x1b[31m', '❌ ', ...optionalParams, '\x1b[0m'),
-  debug: (...optionalParams: unknown[]) => console.log('\x1b[34m', '🐛 ', ...optionalParams, '\x1b[0m'),
-};
 
 const errorCallback: ErrorCallback = (error, ctx) => {
   const errorData = errorHandler(error, ctx.logger);
@@ -21,9 +15,9 @@ const errorCallback: ErrorCallback = (error, ctx) => {
 const router = new Router();
 
 async function main() {
-  exceptions(ConsoleTextColorLogger);
+  exceptions(AppLogger);
   const koaApp = await getKoaServer({
-    logger: ConsoleTextColorLogger,
+    logger: AppLogger,
     errorCallback,
     serviceName: 'main-service',
     serviceVersion: '1.0.0',
@@ -40,11 +34,11 @@ async function main() {
     router
   );
   clients.forEach(client => {
-    ConsoleTextColorLogger.info(`Connecting to client: ${client.name}`);
+    AppLogger.info(`Connecting to client: ${client.name}`);
     client.connect();
   });
   controllers.forEach(({ name, method, path, callback }) => {
-    ConsoleTextColorLogger.info(`Setting up route ${method.toUpperCase()} ${path}`);
+    AppLogger.info(`Setting up route ${method.toUpperCase()} ${path}`);
     // eslint-disable-next-line security/detect-object-injection
     router[method](name, path, callback);
   });
@@ -54,18 +48,18 @@ async function main() {
 
   const server = koaApp
     .listen(9900, () => {
-      ConsoleTextColorLogger.info(`Server listening on http://localhost:9900`);
+      AppLogger.info(`Server listening on http://localhost:9900`);
     })
     .on('error', error => {
-      ConsoleTextColorLogger.error(error.message);
+      AppLogger.error(error.message);
       process.exit(1);
     });
 
   gracefulShutdown(
-    ConsoleTextColorLogger,
+    AppLogger,
     () => {
       clients.forEach(client => {
-        ConsoleTextColorLogger.warn(`Closing client: ${client.name}`);
+        AppLogger.warn(`Closing client: ${client.name}`);
         client.close();
       });
     },

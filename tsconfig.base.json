@@ -12,6 +12,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
+      "@clean-stack/appLogger": ["domain/appLogger/src/index.ts"],
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
       "@clean-stack/global_types": ["infra/global_types/src/index.ts"],

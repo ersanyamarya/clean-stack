@@ -64,12 +64,6 @@ export default [
     callback: koaCallback(TestController, { querySchema, paramsSchema, bodySchema }),
   },
   {
-    name: 'getErrorTest',
-    method: 'get',
-    path: '/getErrorTest/:id',
-    callback: koaCallback(TestController, { querySchema, paramsSchema, bodySchema }),
-  },
-  {
     name: 'getTest',
     method: 'get',
     path: '/getTest',
