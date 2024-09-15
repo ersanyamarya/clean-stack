@@ -62,7 +62,7 @@ const getSockets = (server: Server): SocketsMap => {
  * @param {Logger} logger - The logger instance.
  */
 const closeSockets = (sockets: SocketsMap, logger: Logger): void => {
-  logger.warn('--------> Closing idle connections <--------');
+  logger.warn('Closing idle connections');
 
   Object.values(sockets).forEach((socket: Socket) => {
     if (socket.isIdle) {
