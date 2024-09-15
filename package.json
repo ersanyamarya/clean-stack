@@ -4,9 +4,10 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "clean": "nx reset && nx run-many --target=clean --all --parallel && rm -rf dist coverage tmp .nx",
+    "clean": "nx reset && nx run-many --target=clean --all --parallel && rm -rf dist coverage tmp .nx docs",
     "dep-graph": "nx graph",
     "format": "prettier --write \"**/*.{ts,js,json,md,tsx,jsx}\"",
+    "generate:docs": "typedoc --options typedoc.json",
     "graph": "nx dep-graph",
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
@@ -25,7 +26,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@nx-plus/docusaurus": "^15.0.0-rc.0",
     "@nx/esbuild": "19.7.2",
     "@nx/eslint": "19.7.2",
     "@nx/eslint-plugin": "19.7.2",
@@ -60,7 +60,6 @@
     "ts-proto": "^2.2.0",
     "typedoc": "^0.26.7",
     "typedoc-material-theme": "^1.1.0",
-    "typedoc-plugin-markdown": "^4.2.7",
     "typescript": "~5.5.2",
     "vite": "^5.0.0",
     "vitest": "^1.3.1"

@@ -1,20 +1,16 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
+    "baseUrl": ".",
     "declaration": false,
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
+    "jsx": "react-jsx",
     "lib": ["es2020", "dom"],
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
@@ -23,7 +19,12 @@
       "@clean-stack/grpc-proto": ["domain/grpc-proto/src/index.ts"],
       "@clean-stack/koa-server-essentials": ["infra/koa-server-essentials/src/index.ts"],
       "@clean-stack/utilities": ["infra/utilities/src/index.ts"]
-    }
+    },
+    "rootDir": ".",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "es2015"
   },
   "exclude": ["node_modules", "tmp"]
 }

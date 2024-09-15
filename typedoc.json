@@ -2,7 +2,7 @@
   "entryPoints": ["infra/**/src", "domain/**/src"],
   "out": "docs",
   "tsconfig": "tsconfig.base.json",
-  "plugin": ["typedoc-material-theme", "typedoc-plugin-markdown"],
+  "plugin": ["typedoc-material-theme"],
   "themeColor": "#dcf5af",
   "name": "Clean Stack",
   "categorizeByGroup": false,
@@ -18,7 +18,7 @@
   "readme": "README.md",
   "hideGenerator": true,
   "titleLink": "https://sanyamarya.com",
-  "hideBreadcrumbs": true,
-  "hidePageHeader": true,
-  "entryFileName": "index.md"
+
+  "skipErrorChecking": true,
+  "exclude": ["**/apps/**", "apps/**"]
 }
