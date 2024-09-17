@@ -46,7 +46,7 @@ Thumbs.db
 .cache-loader/
 
 # observability_stack
-grafana_data
-prometheus_data
-loki_data
-tempo_data
+**/data/grafana
+**/data/prometheus
+**/data/loki
+**/data/tempo

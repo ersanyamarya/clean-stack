@@ -1,13 +1,16 @@
-import { AppLogger } from '@clean-stack/appLogger';
+import './init';
+
 import { errorHandler } from '@clean-stack/custom-errors';
 import { localUserUseCase } from '@clean-stack/domain_user';
 import { ServiceControllerErrorHandler } from '@clean-stack/grpc-essentials';
 import { ServiceUserService } from '@clean-stack/grpc-proto';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
+
 import { userServiceServer } from './service';
 
+import { mainLogger } from '@clean-stack/backend-telemetry';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
-import { config, loadConfig } from './config';
+import { config } from './config';
 
 const handleError: ServiceControllerErrorHandler = (error, logger) => {
   logger.error(error);
@@ -20,40 +23,40 @@ const handleError: ServiceControllerErrorHandler = (error, logger) => {
   return metadata;
 };
 
-exceptions(AppLogger);
-
 async function main() {
-  loadConfig();
+  exceptions(mainLogger);
+
   const server = new Server();
 
   const userUseCase = localUserUseCase();
 
   const address = config.address;
   try {
-    const userService = userServiceServer(userUseCase, handleError, AppLogger);
+    const userService = userServiceServer(userUseCase, handleError, mainLogger);
 
     server.addService(ServiceUserService, userService);
   } catch (error) {
     console.log('----------------------------------> error <----------------------------------');
 
-    AppLogger.error(`Failed to add service: ${error}`);
+    mainLogger.error(`Failed to add service: ${error}`);
   }
   server.bindAsync(address, ServerCredentials.createInsecure(), (err, port) => {
     if (err) {
-      AppLogger.error(`Failed to bind server to ${address}: ${err}`);
+      mainLogger.error(`Failed to bind server to ${address}: ${err}`);
       process.exit(1);
     }
 
-    AppLogger.info(`Server bound on port ${port}`);
-    AppLogger.info(`Server listening on ${address}`);
+    mainLogger.info(`Server bound on port ${port}`);
+    mainLogger.info(`Server listening on ${address}`);
   });
 
   const onsShutdown = () => {
-    AppLogger.info('Shutting down server');
+    mainLogger.info('Shutting down server');
     server.forceShutdown();
+    // telemetrySdk.shutdown();
   };
 
-  gracefulShutdown(AppLogger, onsShutdown);
+  gracefulShutdown(mainLogger, onsShutdown);
 }
 
 main().catch(error => {

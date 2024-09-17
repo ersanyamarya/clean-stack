@@ -16,7 +16,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
   return {
     getUser: serviceController<UserIdMessage, UserGenericResponse>(
       async (request, logger) => {
-        logger.debug('Getting user');
+        logger.info('Getting user');
         const user = await userRepository.getUser(request.id);
         return UserGenericResponse.fromJSON(user);
       },
@@ -26,7 +26,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
 
     createUser: serviceController<CreateUserRequest, CreateUserResponse>(
       async (request, logger) => {
-        logger.debug('Creating user');
+        logger.info('Creating user');
         const user = CreateUserRequest.toJSON(request) as IUser;
         const newUser = await userRepository.createUser(user);
         const response: CreateUserResponse = CreateUserResponse.fromJSON(newUser);
@@ -37,6 +37,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
     ),
     listUsers: serviceController<ListUsersRequest, ListUsersResponse>(
       async (request, logger) => {
+        logger.info('Listing users');
         const { page, limit } = request;
 
         const users = await userRepository.listUsers();
@@ -50,7 +51,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
 
     updateUser: serviceController<UpdateUserRequest, UserGenericResponse>(
       async (request, logger) => {
-        logger.debug('Updating user');
+        logger.info('Updating user');
         const user = UpdateUserRequest.toJSON(request) as IUser;
         const updatedUser = await userRepository.updateUser(request.id, user);
         return UserGenericResponse.fromJSON(updatedUser);
@@ -60,7 +61,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
     ),
     deleteUser: serviceController<UserIdMessage, UserIdMessage>(
       async (request, logger) => {
-        logger.debug('Deleting user');
+        logger.info('Deleting user');
         await userRepository.deleteUser(request.id);
         return { id: request.id };
       },

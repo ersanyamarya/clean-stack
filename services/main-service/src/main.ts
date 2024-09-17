@@ -1,4 +1,6 @@
-import { AppLogger } from '@clean-stack/appLogger';
+import './init';
+
+import { mainLogger } from '@clean-stack/backend-telemetry';
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
@@ -6,6 +8,7 @@ import Router from '@koa/router';
 import controllers from './controllers';
 import clients from './service-clients';
 
+mainLogger.info('Tracer initialized');
 const errorCallback: ErrorCallback = (error, ctx) => {
   const errorData = errorHandler(error, ctx.logger);
 
@@ -15,9 +18,9 @@ const errorCallback: ErrorCallback = (error, ctx) => {
 const router = new Router();
 
 async function main() {
-  exceptions(AppLogger);
+  exceptions(mainLogger);
   const koaApp = await getKoaServer({
-    logger: AppLogger,
+    logger: mainLogger,
     errorCallback,
     serviceName: 'main-service',
     serviceVersion: '1.0.0',
@@ -34,11 +37,11 @@ async function main() {
     router
   );
   clients.forEach(client => {
-    AppLogger.info(`Connecting to client: ${client.name}`);
+    mainLogger.info(`Connecting to client: ${client.name}`);
     client.connect();
   });
   controllers.forEach(({ name, method, path, callback }) => {
-    AppLogger.info(`Setting up route ${method.toUpperCase()} ${path}`);
+    mainLogger.info(`Setting up route ${method.toUpperCase()} ${path}`);
     // eslint-disable-next-line security/detect-object-injection
     router[method](name, path, callback);
   });
@@ -48,20 +51,21 @@ async function main() {
 
   const server = koaApp
     .listen(9900, () => {
-      AppLogger.info(`Server listening on http://localhost:9900`);
+      mainLogger.info(`Server listening on http://localhost:9900`);
     })
     .on('error', error => {
-      AppLogger.error(error.message);
+      mainLogger.error(error.message);
       process.exit(1);
     });
 
   gracefulShutdown(
-    AppLogger,
+    mainLogger,
     () => {
       clients.forEach(client => {
-        AppLogger.warn(`Closing client: ${client.name}`);
+        mainLogger.warn(`Closing client: ${client.name}`);
         client.close();
       });
+      // telemetrySdk.shutdown();
     },
     server
   );
