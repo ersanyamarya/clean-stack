@@ -1,4 +1,4 @@
-import './init';
+import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
 import { localUserUseCase } from '@clean-stack/domain_user';
@@ -8,7 +8,6 @@ import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
 import { userServiceServer } from './service';
 
-import { mainLogger } from '@clean-stack/backend-telemetry';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
 import { config } from './config';
 
@@ -53,7 +52,7 @@ async function main() {
   const onsShutdown = () => {
     mainLogger.info('Shutting down server');
     server.forceShutdown();
-    // telemetrySdk.shutdown();
+    telemetrySdk.shutdown();
   };
 
   gracefulShutdown(mainLogger, onsShutdown);

@@ -7,6 +7,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { Resource } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+
 export type TelemetryConfig = {
   serviceName: string;
   serviceVersion: string;
@@ -36,5 +37,16 @@ export function initTelemetry(config: TelemetryConfig) {
 
   telemetrySdk.start();
 
-  return { telemetrySdk };
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mainLogger = require('pino')({
+    level: 'debug',
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+      },
+    },
+  });
+
+  return { telemetrySdk, mainLogger };
 }

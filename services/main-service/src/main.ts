@@ -1,6 +1,5 @@
-import './init';
+import { mainLogger, telemetrySdk } from './init';
 
-import { mainLogger } from '@clean-stack/backend-telemetry';
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
@@ -65,7 +64,7 @@ async function main() {
         mainLogger.warn(`Closing client: ${client.name}`);
         client.close();
       });
-      // telemetrySdk.shutdown();
+      telemetrySdk.shutdown();
     },
     server
   );

@@ -1,2 +1,3 @@
 import { initTelemetry } from '@clean-stack/backend-telemetry';
-initTelemetry({ serviceName: 'main-service', serviceVersion: '1.0.0', collectorUrl: 'http://localhost:4317' });
+const { mainLogger, telemetrySdk } = initTelemetry({ serviceName: 'main-service', serviceVersion: '1.0.0', collectorUrl: 'http://localhost:4317' });
+export { mainLogger, telemetrySdk };
