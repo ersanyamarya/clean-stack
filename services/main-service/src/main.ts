@@ -7,7 +7,8 @@ import Router from '@koa/router';
 import controllers from './controllers';
 import clients from './service-clients';
 
-mainLogger.info('Tracer initialized');
+import { config } from './config';
+
 const errorCallback: ErrorCallback = (error, ctx) => {
   const errorData = errorHandler(error, ctx.logger);
 
@@ -18,17 +19,22 @@ const router = new Router();
 
 async function main() {
   exceptions(mainLogger);
+
+  const {
+    server: { address, port },
+    service: { name: serviceName, version: serviceVersion },
+  } = config;
   const koaApp = await getKoaServer({
     logger: mainLogger,
     errorCallback,
-    serviceName: 'main-service',
-    serviceVersion: '1.0.0',
+    serviceName,
+    serviceVersion,
   });
 
   setupRootRoute(
     {
-      serviceName: 'main-service',
-      serviceVersion: '1.0.0',
+      serviceName,
+      serviceVersion,
       healthChecks: {},
       showRoutes: true,
       nodeEnv: process.env.NODE_ENV,
@@ -49,8 +55,8 @@ async function main() {
   koaApp.use(router.allowedMethods());
 
   const server = koaApp
-    .listen(9900, () => {
-      mainLogger.info(`Server listening on http://localhost:9900`);
+    .listen(port, () => {
+      mainLogger.info(`Server listening on ${address}`);
     })
     .on('error', error => {
       mainLogger.error(error.message);

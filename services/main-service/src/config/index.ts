@@ -7,7 +7,7 @@ const configSchema = z.object({
     version: z.string(),
   }),
   server: z.object({
-    host: z.string(),
+    address: z.string(),
     port: numberTransformSchema,
   }),
   otelCollectorUrl: z.string(),
@@ -15,23 +15,21 @@ const configSchema = z.object({
 
 const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
   service: {
-    name: 'USER_SERVICE_NAME',
-    version: 'USER_SERVICE_VERSION',
+    name: 'MAIN_SERVICE_NAME',
+    version: 'MAIN_SERVICE_VERSION',
   },
   server: {
-    host: 'USER_SERVICE_HOST',
-    port: 'USER_SERVICE_PORT',
+    address: 'MAIN_SERVICE_ADDRESS',
+    port: 'MAIN_SERVICE_PORT',
   },
   otelCollectorUrl: 'OTEL_COLLECTOR_ADDRESS',
 };
 
-type AppConfig = z.infer<typeof configSchema> & {
-  address: string;
-};
+type AppConfig = z.infer<typeof configSchema>;
 
 export let config: AppConfig;
 
 export const loadConfig = () => {
   const envConfig = loadConfigFromEnv(configSchema, configMapping);
-  config = { ...envConfig, address: `${envConfig.server.host}:${envConfig.server.port}` };
+  config = envConfig;
 };
