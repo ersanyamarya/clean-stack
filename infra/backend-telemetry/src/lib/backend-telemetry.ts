@@ -27,7 +27,11 @@ export function initTelemetry(config: TelemetryConfig) {
         url: config.collectorUrl,
       }),
     }),
-    instrumentations: [getNodeAutoInstrumentations()],
+    instrumentations: [
+      getNodeAutoInstrumentations({
+        '@opentelemetry/instrumentation-fs': { enabled: false },
+      }),
+    ],
   });
 
   telemetrySdk.start();
