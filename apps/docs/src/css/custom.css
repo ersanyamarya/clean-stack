@@ -1,31 +1,43 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
-/* You can override the default Infima variables here. */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 :root {
-  --ifm-color-primary: #4f5d73; /* Blue Gray */
-  --ifm-color-primary-dark: #3e4a5a; /* Darker Blue Gray */
-  --ifm-color-primary-darker: #2e3947; /* Even Darker Blue Gray */
-  --ifm-color-primary-darkest: #1e2834; /* Darkest Blue Gray */
-  --ifm-color-primary-light: #657487; /* Lighter Blue Gray */
-  --ifm-color-primary-lighter: #7d8a9b; /* Even Lighter Blue Gray */
-  --ifm-color-primary-lightest: #96a0af; /* Lightest Blue Gray */
+  --ifm-color-primary: #3e4a5a;
+  --ifm-color-primary-dark: #384351;
+  --ifm-color-primary-darker: #353f4d;
+  --ifm-color-primary-darkest: #2b343f;
+  --ifm-color-primary-light: #445163;
+  --ifm-color-primary-lighter: #475568;
+  --ifm-color-primary-lightest: #516075;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-  --ifm-color-secondary: #76c2af; /* Teal */
+  --ifm-color-secondary: #a0d3c7;
+  --ifm-font-family-base: 'Ubuntu', sans-serif;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.5;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #9aa5b1; /* Lighter Blue Gray */
-  --ifm-color-primary-dark: #7d8a9b; /* Even Lighter Blue Gray */
-  --ifm-color-primary-darker: #657487; /* Lighter Blue Gray */
-  --ifm-color-primary-darkest: #4f5d73; /* Blue Gray */
-  --ifm-color-primary-light: #b0b9c4; /* Lightest Blue Gray */
-  --ifm-color-primary-lighter: #c7ced6; /* Even Lighter Blue Gray */
-  --ifm-color-primary-lightest: #dee3e8; /* Lightest Blue Gray */
+  --ifm-color-primary: #b3e6da;
+  --ifm-color-primary-dark: #94dccb;
+  --ifm-color-primary-darker: #85d7c4;
+  --ifm-color-primary-darkest: #57c8ad;
+  --ifm-color-primary-light: #d2f0e9;
+  --ifm-color-primary-lighter: #e1f5f0;
+  --ifm-color-primary-lightest: #ffffff;
+  --ifm-background-color: #262836;
+  --ifm-color-secondary: #d1dae5;
+
   --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
-  --ifm-color-secondary: #a8d8c7; /* Lighter Teal */
+}
+
+* {
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
 }

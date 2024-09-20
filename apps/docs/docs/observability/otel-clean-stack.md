@@ -2,9 +2,9 @@
 sidebar_position: 2
 ---
 
-# OpenTelemetry Stack in Clean Stack
+# Observability Stack in Clean Stack
 
-###  [Docker Compose Setup](https://github.com/ersanyamarya/clean-stack/blob/main/server_setup/observability_stack/docker-compose.yml)
+### [Docker Compose Setup](https://github.com/ersanyamarya/clean-stack/blob/main/server_setup/observability_stack/docker-compose.yml)
 
 The OpenTelemetry stack in Clean Stack is set up using Docker Compose, which orchestrates multiple containers to create a comprehensive observability solution. The stack consists of the following components:
 
@@ -16,7 +16,7 @@ The OpenTelemetry stack in Clean Stack is set up using Docker Compose, which orc
 
 Here's a Mermaid component diagram representing the architecture:
 
-```mermaid 
+```mermaid
 graph LR
     A[Application] -->|OTLP| B(OpenTelemetry Collector)
     B -->|Metrics| C(Prometheus)
@@ -70,9 +70,7 @@ To use this observability stack:
 
 This setup provides a robust foundation for observability in Clean Stack, allowing you to collect, store, and visualize metrics, logs, and traces from your applications efficiently.
 
-
 Certainly, Sanyam! I'll include some key configurations from the setup to give a more detailed understanding of how each component is configured. Here's an expanded explanation with config snippets:
-
 
 ### Key Configurations
 
@@ -80,7 +78,7 @@ Let's look at some important configurations for each component:
 
 #### OpenTelemetry Collector (otel-collector-config.yml)
 
-```yaml 
+```yaml showLineNumbers
 receivers:
   otlp:
     protocols:
@@ -116,13 +114,14 @@ service:
 ```
 
 This configuration sets up the OpenTelemetry Collector to:
+
 - Receive data via OTLP (both gRPC and HTTP)
 - Export metrics to Prometheus, logs to Loki, and traces to Tempo
 - Use batch processing for efficiency
 
 #### Prometheus (prometheus.yml)
 
-```yaml
+```yaml showLineNumbers
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -136,7 +135,7 @@ Prometheus is configured to scrape metrics from the OpenTelemetry Collector ever
 
 #### Grafana (datasources.yml)
 
-```yaml
+```yaml showLineNumbers
 apiVersion: 1
 
 datasources:
@@ -160,7 +159,7 @@ This configuration sets up Grafana to connect to Prometheus, Loki, and Tempo, al
 
 #### Loki (loki-config.yml)
 
-```yaml
+```yaml showLineNumbers
 auth_enabled: false
 
 server:
@@ -188,7 +187,7 @@ This configuration sets up Loki for log storage, using a local filesystem for bo
 
 #### Tempo (tempo-config.yml)
 
-```yaml
+```yaml showLineNumbers
 server:
   http_listen_port: 3200
 

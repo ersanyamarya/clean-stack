@@ -37,6 +37,16 @@ export function initTelemetry(config: TelemetryConfig) {
 
   telemetrySdk.start();
 
+  /**
+   * Initializes the main logger using the 'pino' library with a 'pino-pretty' transport.
+   * The logger is configured to display debug level messages with colorized output.
+   *
+   * @remarks
+   * The logger is instantiated only after the instrumentation has started to ensure
+   * that all necessary configurations and dependencies are properly set up. If the
+   * logger is instantiated before the instrumentation, it may not function correctly
+   * due to missing or incomplete setup.
+   */
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mainLogger = require('pino')({
     level: 'debug',
