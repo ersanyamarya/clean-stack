@@ -29,6 +29,27 @@ const config: Config = {
     locales: ['en'],
   },
 
+  // plugins: [
+  //   [
+  //     'docusaurus-plugin-typedoc',
+
+  //     // Options
+  //     {
+  //       entryPoints: ['infra/**/src', 'domain/**/src'],
+  //       tsconfig: 'tsconfig.base.json',
+  //       out: './docs/code',
+  //       skipErrorChecking: true,
+  //       entryFileName: 'index.md',
+  //       hideBreadcrumbs: true,
+  //       hidePageHeader: true,
+  //       sidebar: {
+  //         autoConfiguration: true,
+  //         pretty: true,
+  //       },
+  //     },
+  //   ],
+  // ],
+
   presets: [
     [
       'classic',
