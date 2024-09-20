@@ -78,6 +78,10 @@ const config: Config = {
   themes: ['@docusaurus/theme-mermaid'],
   // themes: ['@docusaurus/theme-mermaid'],
   themeConfig: {
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 5,
+    },
     mermaid: {
       theme: { light: 'forest', dark: 'dark' },
     },
