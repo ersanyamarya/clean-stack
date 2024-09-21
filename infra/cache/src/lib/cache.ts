@@ -43,6 +43,7 @@ export type CacheStore = {
  * - `invalidateGroup(group: string)`: Invalidates all cache entries associated with the specified group.
  * - `clear()`: Clears all cache entries.
  * - `stats()`: Returns the current cache statistics, including hits, misses, and entries.
+ * - `getAllKeys()`: Returns an array of all cache keys.
  *
  * The cache store maintains statistics on cache hits, misses, and entries, and supports invalidation groups for managing related cache entries.
  */
