@@ -14,7 +14,7 @@ The OpenTelemetry stack in Clean Stack is set up using Docker Compose, which orc
 4. **Loki**: Aggregates and queries log data.
 5. **Tempo**: Stores and queries distributed traces.
 
-Here's a Mermaid component diagram representing the architecture:
+Here's a high-level overview of the observability stack architecture:
 
 ```mermaid
 graph LR
