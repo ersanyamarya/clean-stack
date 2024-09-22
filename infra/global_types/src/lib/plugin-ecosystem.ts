@@ -29,6 +29,7 @@ type Status = (typeof STATUSES)[number];
 export type HealthCheck = {
   connected?: boolean;
   status?: Status;
+  [key: string]: unknown;
 };
 
 /**

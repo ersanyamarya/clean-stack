@@ -1,7 +1,8 @@
 import { AppError } from '@clean-stack/custom-errors';
-import { Controller, koaCallback } from '@clean-stack/koa-server-essentials';
-import { z, infer as ZodInfer } from 'zod';
+import { koaCallback } from '@clean-stack/koa-server-essentials';
+import { z } from 'zod';
 
+import { CacheStore } from '@clean-stack/cache';
 import { grpcClientPromisify } from '@clean-stack/grpc-essentials';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
 import { listUsers } from '../service-clients/user-service';
@@ -20,53 +21,78 @@ const bodySchema = z.object({
   age: z.number().min(0),
 });
 
-const ListUsersController: Controller<undefined, undefined, undefined> = async ({ ctx }) => {
-  ctx.logger.info('ListUsersController called');
-  const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });
+function getTestCallback(cacheStore: CacheStore) {
+  return koaCallback(
+    async ({ query, params, method, path, body, headers, ctx }) => {
+      ctx.logger.info('TestController called');
+      if (query.search === 'error') throw new AppError('RESOURCE_NOT_FOUND', { metadata: { resource: 'Test' } });
+      if (query.search === 'invalidate') {
+        await cacheStore.invalidateGroup('test');
+        return {
+          status: 200,
+          body: 'Cache invalidated',
+        };
+      }
+      const cacheKey = JSON.stringify({ query, params, method, path, body, locale: ctx.locale, version: ctx.serviceVersion, service: ctx.serviceName });
 
-  return {
-    status: 200,
-    body: users,
-  };
-};
+      const cached = await cacheStore.get(cacheKey);
 
-const TestController: Controller<ZodInfer<typeof querySchema>, ZodInfer<typeof paramsSchema>, ZodInfer<typeof bodySchema>> = async ({
-  query,
-  params,
-  method,
-  path,
-  body,
-  headers,
-  ctx,
-}) => {
-  ctx.logger.info('TestController called');
+      if (cached) {
+        return {
+          status: 200,
+          body: JSON.parse(cached),
+        };
+      }
 
-  if (query.search === 'error') throw new AppError('RESOURCE_NOT_FOUND', { metadata: { resource: 'Test' } });
-  if (params.id === 'error') throw new AppError('USER_UNAUTHENTICATED', { metadata: { resource: 'Test' } });
+      const returnData = { query, params, method, path, body, locale: ctx.locale, version: ctx.serviceVersion, service: ctx.serviceName };
 
-  return {
-    status: 200,
-    body: { query, params, method, path, body, locale: ctx.locale, version: ctx.serviceVersion, service: ctx.serviceName },
-  };
-};
+      //delay
+
+      /* The line `await new Promise(resolve => setTimeout(resolve, 3000));` is creating a delay of
+      3000 milliseconds (3 seconds) in the execution of the code. */
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      await cacheStore.addOrReplace(cacheKey, JSON.stringify(returnData), { ttl: 60, groups: ['test'] });
+
+      return {
+        status: 200,
+        body: returnData,
+      };
+    },
+    { querySchema }
+    // { querySchema, paramsSchema, bodySchema }
+  );
+}
+
+function getListUsersCallback(cacheStore: CacheStore) {
+  return koaCallback(async ({ ctx }) => {
+    ctx.logger.info('ListUsersController called');
+    const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });
+
+    return {
+      status: 200,
+      body: users,
+    };
+  }, {});
+}
 
 export default [
   {
     name: 'listUsers',
     method: 'get',
     path: '/listUsers',
-    callback: koaCallback(ListUsersController),
+    getCallback: getListUsersCallback,
   },
   {
     name: 'postTest',
     method: 'post',
     path: '/postTest/:id',
-    callback: koaCallback(TestController, { querySchema, paramsSchema, bodySchema }),
+    getCallback: getTestCallback,
   },
   {
     name: 'getTest',
     method: 'get',
     path: '/getTest',
-    callback: koaCallback(TestController, { querySchema }),
+    getCallback: getTestCallback,
   },
 ];

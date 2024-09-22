@@ -11,13 +11,13 @@ const mockCacheProvider = () => {
     get: async (key: string) => {
       return store[key] || null;
     },
-    getManyKeys: async (keys: string[]) => {
-      const result: Record<string, string | null> = {};
-      keys.forEach(key => {
-        result[key] = store[key] || null;
-      });
-      return result;
-    },
+    // getManyKeys: async (keys: string[]) => {
+    //   const result: Record<string, string | null> = {};
+    //   keys.forEach(key => {
+    //     result[key] = store[key] || null;
+    //   });
+    //   return result;
+    // },
     delete: async (key: string) => {
       delete store[key];
     },

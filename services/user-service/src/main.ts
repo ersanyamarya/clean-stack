@@ -11,10 +11,10 @@ import { userServiceServer } from './service';
 import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
 import { config } from './config';
 
-const handleError: ServiceControllerErrorHandler = (error, logger) => {
-  logger.error(error);
+const handleError: ServiceControllerErrorHandler = error => {
+  mainLogger.error(error);
   const metadata = new Metadata();
-  const formattedError = errorHandler(error, logger);
+  const formattedError = errorHandler(error, mainLogger);
 
   metadata.set('error-code', formattedError.errorCode);
   metadata.set('error-message', formattedError.message);
