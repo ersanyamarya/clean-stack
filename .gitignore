@@ -50,4 +50,6 @@ Thumbs.db
 **/data/prometheus
 **/data/loki
 **/data/tempo
+
+# redis
 **/data/redis
