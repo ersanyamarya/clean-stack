@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["infra/**/src", "domain/**/src"],
+  "entryPoints": ["platform-features/**/src", "domain/**/src", "framework/**/src"],
   "out": "docs",
   "tsconfig": "tsconfig.base.json",
   "plugin": ["typedoc-material-theme"],

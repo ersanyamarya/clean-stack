@@ -25,7 +25,7 @@ export default defineConfig({
       exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', 'src/lib/graceful-shutdown/**', 'src/lib/exceptions/**'],
       reportsDirectory: '../../coverage/infra/utilities',
       provider: 'v8',
-      reporter: ['json'],
+      reporter: ['json', 'text'],
     },
   },
 });
