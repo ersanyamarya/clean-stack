@@ -1,4 +1,4 @@
-import { initTelemetry } from '@clean-stack/backend-telemetry';
+import { initTelemetry } from '@clean-stack/platform-features/backend-telemetry-plugin';
 import { config, loadConfig } from './config';
 loadConfig();
 const serviceName = config.service.name;

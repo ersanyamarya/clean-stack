@@ -12,14 +12,14 @@
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "@clean-stack/backend-telemetry": ["infra/backend-telemetry/src/index.ts"],
-      "@clean-stack/cache": ["infra/cache/src/index.ts"],
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
       "@clean-stack/global_types": ["infra/global_types/src/index.ts"],
       "@clean-stack/grpc-essentials": ["infra/grpc-essentials/src/index.ts"],
       "@clean-stack/grpc-proto": ["domain/grpc-proto/src/index.ts"],
       "@clean-stack/koa-server-essentials": ["infra/koa-server-essentials/src/index.ts"],
+      "@clean-stack/platform-features/backend-telemetry-plugin": ["platform-features/backend-telemetry-plugin/src/index.ts"],
+      "@clean-stack/platform-features/cache": ["platform-features/cache/src/index.ts"],
       "@clean-stack/utilities": ["infra/utilities/src/index.ts"]
     },
     "rootDir": ".",

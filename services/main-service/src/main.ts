@@ -7,7 +7,7 @@ import Router from '@koa/router';
 import controllers from './controllers';
 import clients from './service-clients';
 
-import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/cache';
+import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/platform-features/cache';
 import { createClient, RedisClientType } from 'redis';
 import { config } from './config';
 

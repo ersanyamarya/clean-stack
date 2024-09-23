@@ -2,9 +2,9 @@ import { AppError } from '@clean-stack/custom-errors';
 import { koaCallback } from '@clean-stack/koa-server-essentials';
 import { z } from 'zod';
 
-import { CacheStore } from '@clean-stack/cache';
 import { grpcClientPromisify } from '@clean-stack/grpc-essentials';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
+import { CacheStore } from '@clean-stack/platform-features/cache';
 import { listUsers } from '../service-clients/user-service';
 
 // Define Zod schemas

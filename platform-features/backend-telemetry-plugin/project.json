@@ -1,0 +1,9 @@
+{
+  "name": "backend-telemetry-plugin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "platform-features/backend-telemetry-plugin/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project backend-telemetry-plugin --web",
+  "targets": {}
+}

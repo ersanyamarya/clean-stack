@@ -1,9 +1,0 @@
-{
-  "name": "backend-telemetry",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "infra/backend-telemetry/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project backend-telemetry --web",
-  "targets": {}
-}
