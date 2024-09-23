@@ -9,3 +9,9 @@ services:
       - REDIS_ARGS=--loglevel warning --save 60 1000 --appendonly yes
     volumes:
       - ./data/redis:/data
+    networks:
+      - cache-network
+
+networks:
+  cache-network:
+    driver: bridge

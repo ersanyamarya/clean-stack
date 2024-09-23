@@ -11,6 +11,12 @@
     "graph": "nx dep-graph",
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
+    "setup:all": "npm run setup:observability && npm run setup:cache",
+    "setup:all:down": "npm run setup:observability:down && npm run setup:cache:down",
+    "setup:cache": "docker compose -f server_setup/cache_stack/docker-compose.yml up -d",
+    "setup:cache:down": "docker compose -f server_setup/cache_stack/docker-compose.yml down",
+    "setup:observability": " docker compose -f server_setup/observability_stack/docker-compose.yml up -d",
+    "setup:observability:down": "docker compose -f server_setup/observability_stack/docker-compose.yml down",
     "test": "npm run clean && nx run-many --target=test --all --parallel",
     "test:merge:coverage": "npm run test && node ./tools/merge-coverage.js"
   },

@@ -72,6 +72,7 @@ export function createCacheStore(cacheProvider: CacheProvider): CacheStore {
         invalidationGroups[group] = [];
       }
       invalidationGroups[group].push(key);
+      invalidationGroups[group] = removeDuplicates(invalidationGroups[group]);
     }
     await cacheProvider.set('invalidationGroups', JSON.stringify(invalidationGroups));
   };
@@ -81,13 +82,14 @@ export function createCacheStore(cacheProvider: CacheProvider): CacheStore {
       const hashedKey = computeHash(key);
       await cacheProvider.set(hashedKey, value, ttl);
       if (groups) {
-        await updateGroupsForKey(key, groups);
+        await updateGroupsForKey(hashedKey, groups);
       }
       stats.entries++;
     },
     async get(key: string) {
       const hashedKey = computeHash(key);
       const cached = await cacheProvider.get(hashedKey);
+
       if (cached) {
         stats.hits++;
         return cached;
@@ -98,7 +100,8 @@ export function createCacheStore(cacheProvider: CacheProvider): CacheStore {
     async invalidateGroup(group: string) {
       const invalidationGroups = await getInvalidationGroups();
       const keys = invalidationGroups[group] ?? [];
-      await cacheProvider.deleteManyKeys(keys.map(computeHash));
+
+      await cacheProvider.deleteManyKeys(keys);
       delete invalidationGroups[group];
       for (const group in invalidationGroups) {
         invalidationGroups[group] = invalidationGroups[group].filter(k => !keys.includes(k));
@@ -116,4 +119,8 @@ export function createCacheStore(cacheProvider: CacheProvider): CacheStore {
       return cacheProvider.getAllKeys();
     },
   };
+}
+
+function removeDuplicates(arr: string[]): string[] {
+  return [...new Set(arr)];
 }

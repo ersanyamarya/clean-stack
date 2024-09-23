@@ -64,7 +64,7 @@ function getTestCallback(cacheStore: CacheStore) {
   );
 }
 
-function getListUsersCallback(cacheStore: CacheStore) {
+function getListUsersCallback() {
   return koaCallback(async ({ ctx }) => {
     ctx.logger.info('ListUsersController called');
     const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });

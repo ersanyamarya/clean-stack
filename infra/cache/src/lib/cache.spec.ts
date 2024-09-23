@@ -144,7 +144,7 @@ describe('createCacheStore', () => {
         return;
       }
       const parsedGroups = JSON.parse(invalidationGroups);
-      expect(parsedGroups['group1']).toContain('key1');
+      expect(parsedGroups['group1']).toContain(computeHash('key1'));
     });
 
     it('should remove key from old groups if not in new groups', async () => {
@@ -155,8 +155,8 @@ describe('createCacheStore', () => {
         return;
       }
       const parsedGroups = JSON.parse(invalidationGroups);
-      expect(parsedGroups['group1']).not.toContain('key1');
-      expect(parsedGroups['group2']).toContain('key1');
+      expect(parsedGroups['group1']).not.toContain(computeHash('key1'));
+      expect(parsedGroups['group2']).toContain(computeHash('key1'));
     });
 
     it('should handle keys in multiple groups correctly', async () => {
@@ -166,8 +166,8 @@ describe('createCacheStore', () => {
         return;
       }
       const parsedGroups = JSON.parse(invalidationGroups);
-      expect(parsedGroups['group1']).toContain('key1');
-      expect(parsedGroups['group2']).toContain('key1');
+      expect(parsedGroups['group1']).toContain(computeHash('key1'));
+      expect(parsedGroups['group2']).toContain(computeHash('key1'));
     });
 
     it('should not modify groups if no groups are provided', async () => {
@@ -179,7 +179,7 @@ describe('createCacheStore', () => {
         return;
       }
       const parsedGroups = JSON.parse(invalidationGroups);
-      expect(parsedGroups['group1']).toContain('key1');
+      expect(parsedGroups['group1']).toContain(computeHash('key1'));
     });
   });
   describe('invalidateGroup', () => {
