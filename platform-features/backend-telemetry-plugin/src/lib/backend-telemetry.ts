@@ -1,3 +1,4 @@
+import { Logger } from '@clean-stack/framework/global-types';
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
 
@@ -12,6 +13,7 @@ export type TelemetryConfig = {
   serviceName: string;
   serviceVersion: string;
   collectorUrl: string;
+  initiateTelemetry?: boolean;
 };
 
 /**
@@ -31,29 +33,34 @@ export type TelemetryConfig = {
  * logger is instantiated before the instrumentation, it may not function correctly
  * due to missing or incomplete setup.
  */
-export function initTelemetry(config: TelemetryConfig) {
-  const telemetrySdk = new NodeSDK({
-    resource: new Resource({
-      'service.name': config.serviceName,
-      'service.version': config.serviceVersion,
-    }),
-    traceExporter: new OTLPTraceExporter({
-      url: config.collectorUrl,
-    }),
-    metricReader: new PeriodicExportingMetricReader({
-      exporter: new OTLPMetricExporter({
-        url: config.collectorUrl,
+export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initiateTelemetry = true }: TelemetryConfig): {
+  telemetrySdk: NodeSDK | null;
+  mainLogger: Logger;
+} {
+  let telemetrySdk: NodeSDK | null = null;
+  if (initiateTelemetry) {
+    telemetrySdk = new NodeSDK({
+      resource: new Resource({
+        'service.name': serviceName,
+        'service.version': serviceVersion,
       }),
-    }),
-    instrumentations: [
-      getNodeAutoInstrumentations({
-        '@opentelemetry/instrumentation-fs': { enabled: false },
+      traceExporter: new OTLPTraceExporter({
+        url: collectorUrl,
       }),
-    ],
-  });
+      metricReader: new PeriodicExportingMetricReader({
+        exporter: new OTLPMetricExporter({
+          url: collectorUrl,
+        }),
+      }),
+      instrumentations: [
+        getNodeAutoInstrumentations({
+          '@opentelemetry/instrumentation-fs': { enabled: false },
+        }),
+      ],
+    });
 
-  telemetrySdk.start();
-
+    telemetrySdk.start();
+  }
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mainLogger = require('pino')({
     level: 'debug',

@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Observability Stack in Clean Stack
 
-### [Docker Compose Setup](https://github.com/ersanyamarya/clean-stack/blob/main/platform_setup/observability_stack/docker-compose.yml)
+### [Docker Compose Setup](https://github.com/ersanyamarya/clean-stack/blob/main/PLATFORM_SETUP/observability_stack/docker-compose.yml)
 
 The OpenTelemetry stack in Clean Stack is set up using Docker Compose, which orchestrates multiple containers to create a comprehensive observability solution. The stack consists of the following components:
 
@@ -64,7 +64,7 @@ All services are connected through a custom Docker network called `otel-network`
 To use this observability stack:
 
 1. Ensure Docker and Docker Compose are installed on your system.
-2. Navigate to the `platform_setup/observability_stack/` directory.
+2. Navigate to the `PLATFORM_SETUP/observability_stack/` directory.
 3. Run `docker-compose up -d` to start all services.
 4. Access Grafana at `http://localhost:3000` to view your observability data.
 
