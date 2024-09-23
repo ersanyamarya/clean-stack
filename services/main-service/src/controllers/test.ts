@@ -44,7 +44,7 @@ function getTestCallback(cacheStore: CacheStore) {
         };
       }
 
-      const returnData = { query, params, method, path, body, locale: ctx.locale, version: ctx.serviceVersion, service: ctx.serviceName };
+      const returnData = { query, params, method, path, body, locale: ctx.locale, version: ctx.serviceVersion, service: ctx.serviceName, headers };
 
       //delay
 
