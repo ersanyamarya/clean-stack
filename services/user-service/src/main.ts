@@ -2,13 +2,13 @@ import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
 import { localUserUseCase } from '@clean-stack/domain_user';
-import { ServiceControllerErrorHandler } from '@clean-stack/grpc-essentials';
+import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { ServiceUserService } from '@clean-stack/grpc-proto';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
 import { userServiceServer } from './service';
 
-import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
+import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import { config } from './config';
 
 const handleError: ServiceControllerErrorHandler = error => {

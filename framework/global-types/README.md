@@ -1,3 +1,3 @@
-# global_types
+# global-types
 
 This library was generated with [Nx](https://nx.dev).

@@ -1,4 +1,4 @@
-import { Logger } from '@clean-stack/global_types';
+import { Logger } from '@clean-stack/framework/global-types';
 
 /**
  * The function `exceptions` sets up event listeners for unhandled rejections and uncaught exceptions,

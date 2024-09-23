@@ -1,6 +1,6 @@
 import { IUser, IUserRepository } from '@clean-stack/domain_user';
-import { Logger } from '@clean-stack/global_types';
-import { serviceController, ServiceControllerErrorHandler } from '@clean-stack/grpc-essentials';
+import { Logger } from '@clean-stack/framework/global-types';
+import { serviceController, ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import {
   CreateUserRequest,
   CreateUserResponse,

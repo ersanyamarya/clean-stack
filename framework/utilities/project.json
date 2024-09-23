@@ -1,7 +1,7 @@
 {
   "name": "utilities",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "infra/utilities/src",
+  "sourceRoot": "framework/utilities/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../../coverage/infra/utilities"
+        "reportsDirectory": "../../coverage/framework/utilities"
       }
     }
   }

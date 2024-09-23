@@ -1,4 +1,4 @@
-import { loadConfigFromEnv, numberTransformSchema } from '@clean-stack/utilities';
+import { loadConfigFromEnv, numberTransformSchema } from '@clean-stack/framework/utilities';
 import { z } from 'zod';
 
 const configSchema = z.object({

@@ -1,7 +1,7 @@
 import cors from '@koa/cors';
 import Koa, { Context } from 'koa';
 
-import { Logger } from '@clean-stack/global_types';
+import { Logger } from '@clean-stack/framework/global-types';
 import { bodyParser } from '@koa/bodyparser';
 import helmet from 'koa-helmet';
 

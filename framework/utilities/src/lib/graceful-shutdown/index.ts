@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-object-injection */
-import { Logger } from '@clean-stack/global_types';
+import { Logger } from '@clean-stack/framework/global-types';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { Socket as NetSocket } from 'net';
 

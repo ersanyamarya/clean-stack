@@ -1,8 +1,8 @@
 import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
-import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/koa-server-essentials';
-import { exceptions, gracefulShutdown } from '@clean-stack/utilities';
+import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
+import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import Router from '@koa/router';
 import controllers from './controllers';
 import clients from './service-clients';

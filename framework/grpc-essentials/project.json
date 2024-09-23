@@ -1,7 +1,7 @@
 {
-  "name": "koa-server-essentials",
+  "name": "grpc-essentials",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "infra/koa-server-essentials/src",
+  "sourceRoot": "framework/grpc-essentials/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../../coverage/infra/koa-server-essentials"
+        "reportsDirectory": "../../coverage/framework/grpc-essentials"
       }
     }
   }

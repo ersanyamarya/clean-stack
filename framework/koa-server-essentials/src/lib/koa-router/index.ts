@@ -1,4 +1,4 @@
-import { HealthCheck } from '@clean-stack/global_types';
+import { HealthCheck } from '@clean-stack/framework/global-types';
 import Router from '@koa/router';
 
 export type RootRouteOptions = {

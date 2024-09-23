@@ -1,4 +1,4 @@
-import { Logger } from '@clean-stack/global_types';
+import { Logger } from '@clean-stack/framework/global-types';
 import { Context } from 'koa';
 import { vi } from 'vitest';
 import { getKoaServer, ServerEssentialsOptions } from './koa-server';
