@@ -1,75 +1,61 @@
-import { Logger } from '@clean-stack/global_types';
-import { describe, expect, it, vi } from 'vitest';
-import { AppError } from '../app-error';
+import { describe, expect, it, Mock, vi } from 'vitest';
+import { AppError, ERROR_CODE_KEYS } from '../app-error';
 import { errorHandler, ErrorHandlerReturnType } from './index';
 
 describe('errorHandler', () => {
-  const mockLogger = {
-    error: vi.fn(),
-  } as unknown as Logger;
+  let mockOnUnhandledError: Mock;
 
-  it('should handle null correctly', () => {
-    const result: ErrorHandlerReturnType = errorHandler(null, mockLogger);
+  beforeEach(() => {
+    mockOnUnhandledError = vi.fn();
+  });
 
-    expect(result.status).toBe(500);
-    expect(result.message).toBe('Internal Server Error');
-    expect(result.errorCode).toBe('INTERNAL_SERVER_ERROR');
-    expect(mockLogger.error).toHaveBeenCalledWith({
+  it('should handle unknown errors', () => {
+    const result: ErrorHandlerReturnType = errorHandler(null, mockOnUnhandledError);
+
+    expect(mockOnUnhandledError).toHaveBeenCalledWith(null);
+    expect(result).toEqual({
+      name: 'Error',
+      status: 500,
+      message: 'An unknown error occurred',
       errorCode: 'INTERNAL_SERVER_ERROR',
-      where: 'errorHandler',
-      context: null,
     });
   });
 
-  it('should handle undefined correctly', () => {
-    const result: ErrorHandlerReturnType = errorHandler(undefined, mockLogger);
+  it('should handle non-Error objects', () => {
+    const nonErrorObject = { foo: 'bar' };
+    const result: ErrorHandlerReturnType = errorHandler(nonErrorObject, mockOnUnhandledError);
 
-    expect(result.status).toBe(500);
-    expect(result.message).toBe('Internal Server Error');
-    expect(result.errorCode).toBe('INTERNAL_SERVER_ERROR');
-    expect(mockLogger.error).toHaveBeenCalledWith({
+    expect(mockOnUnhandledError).toHaveBeenCalledWith(nonErrorObject);
+    expect(result).toEqual({
+      name: 'Error',
+      status: 500,
+      message: 'An unknown error occurred',
       errorCode: 'INTERNAL_SERVER_ERROR',
-      where: 'errorHandler',
-      context: undefined,
-    });
-  });
-
-  it('should handle non-error objects correctly', () => {
-    const nonErrorObject = { some: 'object' };
-    const result: ErrorHandlerReturnType = errorHandler(nonErrorObject, mockLogger);
-
-    expect(result.status).toBe(500);
-    expect(result.message).toBe('Internal Server Error');
-    expect(result.errorCode).toBe('INTERNAL_SERVER_ERROR');
-    expect(mockLogger.error).toHaveBeenCalledWith({
-      errorCode: 'INTERNAL_SERVER_ERROR',
-      where: 'errorHandler',
-      context: nonErrorObject,
     });
   });
 
   it('should handle AppError correctly', () => {
-    const errorCode = 'RESOURCE_NOT_FOUND';
-    const context = { userId: 123 };
-    const metadata = { resource: 'user' };
-    const appError = new AppError(errorCode, { context, metadata });
-
-    const result: ErrorHandlerReturnType = errorHandler(appError, mockLogger);
-
-    expect(result.status).toBe(appError.statusCode);
-    expect(result.message).toBe(appError.message);
-    expect(result.errorCode).toBe(appError.errorCode);
-    expect(result.name).toBe('AppError');
+    const appError = new AppError<ERROR_CODE_KEYS>('RESOURCE_NOT_FOUND', { context: { resource: 'User' } });
+    const result: ErrorHandlerReturnType = errorHandler(appError, mockOnUnhandledError);
+    expect(mockOnUnhandledError).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      name: 'AppError',
+      status: 404,
+      message: { resource: 'User' },
+      errorCode: 'RESOURCE_NOT_FOUND',
+    });
   });
 
-  it('should handle unknown errors correctly', () => {
-    const unknownError = new Error('Unknown error');
+  it('should handle generic Error objects', () => {
+    const genericError = new Error('Generic error message');
+    const result: ErrorHandlerReturnType = errorHandler(genericError, mockOnUnhandledError);
 
-    const result: ErrorHandlerReturnType = errorHandler(unknownError, mockLogger);
-
-    expect(result.status).toBe(500);
-    expect(result.message).toBe(unknownError.message);
-    expect(result.errorCode).toBe('INTERNAL_SERVER_ERROR');
-    expect(result.name).toBe(unknownError.name);
+    expect(mockOnUnhandledError).toHaveBeenCalledWith(genericError);
+    expect(result).toEqual({
+      name: 'Error',
+      status: 500,
+      message: 'Generic error message',
+      errorCode: 'INTERNAL_SERVER_ERROR',
+    });
   });
 });

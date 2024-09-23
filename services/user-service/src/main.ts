@@ -14,10 +14,12 @@ import { config } from './config';
 const handleError: ServiceControllerErrorHandler = error => {
   mainLogger.error(error);
   const metadata = new Metadata();
-  const formattedError = errorHandler(error, mainLogger);
+  const formattedError = errorHandler(error, (error: unknown) => {
+    mainLogger.error(error);
+  });
 
   metadata.set('error-code', formattedError.errorCode);
-  metadata.set('error-message', formattedError.message);
+  metadata.set('error-message', formattedError.message.toString());
 
   return metadata;
 };

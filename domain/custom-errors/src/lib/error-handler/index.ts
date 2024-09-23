@@ -1,10 +1,9 @@
-import { Logger } from '@clean-stack/global_types';
 import { AppError, ERROR_CODE_KEYS, isAppError } from '../app-error';
 
 export type ErrorHandlerReturnType = {
   name: string;
   status: number;
-  message: string;
+  message: string | Record<string, unknown>;
   errorCode: string;
 };
 
@@ -19,28 +18,10 @@ export type ErrorHandlerReturnType = {
  */
 export type AllowedError = {
   check: (error: unknown) => boolean;
-  process: (error: unknown, logger: Logger) => ErrorHandlerReturnType;
+  process: (error: unknown) => ErrorHandlerReturnType;
 };
 
 export const allowedErrors: AllowedError[] = [
-  {
-    check: (error: unknown) => !error || error instanceof Error === false,
-    process: (error: unknown, logger: Logger) => {
-      logger.error({
-        errorCode: 'INTERNAL_SERVER_ERROR',
-        where: 'errorHandler',
-        context: error,
-      });
-
-      return {
-        name: 'Error',
-        status: 500,
-        message: 'Internal Server Error',
-        errorCode: 'INTERNAL_SERVER_ERROR',
-      };
-    },
-  },
-
   {
     check: isAppError,
     process: (error: unknown) => {
@@ -48,7 +29,7 @@ export const allowedErrors: AllowedError[] = [
       return {
         name: 'AppError',
         status: appError.statusCode,
-        message: appError.message,
+        message: appError.context,
         errorCode: appError.errorCode,
       };
     },
@@ -60,22 +41,28 @@ export const allowedErrors: AllowedError[] = [
  * If the error is not in the allowed list, it logs the error and returns a generic internal server error response.
  *
  * @param error - The error to be handled. Can be of any type.
- * @param logger - The logger instance used to log error details.
+ * @param onUnhandledError - A callback function that is called when an unhandled error is encountered. The function is passed the error as an argument.
  * @returns An object containing error details such as name, status, message, and errorCode.
  */
-export function errorHandler(error: unknown, logger: Logger): ErrorHandlerReturnType {
+export function errorHandler(error: unknown, onUnhandledError: (error: unknown) => void): ErrorHandlerReturnType {
+  if (!error || error instanceof Error === false) {
+    onUnhandledError(error);
+    return {
+      name: 'Error',
+      status: 500,
+      message: 'An unknown error occurred',
+      errorCode: 'INTERNAL_SERVER_ERROR',
+    };
+  }
+
   for (const allowedError of allowedErrors) {
     if (allowedError.check(error)) {
-      return allowedError.process(error, logger);
+      return allowedError.process(error);
     }
   }
 
   const err = error as Error;
-  logger.error({
-    errorCode: 'INTERNAL_SERVER_ERROR',
-    where: 'errorHandler',
-    context: err,
-  });
+  onUnhandledError(err);
   return {
     name: err.name,
     status: 500,

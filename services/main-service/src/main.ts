@@ -12,7 +12,9 @@ import { createClient, RedisClientType } from 'redis';
 import { config } from './config';
 
 const errorCallback: ErrorCallback = (error, ctx) => {
-  const errorData = errorHandler(error, ctx.logger);
+  const errorData = errorHandler(error, (error: unknown) => {
+    ctx.logger.error(error);
+  });
 
   ctx.status = errorData.status;
   ctx.body = errorData;
