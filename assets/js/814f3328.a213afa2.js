@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_clean_stack_source=self.webpackChunk_clean_stack_source||[]).push([[7472],{6370:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome","permalink":"/clean-stack/blog/welcome","unlisted":false}]}')}}]);
