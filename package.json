@@ -80,6 +80,7 @@
     "grpc-tools": "^1.12.4",
     "http-server": "^14.1.1",
     "nx": "19.7.2",
+    "nx-github-pages": "^1.0.0",
     "nyc": "^17.0.0",
     "prettier": "^2.6.2",
     "prettier-plugin-organize-imports": "^4.0.0",
