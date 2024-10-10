@@ -1,6 +1,7 @@
 ---
 sidebar_label: Caching
 ---
+
 # Cache Store for Clean Stack
 
 ## What is Caching?
@@ -44,12 +45,9 @@ The `CacheProvider` is passed as a parameter to the `createCacheStore` function,
 2. **Testability**: It's easier to mock the cache provider in unit tests.
 3. **Dependency Injection**: This design follows the dependency injection principle, improving modularity and maintainability.
 
-
 ## Significance of Invalidation Groups
 
-:::info
-Invalidation groups are a powerful feature of this cache implementation:
-:::
+:::info Invalidation groups are a powerful feature of this cache implementation: :::
 
 1. **Efficient Bulk Invalidation**: Related cache entries can be invalidated together, useful for complex data relationships.
 2. **Fine-grained Control**: Allows selective invalidation without clearing the entire cache.
@@ -69,85 +67,84 @@ To use this cache store with a REST API and Redis provider:
 
 1. Create a Redis provider:
 
-    ```typescript
-    import { RedisClientType } from 'redis';
-    import { CacheProvider } from '../cache';
+   ```typescript
+   import { RedisClientType } from 'redis';
+   import { CacheProvider } from '../cache';
 
-    export function gerRedisCacheProvider(client: RedisClientType): CacheProvider {
-      return {
-        set: async (key: string, value: string, ttl?: number) => {
-          await client.set(key, value, { EX: ttl });
-        },
-        get: async (key: string) => {
-          return await client.get(key);
-        },
+   export function gerRedisCacheProvider(client: RedisClientType): CacheProvider {
+     return {
+       set: async (key: string, value: string, ttl?: number) => {
+         await client.set(key, value, { EX: ttl });
+       },
+       get: async (key: string) => {
+         return await client.get(key);
+       },
 
-        delete: async (key: string) => {
-          await client.del(key);
-        },
-        deleteManyKeys: async (keys: string[]) => {
-          await client.del(keys);
-        },
-        clear: async () => {
-          await client.flushAll();
-        },
-        getAllKeys: async () => {
-          return await client.keys('*');
-        },
-      };
-    }
-    ```
+       delete: async (key: string) => {
+         await client.del(key);
+       },
+       deleteManyKeys: async (keys: string[]) => {
+         await client.del(keys);
+       },
+       clear: async () => {
+         await client.flushAll();
+       },
+       getAllKeys: async () => {
+         return await client.keys('*');
+       },
+     };
+   }
+   ```
 
 2. Set up the Redis client and cache provider:
 
-    ```typescript
-    import { createClient } from 'redis';
-    import { getRedisCacheProvider } from './redisCacheProvider';
-    import { createCacheStore } from './cacheStore';
+   ```typescript
+   import { createClient } from 'redis';
+   import { getRedisCacheProvider } from './redisCacheProvider';
+   import { createCacheStore } from './cacheStore';
 
-    const redisClient = createClient({ url: 'redis://localhost:6379' });
-    await redisClient.connect();
+   const redisClient = createClient({ url: 'redis://localhost:6379' });
+   await redisClient.connect();
 
-    const redisCacheProvider = getRedisCacheProvider(redisClient);
-    const cacheStore = createCacheStore(redisCacheProvider);
-    ```
+   const redisCacheProvider = getRedisCacheProvider(redisClient);
+   const cacheStore = createCacheStore(redisCacheProvider);
+   ```
 
 3. Use in API routes:
 
-    ```typescript
-    app.get('/users/:id', async (req, res) => {
-      const userId = req.params.id;
-      const cacheKey = `user:${userId}`;
+   ```typescript
+   app.get('/users/:id', async (req, res) => {
+     const userId = req.params.id;
+     const cacheKey = `user:${userId}`;
 
-      // Try to get from cache
-      let userData = await cacheStore.get(cacheKey);
+     // Try to get from cache
+     let userData = await cacheStore.get(cacheKey);
 
-      if (!userData) {
-        // If not in cache, fetch from database
-        userData = await fetchUserFromDatabase(userId);
-        // Cache the result
-        await cacheStore.addOrReplace(cacheKey, JSON.stringify(userData), { ttl: 3600, groups: ['users'] });
-      } else {
-        userData = JSON.parse(userData);
-      }
+     if (!userData) {
+       // If not in cache, fetch from database
+       userData = await fetchUserFromDatabase(userId);
+       // Cache the result
+       await cacheStore.addOrReplace(cacheKey, JSON.stringify(userData), { ttl: 3600, groups: ['users'] });
+     } else {
+       userData = JSON.parse(userData);
+     }
 
-      res.json(userData);
-    });
-    ```
+     res.json(userData);
+   });
+   ```
 
 4. Invalidation example with group key `users`:
 
-      ```typescript
-      app.post('/users', async (req, res) => {
-        // Create user in database
-        const newUser = await createUserInDatabase(req.body);
+   ```typescript
+   app.post('/users', async (req, res) => {
+     // Create user in database
+     const newUser = await createUserInDatabase(req.body);
 
-        // Invalidate user-related caches
-        await cacheStore.invalidateGroup('users');
+     // Invalidate user-related caches
+     await cacheStore.invalidateGroup('users');
 
-        res.json(newUser);
-      });
-      ```
-
+     res.json(newUser);
+   });
+   ```
 
 This implementation provides a flexible, efficient, and powerful caching solution for Clean Stack, enhancing performance and scalability while maintaining ease of use and adaptability to different caching backends.

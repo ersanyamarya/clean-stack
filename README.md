@@ -1,8 +1,6 @@
-# <img src="./apps/docs/static/img/logo.svg" alt="Logo" width="64"/> Clean Stack 
+# <img src="./apps/docs/static/img/logo.svg" alt="Logo" width="64"/> Clean Stack
 
-![Clean Stack](https://img.shields.io/badge/Clean%20Stack-v1.0.0-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-
+![Clean Stack](https://img.shields.io/badge/Clean%20Stack-v1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
 Clean Stack is a modern, opinionated, and full-stack TypeScript boilerplate for building scalable and maintainable web applications. It provides a set of best practices, tools, and libraries to streamline the development process and ensure code quality.
 

@@ -89,8 +89,7 @@ The user service demonstrates how to use the Backend-Telemetry Library effective
      collectorUrl: 'http://localhost:4317',
    });
    ```
-   :::tip[This file initializes telemetry before anything else in the service.]
-    It's in a separate file to:
+   :::tip[This file initializes telemetry before anything else in the service.] It's in a separate file to:
    - Ensure telemetry is set up before any other operations
    - Keep the main application code clean and focused
    - Make it easier to manage telemetry configuration :::
