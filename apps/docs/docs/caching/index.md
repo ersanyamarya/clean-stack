@@ -47,12 +47,12 @@ The `CacheProvider` is passed as a parameter to the `createCacheStore` function,
 
 ## Significance of Invalidation Groups
 
-:::info Invalidation groups are a powerful feature of this cache implementation: :::
+:::info Invalidation groups are a powerful feature of this cache implementation: 
 
 1. **Efficient Bulk Invalidation**: Related cache entries can be invalidated together, useful for complex data relationships.
 2. **Fine-grained Control**: Allows selective invalidation without clearing the entire cache.
 3. **Consistency Management**: Helps maintain data consistency across related cache entries.
-
+:::
 Usage example:
 
 ```typescript
