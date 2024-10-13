@@ -8,7 +8,6 @@
     "dep-graph": "nx graph",
     "format": "prettier --write \"**/*.{ts,js,json,md,tsx,jsx}\"",
     "generate:docs": "typedoc --options typedoc.json && http-server docs -p 8888 -o",
-    "graph": "nx dep-graph",
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
     "platform:all": "npm run platform:observability && npm run platform:cache",
