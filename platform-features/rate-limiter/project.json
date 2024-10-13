@@ -1,0 +1,16 @@
+{
+  "name": "rate-limiter",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "platform-features/rate-limiter/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/platform-features/rate-limiter"
+      }
+    }
+  }
+}
