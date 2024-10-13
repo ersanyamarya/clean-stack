@@ -9,7 +9,6 @@ type CacheStats = {
 export type CacheProvider = {
   set: (key: string, value: string, ttl?: number) => Promise<void>;
   get: (key: string) => Promise<string | null>;
-  // getManyKeys: (keys: string[]) => Promise<Record<string, string | null>>;
   delete: (key: string) => Promise<void>;
   deleteManyKeys: (keys: string[]) => Promise<void>;
   clear: () => Promise<void>;
