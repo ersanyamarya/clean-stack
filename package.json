@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "clean": "nx reset && nx run-many --target=clean --all --parallel && rm -rf dist coverage tmp .nx docs apps/docs/.docusaurus",
+    "clean": "nx reset && nx run-many --target=clean --all --parallel && rm -rf dist coverage tmp .nx docs apps/clean-docs/.docusaurus",
     "dep-graph": "nx graph",
     "format": "prettier --write \"**/*.{ts,js,json,md,tsx,jsx}\"",
     "generate:docs": "typedoc --options typedoc.json && http-server docs -p 8888 -o",

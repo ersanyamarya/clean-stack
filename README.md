@@ -1,4 +1,4 @@
-# <img src="./apps/docs/static/img/logo.svg" alt="Logo" width="64"/> Clean Stack
+# <img src="./apps/clean-docs/static/img/logo.svg" alt="Logo" width="64"/> Clean Stack
 
 ![Clean Stack](https://img.shields.io/badge/Clean%20Stack-v1.0.0-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
