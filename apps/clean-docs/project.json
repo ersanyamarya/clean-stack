@@ -1,14 +1,13 @@
 {
-  "name": "docs",
+  "name": "clean-docs",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/docs/src",
-  "tags": [],
+  "sourceRoot": "apps/clean-docs/src",
   "targets": {
     "build": {
       "executor": "@nx-extend/docusaurus:browser",
       "options": {
-        "outputPath": "dist/apps/docs"
+        "outputPath": "dist/apps/clean-docs"
       }
     },
     "serve": {
@@ -22,5 +21,6 @@
       "options": {},
       "dependsOn": ["build"]
     }
-  }
+  },
+  "tags": []
 }

@@ -67,9 +67,10 @@ function Feature({ title, Svg, description, link }: FeatureItem) {
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
+        <br />
         <a
-          href={link}
-          className={styles.learnMoreButton}>
+          className="button button--secondary button--lg"
+          href={link}>
           Learn more
         </a>
       </div>

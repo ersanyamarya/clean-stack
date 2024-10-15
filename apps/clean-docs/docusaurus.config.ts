@@ -29,27 +29,6 @@ const config: Config = {
     locales: ['en'],
   },
 
-  // plugins: [
-  //   [
-  //     'docusaurus-plugin-typedoc',
-
-  //     // Options
-  //     {
-  //       entryPoints: ['infra/**/src', 'domain/**/src'],
-  //       tsconfig: 'tsconfig.base.json',
-  //       out: './docs/code',
-  //       skipErrorChecking: true,
-  //       entryFileName: 'index.md',
-  //       hideBreadcrumbs: true,
-  //       hidePageHeader: true,
-  //       sidebar: {
-  //         autoConfiguration: true,
-  //         pretty: true,
-  //       },
-  //     },
-  //   ],
-  // ],
-
   presets: [
     [
       'classic',
@@ -76,7 +55,6 @@ const config: Config = {
     mermaid: true,
   },
   themes: ['@docusaurus/theme-mermaid'],
-  // themes: ['@docusaurus/theme-mermaid'],
   themeConfig: {
     tableOfContents: {
       minHeadingLevel: 2,
@@ -114,7 +92,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Docs',
+              label: 'Tutorial',
               to: '/docs/intro',
             },
           ],
@@ -145,7 +123,7 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/ersanyamarya',
+              href: 'https://github.com/facebook/docusaurus',
             },
           ],
         },
@@ -153,7 +131,7 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.dracula,
+      theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
