@@ -1,0 +1,68 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    command: ['--config=/etc/otel-collector-config.yml']
+    volumes:
+      - ./config/otel-collector-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - '4317:4317' # OTLP gRPC receiver
+      - '4318:4318' # OTLP HTTP receiver
+      # - '8888:8888' # Prometheus metrics exposed by the collector
+      - '8889:8889' # Prometheus exporter metrics
+    networks:
+      - otel-network
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    # ports:
+    #   - '9090:9090'
+    networks:
+      - otel-network
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - '3000:3000'
+    networks:
+      - otel-network
+
+  loki:
+    image: grafana/loki
+    volumes:
+      - ./config/loki-config.yml:/etc/loki/local-config.yml
+      - ./data/loki:/loki
+    # ports:
+    #   - '3100:3100'
+    command: -config.file=/etc/loki/local-config.yml
+    networks:
+      - otel-network
+
+  tempo:
+    image: grafana/tempo
+    command: ['-config.file=/etc/tempo.yml']
+    volumes:
+      - ./config/tempo-config.yml:/etc/tempo.yml
+      - ./data/tempo:/tmp/tempo
+    # ports:
+    #   - '3200:3200' # tempo
+    #   - '4317' # otlp grpc
+    #   - '4318' # otlp http
+    networks:
+      - otel-network
+
+networks:
+  otel-network:
+    driver: bridge

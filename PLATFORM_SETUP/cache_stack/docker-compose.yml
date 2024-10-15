@@ -1,0 +1,17 @@
+services:
+  redis:
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - '6379:6379'
+      - '13333:8001'
+    environment:
+      - REDIS_ARGS=--loglevel warning --save 60 1000 --appendonly yes
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - cache-network
+
+networks:
+  cache-network:
+    driver: bridge
