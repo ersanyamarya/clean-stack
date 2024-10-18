@@ -67,13 +67,13 @@ function Feature({ title, Svg, description, link }: FeatureItem) {
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
-        <br />
-        <a
-          className="button button--secondary button--lg"
-          href={link}>
-          Learn more
-        </a>
       </div>
+      <span style={{ flex: 1 }} />
+      <a
+        className="button button--secondary button--lg"
+        href={link}>
+        Learn more
+      </a>
     </div>
   );
 }
