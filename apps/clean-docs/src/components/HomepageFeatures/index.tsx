@@ -11,12 +11,6 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Observability',
-    Svg: require('@site/static/img/observability.svg').default,
-    description: 'Observability stack with Open Telemetry, Prometheus, Grafana, Loki, and Tempo.',
-    link: '/docs/observability',
-  },
-  {
     title: 'Monorepo Structure',
     Svg: require('@site/static/img/monorepo.svg').default,
     description: 'Efficiently organize and scale your projects using Nx for monorepo management.',
@@ -29,16 +23,22 @@ const FeatureList: FeatureItem[] = [
     link: '/docs/intro',
   },
   {
-    title: 'Rate Limiting',
-    Svg: require('@site/static/img/rate_limit.svg').default,
-    description: 'Implement robust rate limiting strategies to manage API traffic and enhance security.',
-    link: '/docs/rate-limiter',
-  },
-  {
     title: 'Microservices Architecture',
     Svg: require('@site/static/img/microservices.svg').default,
     description: 'Build scalable applications with a distributed system of loosely coupled services.',
     link: '/docs/intro',
+  },
+  {
+    title: 'Observability',
+    Svg: require('@site/static/img/observability.svg').default,
+    description: 'Observability stack with Open Telemetry, Prometheus, Grafana, Loki, and Tempo.',
+    link: '/docs/observability',
+  },
+  {
+    title: 'Rate Limiting',
+    Svg: require('@site/static/img/rate_limit.svg').default,
+    description: 'Implement robust rate limiting strategies to manage API traffic and enhance security.',
+    link: '/docs/rate-limiter',
   },
 
   {
