@@ -14,44 +14,44 @@ const FeatureList: FeatureItem[] = [
     title: 'Observability',
     Svg: require('@site/static/img/observability.svg').default,
     description: 'Observability stack with Open Telemetry, Prometheus, Grafana, Loki, and Tempo.',
-    link: '/clean-stack/docs/observability',
+    link: '/docs/observability',
   },
   {
     title: 'Monorepo Structure',
     Svg: require('@site/static/img/monorepo.svg').default,
     description: 'Efficiently organize and scale your projects using Nx for monorepo management.',
-    link: '/clean-stack/docs/intro',
+    link: '/docs/intro',
   },
   {
     title: 'TypeScript Everywhere',
     Svg: require('@site/static/img/typescript.svg').default,
     description: 'Leverage the power of static typing across the entire stack for better code quality and maintainability.',
-    link: '/clean-stack/docs/intro',
+    link: '/docs/intro',
   },
   {
     title: 'Rate Limiting',
     Svg: require('@site/static/img/rate_limit.svg').default,
     description: 'Implement robust rate limiting strategies to manage API traffic and enhance security.',
-    link: '/clean-stack/docs/rate-limiter',
+    link: '/docs/rate-limiter',
   },
   {
     title: 'Microservices Architecture',
     Svg: require('@site/static/img/microservices.svg').default,
     description: 'Build scalable applications with a distributed system of loosely coupled services.',
-    link: '/clean-stack/docs/intro',
+    link: '/docs/intro',
   },
 
   {
     title: 'Cache Management',
     Svg: require('@site/static/img/cache.svg').default,
     description: 'Modular cache management with support for Redis and other cache stores.',
-    link: '/clean-stack/docs/cache',
+    link: '/docs/cache',
   },
   {
     title: 'Code Quality',
     Svg: require('@site/static/img/quality.svg').default,
     description: 'Enforced through ESLint, Prettier, and TypeScript to ensure high-quality code.',
-    link: '/clean-stack/docs/intro',
+    link: '/docs/intro',
   },
 ];
 
