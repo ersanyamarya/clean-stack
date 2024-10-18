@@ -62,7 +62,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Additional Resources
 
-- [Documentation](https://ersanyamarya.github.io/clean-stack/)
+- [Documentation](https://clean-stack.sanyamarya.com/)
 - [Community Forum](https://your-community-link)
 - [Tutorials](https://your-tutorials-link)
 
