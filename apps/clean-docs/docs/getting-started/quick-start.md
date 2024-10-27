@@ -61,5 +61,5 @@ You should see:
 ## Next Steps
 
 - Learn about the [Project Structure](./project-structure)
-- Explore [Platform Features](../platform-features/overview)
+<!-- - Explore [Platform Features](../platform-features/overview) -->
 - Read about our [Architecture Philosophy](../architecture/philosophy)

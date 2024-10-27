@@ -14,44 +14,44 @@ const FeatureList: FeatureItem[] = [
     title: 'Monorepo Structure',
     Svg: require('@site/static/img/monorepo.svg').default,
     description: 'Efficiently organize and scale your projects using Nx for monorepo management.',
-    link: '/docs/intro',
+    link: '/docs',
   },
   {
     title: 'TypeScript Everywhere',
     Svg: require('@site/static/img/typescript.svg').default,
     description: 'Leverage the power of static typing across the entire stack for better code quality and maintainability.',
-    link: '/docs/intro',
+    link: '/docs',
   },
   {
     title: 'Microservices Architecture',
     Svg: require('@site/static/img/microservices.svg').default,
     description: 'Build scalable applications with a distributed system of loosely coupled services.',
-    link: '/docs/intro',
+    link: '/docs',
   },
   {
     title: 'Observability',
     Svg: require('@site/static/img/observability.svg').default,
     description: 'Observability stack with Open Telemetry, Prometheus, Grafana, Loki, and Tempo.',
-    link: '/docs/observability',
+    link: '/docs/platform-features/observability',
   },
   {
     title: 'Rate Limiting',
     Svg: require('@site/static/img/rate_limit.svg').default,
     description: 'Implement robust rate limiting strategies to manage API traffic and enhance security.',
-    link: '/docs/rate-limiter',
+    link: '/docs/platform-features/rate-limiter',
   },
 
   {
     title: 'Cache Management',
     Svg: require('@site/static/img/cache.svg').default,
     description: 'Modular cache management with support for Redis and other cache stores.',
-    link: '/docs/cache',
+    link: '/docs/platform-features/caching',
   },
   {
     title: 'Code Quality',
     Svg: require('@site/static/img/quality.svg').default,
     description: 'Enforced through ESLint, Prettier, and TypeScript to ensure high-quality code.',
-    link: '/docs/intro',
+    link: '/docs',
   },
 ];
 

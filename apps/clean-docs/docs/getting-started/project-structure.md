@@ -97,7 +97,7 @@ module-name/
    - Document public interfaces
 
 ## Next Steps
-
+<!-- 
 - Explore [Framework Components](../framework/overview)
 - Learn about [Platform Features](../platform-features/overview)
-- Understand [Clean Architecture](../architecture/clean-architecture)
+- Understand [Clean Architecture](../architecture/clean-architecture) -->

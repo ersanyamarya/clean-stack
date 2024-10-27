@@ -111,7 +111,7 @@ graph LR
 - [Quick Start Guide](./getting-started/quick-start)
 - [Project Structure](./getting-started/project-structure)
 - [Core Concepts](./architecture/philosophy)
-- [Platform Features](./platform-features/overview)
+- [Platform Features](./category/platform-features)
 
 ## Community and Support
 
@@ -127,4 +127,4 @@ We welcome contributions! Whether it's:
 - Submitting feature requests
 - Contributing code
 
-Check our [Contributing Guide](./contributing) to get started.
+Check our [Contributing Guide](./) to get started.
