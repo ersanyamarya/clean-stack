@@ -1,0 +1,8 @@
+{
+  "label": "Platform Features",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Overview of platform features in Clean Stack, including telemetry, caching, and rate limiting. These cross-cutting features provide essential capabilities for building robust, scalable applications."
+  }
+}

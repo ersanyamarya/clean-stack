@@ -1,0 +1,8 @@
+{
+  "label": "Architecture",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Understand Clean Stack's architectural principles, clean architecture implementation, monorepo structure, and microservices design."
+  }
+}
