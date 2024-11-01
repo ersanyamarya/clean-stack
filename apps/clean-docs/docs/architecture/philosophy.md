@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Philosophy of Clean Stack
 
-Clean Stack emerges from real-world challenges in modern software development. It's designed to eliminate repetitive tasks while maintaining high standards for production-grade applications. 
+Clean Stack emerges from real-world challenges in modern software development. It's designed to eliminate repetitive tasks while maintaining high standards for production-grade applications.
 
 ## Core Principles
 
@@ -17,12 +17,23 @@ Clean Stack emerges from real-world challenges in modern software development. I
 ## Architecture Overview
 
 ```mermaid
-graph LR
-    A[Client Applications] --> B[API Gateway]
-    B --> C[gRPC Services]
-    C --> D[Domain Layer]
-    D --> E[Shared Infrastructure]
-    E --> F[Platform Features]
+ graph LR
+      A[Client Applications]
+      B[API Gateway]
+      C[gRPC Services]
+      D[Domain Layer]
+      E[Shared Infrastructure]
+      F[Platform Features]
+
+      A --> B
+      B --> C
+      C --> D
+      D --> E
+      E --> F
+
+      classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px;
+      classDef highlight fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+      class B,C highlight
 ```
 
 ## Monorepo Structure Explained

@@ -1,5 +1,6 @@
 import Heading from '@theme/Heading';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './styles.module.css';
 
 type FeatureItem = {
@@ -57,23 +58,22 @@ const FeatureList: FeatureItem[] = [
 
 function Feature({ title, Svg, description, link }: FeatureItem) {
   return (
-    <div className={styles.feature}>
-      <div>
-        <Svg
-          className={styles.featureSvg}
-          role="img"
-        />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
-      </div>
-      <span style={{ flex: 1 }} />
-      <a
-        className="button button--secondary button--lg"
-        href={link}>
-        Learn more
-      </a>
+    <div
+      className={styles.feature}
+      role="article">
+      <Svg
+        className={styles.featureSvg}
+        role="img"
+        aria-hidden="true"
+      />
+      <Heading as="h3">{title}</Heading>
+      <p>{description}</p>
+      <Link
+        to={link}
+        className="button button--link"
+        aria-label={`Learn more about ${title}`}>
+        Learn more <span aria-hidden="true">→</span>
+      </Link>
     </div>
   );
 }
@@ -81,14 +81,14 @@ function Feature({ title, Svg, description, link }: FeatureItem) {
 export default function HomepageFeatures(): JSX.Element {
   return (
     <div className="container">
-      <section className={styles.features}>
+      <div className={styles.features}>
         {FeatureList.map((props, idx) => (
           <Feature
             key={idx}
             {...props}
           />
         ))}
-      </section>
+      </div>
     </div>
   );
 }

@@ -1,89 +1,170 @@
-.heroBanner {
-  padding: 6rem;
-  text-align: left;
+.hero {
+  padding: 6rem 2rem;
+  background: linear-gradient(160deg, var(--ifm-background-surface-color) 60%, var(--ifm-color-primary-lightest) 60%);
+  overflow: hidden;
+}
+
+.heroInner {
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.heroContent {
+  flex: 1;
+  max-width: 600px;
+}
+
+.logoWrapper {
+  margin-bottom: 2rem;
+}
+
+.logoSvg {
+  width: 64px;
+  height: 64px;
+  color: var(--ifm-color-primary);
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(45deg, var(--ifm-color-primary) 30%, var(--ifm-color-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: var(--ifm-color-emphasis-700);
+  animation: slideUp 0.5s ease-out 0.2s both;
+}
+
+.buttonContainer {
+  animation: slideUp 0.5s ease-out 0.4s both;
+}
+
+.getStarted {
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  background-color: var(--ifm-color-primary);
-  color: var(--ifm-color-primary-lightest);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
-.heroContainer {
-  display: flex;
-  padding: 4rem;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+.getStarted:hover {
+  background: var(--ifm-color-primary-dark);
+  transform: translateY(-2px);
+  color: white;
 }
 
-.heroText {
-  flex: 1;
-  padding-right: 2rem;
+.getStarted::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: width 0.6s ease, height 0.6s ease;
+  transform: translate(-50%, -50%);
 }
 
-.heroImage {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+.getStarted:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
-.heroImage img {
-  max-width: 100%;
-  height: auto;
+/* Main section styles */
+.main {
+  padding-top: 2rem;
 }
 
-.heroImage > * {
-  max-width: 100%;
+.section {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
+.sectionTitle {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, var(--ifm-color-primary) 30%, var(--ifm-color-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionSubtitle {
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
 @media screen and (max-width: 996px) {
-  .heroBanner {
+  .hero {
+    padding: 4rem 1.5rem;
+    background: var(--ifm-background-surface-color);
+  }
+
+  .heroInner {
     flex-direction: column;
-    padding: 3rem 1rem;
+    gap: 2rem;
+    text-align: center;
   }
 
-  .heroContainer {
-    flex-direction: column;
-    padding: 2rem;
+  .heroTitle {
+    font-size: 2.5rem;
   }
 
-  .heroText {
-    padding-right: 0;
-  }
-
-  .heroImage {
-    margin-top: 2rem;
-    order: -1;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .heroBanner {
-    padding: 2rem 1rem;
-  }
-
-  .heroText {
+  .heroSubtitle {
     font-size: 1.2rem;
   }
 
-  .heroImage {
-    margin-top: 1.5rem;
+  .logoWrapper {
+    display: flex;
+    justify-content: center;
   }
 }
 
-@media screen and (max-width: 480px) {
-  .heroBanner {
-    padding: 1.5rem 0.5rem;
-  }
-
-  .heroText {
-    font-size: 1rem;
-  }
-
-  .heroImage {
-    margin-top: 1rem;
+@media (prefers-reduced-motion: reduce) {
+  .heroTitle,
+  .heroSubtitle,
+  .buttonContainer,
+  .getStarted::before {
+    animation: none;
+    transition: none;
   }
 }
 
