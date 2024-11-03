@@ -44,7 +44,7 @@ export const allowedErrors: AllowedError[] = [
  * @param onUnhandledError - A callback function that is called when an unhandled error is encountered. The function is passed the error as an argument.
  * @returns An object containing error details such as name, status, message, and errorCode.
  */
-export function errorHandler(error: unknown, onUnhandledError: (error: unknown) => void): ErrorHandlerReturnType {
+export function errorHandler(error: unknown, onUnhandledError: (error: unknown) => void, additionalAllowedErrors?: AllowedError[]): ErrorHandlerReturnType {
   if (!error || error instanceof Error === false) {
     onUnhandledError(error);
     return {
@@ -54,6 +54,8 @@ export function errorHandler(error: unknown, onUnhandledError: (error: unknown) 
       errorCode: 'INTERNAL_SERVER_ERROR',
     };
   }
+
+  allowedErrors.push(...(additionalAllowedErrors || []));
 
   for (const allowedError of allowedErrors) {
     if (allowedError.check(error)) {

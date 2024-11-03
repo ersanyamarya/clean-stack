@@ -29,7 +29,7 @@ async function main() {
     service: { name: serviceName, version: serviceVersion },
   } = config;
 
-  const client = createClient({
+  const redisClient = createClient({
     url: 'redis://0.0.0.0:6379',
     name: '0',
     socket: {
@@ -42,15 +42,15 @@ async function main() {
       },
     },
   });
-  client.on('error', error => mainLogger.error(error.message));
-  client.on('connect', () => mainLogger.info('Connected to Redis'));
-  client.on('reconnect', () => mainLogger.warn('Reconnected to Redis'));
-  client.on('reconnecting', () => mainLogger.warn('Reconnecting to Redis'));
-  client.on('end', () => mainLogger.warn('Redis connection was terminated'));
+  redisClient.on('error', error => mainLogger.error(error.message));
+  redisClient.on('connect', () => mainLogger.info('Connected to Redis'));
+  redisClient.on('reconnect', () => mainLogger.warn('Reconnected to Redis'));
+  redisClient.on('reconnecting', () => mainLogger.warn('Reconnecting to Redis'));
+  redisClient.on('end', () => mainLogger.warn('Redis connection was terminated'));
 
-  await client.connect();
+  await redisClient.connect();
 
-  const redisProvider = gerRedisCacheProvider(client as RedisClientType);
+  const redisProvider = gerRedisCacheProvider(redisClient as RedisClientType);
 
   const cacheStore = createCacheStore(redisProvider);
 
@@ -68,7 +68,7 @@ async function main() {
       healthChecks: {
         redis: async () => {
           try {
-            await client.ping();
+            await redisClient.ping();
             return { status: 'connected', connected: true, storeStats: cacheStore.stats() };
           } catch (error) {
             return { status: 'disconnected' };
@@ -111,7 +111,7 @@ async function main() {
         client.close();
       });
       telemetrySdk.shutdown();
-      client.disconnect();
+      redisClient.disconnect();
     },
     server
   );

@@ -28,7 +28,11 @@ const bodySchema = z.object({
   age: z.number().min(34),
 });
 
-// Mock controller for testing
+/**
+ * Mock controller for testing
+ * @param {Record<string, unknown>} data - The data passed to the controller
+ * @returns {Promise<{status: number, body: Record<string, unknown>}>} - The response object
+ */
 const mockController = async ({ query, params, method, path, body, headers }: Record<string, unknown>) => {
   return {
     status: 200,
@@ -59,6 +63,7 @@ describe('koaCallback Error Handling', () => {
       expect(isRequestValidationError(error)).toBe(false);
     });
   });
+
   describe('Query Parameter Validation', () => {
     it('should handle valid query parameters', async () => {
       router.get('/test', koaCallback(mockController, { querySchema }));

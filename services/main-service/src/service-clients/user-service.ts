@@ -14,4 +14,11 @@ export default {
   address: USER_SERVICE_ADDRESS,
 };
 
-export const listUsers = () => user_service_client.listUsers.bind(user_service_client);
+const checkClientInitialized = () => {
+  if (!user_service_client) throw new Error('User service client is not initialized');
+};
+
+export const listUsers = () => {
+  checkClientInitialized();
+  return user_service_client.listUsers.bind(user_service_client);
+};
