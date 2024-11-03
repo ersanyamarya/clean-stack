@@ -1,16 +1,18 @@
-import { mainLogger, telemetrySdk } from './init';
-
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
+import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/platform-features/cache';
+import { createRedisConnector, getRedisClient } from '@clean-stack/redis';
 import Router from '@koa/router';
+import { config } from './config';
 import controllers from './controllers';
+import { mainLogger, telemetrySdk } from './init';
 import clients from './service-clients';
 
-import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/platform-features/cache';
-import { createClient, RedisClientType } from 'redis';
-import { config } from './config';
-
+const {
+  server: { address, port },
+  service: { name: serviceName, version: serviceVersion },
+} = config;
 const errorCallback: ErrorCallback = (error, ctx) => {
   const errorData = errorHandler(error, (error: unknown) => {
     ctx.logger.error(error);
@@ -20,38 +22,19 @@ const errorCallback: ErrorCallback = (error, ctx) => {
   ctx.body = errorData;
 };
 const router = new Router();
+const redisConnector = createRedisConnector(mainLogger, {
+  url: 'redis://0.0.0.0:6379',
+  name: serviceName,
+  maxRetries: 20,
+  retryInterval: 500,
+});
 
 async function main() {
   exceptions(mainLogger);
 
-  const {
-    server: { address, port },
-    service: { name: serviceName, version: serviceVersion },
-  } = config;
-
-  const redisClient = createClient({
-    url: 'redis://0.0.0.0:6379',
-    name: '0',
-    socket: {
-      reconnectStrategy: function (retries) {
-        if (retries > 20) {
-          mainLogger.error('Too many attempts to reconnect. Redis connection was terminated');
-        } else {
-          return retries * 500;
-        }
-      },
-    },
-  });
-  redisClient.on('error', error => mainLogger.error(error.message));
-  redisClient.on('connect', () => mainLogger.info('Connected to Redis'));
-  redisClient.on('reconnect', () => mainLogger.warn('Reconnected to Redis'));
-  redisClient.on('reconnecting', () => mainLogger.warn('Reconnecting to Redis'));
-  redisClient.on('end', () => mainLogger.warn('Redis connection was terminated'));
-
-  await redisClient.connect();
-
-  const redisProvider = gerRedisCacheProvider(redisClient as RedisClientType);
-
+  const { name: redisName, healthCheck: redisHealthCheck } = await redisConnector.connect();
+  const redisClient = getRedisClient();
+  const redisProvider = gerRedisCacheProvider(redisClient);
   const cacheStore = createCacheStore(redisProvider);
 
   const koaApp = await getKoaServer({
@@ -66,13 +49,11 @@ async function main() {
       serviceName,
       serviceVersion,
       healthChecks: {
-        redis: async () => {
-          try {
-            await redisClient.ping();
-            return { status: 'connected', connected: true, storeStats: cacheStore.stats() };
-          } catch (error) {
-            return { status: 'disconnected' };
-          }
+        [redisName]: async () => {
+          return {
+            ...(await redisHealthCheck()),
+            store: cacheStore.stats(),
+          };
         },
       },
       showRoutes: true,
@@ -111,7 +92,7 @@ async function main() {
         client.close();
       });
       telemetrySdk.shutdown();
-      redisClient.disconnect();
+      redisConnector.disconnect();
     },
     server
   );
