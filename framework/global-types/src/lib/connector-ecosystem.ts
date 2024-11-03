@@ -22,7 +22,7 @@ export type HealthCheck = {
  *
  * @template ConnectorConfig - The type of the configuration object for the connector.
  */
-export interface Connector<ConnectorConfig extends Record<string, unknown>> {
+export interface Connector {
   /**
    * Connects the connector using the provided configuration.
    *
@@ -49,4 +49,4 @@ export interface Connector<ConnectorConfig extends Record<string, unknown>> {
  * @param logger - An instance of the Logger to be used by the connector.
  * @returns A Connector instance configured with the specified ConnectorConfig.
  */
-export type ConnectorFactory<ConnectorConfig extends Record<string, unknown>> = (logger: Logger, config: ConnectorConfig) => Connector<ConnectorConfig>;
+export type ConnectorFactory<ConnectorConfig extends Record<string, unknown>> = (logger: Logger, config: ConnectorConfig) => Connector;
