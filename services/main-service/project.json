@@ -28,6 +28,7 @@
       "configurations": {
         "development": {},
         "production": {
+          "bundle": true,
           "generateLockfile": true,
           "esbuildOptions": {
             "sourcemap": false,
