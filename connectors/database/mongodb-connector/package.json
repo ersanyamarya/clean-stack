@@ -1,0 +1,6 @@
+{
+  "name": "@clean-stack/mongodb-connector",
+  "version": "0.0.1",
+  "dependencies": {},
+  "private": true
+}

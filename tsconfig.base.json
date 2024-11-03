@@ -19,6 +19,7 @@
       "@clean-stack/framework/koa-server-essentials": ["framework/koa-server-essentials/src/index.ts"],
       "@clean-stack/framework/utilities": ["framework/utilities/src/index.ts"],
       "@clean-stack/grpc-proto": ["domain/grpc-proto/src/index.ts"],
+      "@clean-stack/mongodb-connector": ["connectors/database/mongodb-connector/src/index.ts"],
       "@clean-stack/platform-features/backend-telemetry": ["platform-features/backend-telemetry/src/index.ts"],
       "@clean-stack/platform-features/cache": ["platform-features/cache/src/index.ts"],
       "@clean-stack/rate-limiter": ["platform-features/rate-limiter/src/index.ts"],
