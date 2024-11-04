@@ -6,7 +6,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/infra/grpc-essentials',
+  cacheDir: '../../node_modules/.vite/framework/grpc-essentials',
 
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
 
@@ -25,7 +25,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts'],
-      reportsDirectory: '../../coverage/infra/grpc-essentials',
+      reportsDirectory: '../../coverage/framework/grpc-essentials',
       provider: 'v8',
       reporter: ['json', 'text'],
     },

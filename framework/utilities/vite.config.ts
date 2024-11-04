@@ -5,7 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/infra/utilities',
+  cacheDir: '../../node_modules/.vite/framework/utilities',
 
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
 
@@ -23,7 +23,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', 'src/lib/graceful-shutdown/**', 'src/lib/exceptions/**'],
-      reportsDirectory: '../../coverage/infra/utilities',
+      reportsDirectory: '../../coverage/framework/utilities',
       provider: 'v8',
       reporter: ['json', 'text'],
     },
