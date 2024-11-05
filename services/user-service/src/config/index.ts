@@ -11,6 +11,7 @@ const configSchema = z.object({
     port: numberTransformSchema,
   }),
   otelCollectorUrl: z.string(),
+  mongoConnectionUri: z.string(),
 });
 
 const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
@@ -23,6 +24,7 @@ const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
     port: 'USER_SERVICE_PORT',
   },
   otelCollectorUrl: 'OTEL_COLLECTOR_ADDRESS',
+  mongoConnectionUri: 'MONGO_CONNECTION_URI',
 };
 
 type AppConfig = z.infer<typeof configSchema> & {

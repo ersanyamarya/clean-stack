@@ -1,14 +1,16 @@
 import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
-import { localUserUseCase } from '@clean-stack/domain_user';
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { ServiceUserService } from '@clean-stack/grpc-proto';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
 import { userServiceServer } from './service';
 
+import { createUserMongoRepository } from '@clean-stack/domain_user';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
+import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
+import { Connection } from 'mongoose';
 import { config } from './config';
 
 const handleError: ServiceControllerErrorHandler = error => {
@@ -24,12 +26,21 @@ const handleError: ServiceControllerErrorHandler = error => {
   return metadata;
 };
 
+const mongoDBConnector = createMongoDBConnector(mainLogger, {
+  uri: config.mongoConnectionUri,
+  name: 'mongodb',
+});
+
 async function main() {
   exceptions(mainLogger);
 
+  const { name: mongoDBName, healthCheck: mongoDBHealthCheck } = await mongoDBConnector.connect();
+
   const server = new Server();
 
-  const userUseCase = localUserUseCase();
+  const connection: Connection = getMongoDBConnection();
+
+  const userUseCase = createUserMongoRepository(connection);
 
   const address = config.address;
   try {
@@ -51,10 +62,11 @@ async function main() {
     mainLogger.info(`Server listening on ${address}`);
   });
 
-  const onsShutdown = () => {
+  const onsShutdown = async () => {
     mainLogger.info('Shutting down server');
     server.forceShutdown();
     telemetrySdk.shutdown();
+    await mongoDBConnector.disconnect();
   };
 
   gracefulShutdown(mainLogger, onsShutdown);

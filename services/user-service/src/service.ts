@@ -1,4 +1,4 @@
-import { IUser, IUserRepository } from '@clean-stack/domain_user';
+import { UserCreateInput, UserRepository, UserUpdateInput } from '@clean-stack/domain_user';
 import { Logger } from '@clean-stack/framework/global-types';
 import { serviceController, ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import {
@@ -12,7 +12,7 @@ import {
   UserIdMessage,
 } from '@clean-stack/grpc-proto';
 
-export function userServiceServer(userRepository: IUserRepository, errorHandler: ServiceControllerErrorHandler, logger: Logger): ServiceUserServer {
+export function userServiceServer(userRepository: UserRepository, errorHandler: ServiceControllerErrorHandler, logger: Logger): ServiceUserServer {
   return {
     getUser: serviceController<UserIdMessage, UserGenericResponse>(async request => {
       logger.info('Getting user');
@@ -22,7 +22,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
 
     createUser: serviceController<CreateUserRequest, CreateUserResponse>(async request => {
       logger.info('Creating user');
-      const user = CreateUserRequest.toJSON(request) as IUser;
+      const user = CreateUserRequest.toJSON(request) as UserCreateInput;
       const newUser = await userRepository.createUser(user);
       const response: CreateUserResponse = CreateUserResponse.fromJSON(newUser);
       return response;
@@ -31,7 +31,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
       logger.info('Listing users');
       const { page, limit } = request;
 
-      const users = await userRepository.listUsers();
+      const users = await userRepository.listUsers({});
 
       const total = users.length;
       return { users: users.map(user => UserGenericResponse.fromJSON(user)), total };
@@ -39,7 +39,7 @@ export function userServiceServer(userRepository: IUserRepository, errorHandler:
 
     updateUser: serviceController<UpdateUserRequest, UserGenericResponse>(async request => {
       logger.info('Updating user');
-      const user = UpdateUserRequest.toJSON(request) as IUser;
+      const user = UpdateUserRequest.toJSON(request) as UserUpdateInput;
       const updatedUser = await userRepository.updateUser(request.id, user);
       return UserGenericResponse.fromJSON(updatedUser);
     }, errorHandler),
