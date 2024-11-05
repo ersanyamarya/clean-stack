@@ -13,7 +13,7 @@ const overviewReportFile = path.join(coverageDir, 'index.html');
 const detailsReportFile = path.join(coverageDir, 'details.html');
 
 function getProjectRoot(filePath) {
-  const cleanStackRoot = '/Users/sanyam.arya/ws/clean-stack';
+  const cleanStackRoot = path.join(__dirname, '..');
   const relativePath = filePath.replace(cleanStackRoot, '');
   const parts = relativePath.split('/').filter(Boolean);
 
@@ -101,7 +101,9 @@ try {
   }
 
   function getPercentage(metric) {
-    return metric.total === 0 ? 100 : ((metric.covered / metric.total) * 100).toFixed(2);
+    if (metric.total === 0) return '100';
+    const percentage = (metric.covered / metric.total) * 100;
+    return percentage % 1 === 0 ? percentage.toString() : percentage.toFixed(2);
   }
 
   console.log('Processing coverage data...');
