@@ -54,4 +54,8 @@ Thumbs.db
 # redis
 **/data/redis
 
+# mongodb
+**/mongodata
+
+# vite
 **/vite.config.{js,ts,mjs,mts,cjs,cts}.timestamp*
