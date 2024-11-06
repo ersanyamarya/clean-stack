@@ -1,3 +1,4 @@
+/// <reference types='vitest' />
 import { defineConfig } from 'vite';
 
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
@@ -5,7 +6,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/platform-features/rate-limiter',
+  cacheDir: '../../node_modules/.vite/domain/domain_user',
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
   // Uncomment this if you are using workers.
   // worker: {
@@ -18,9 +19,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts'],
       enabled: true,
-      reportsDirectory: '../../coverage/platform-features/rate-limiter',
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts'],
+      reportsDirectory: '../../coverage/domain/domain_user',
       provider: 'v8',
       reporter: ['json', 'text'],
     },

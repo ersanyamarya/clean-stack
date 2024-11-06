@@ -24,7 +24,7 @@ export default defineConfig({
     reporters: ['default'],
     coverage: {
       enabled: true,
-      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts'],
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts'],
       reportsDirectory: '../../coverage/framework/grpc-essentials',
       provider: 'v8',
       reporter: ['json', 'text'],
