@@ -16,7 +16,7 @@
     "platform:cache:down": "docker compose -f PLATFORM_SETUP/cache_stack/docker-compose.yml down",
     "platform:observability": "docker compose -f PLATFORM_SETUP/observability_stack/docker-compose.yml up -d && open http://localhost:3000",
     "platform:observability:down": "docker compose -f PLATFORM_SETUP/observability_stack/docker-compose.yml down",
-    "mongodb:up": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml up -d",
+    "mongodb:up": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml up -d && open http://localhost:27018",
     "mongodb:down": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml down",
     "test": "rm -rf coverage && npm run clean && nx run-many --target=test --all --parallel",
     "test:merge:coverage": "npm run test && node ./tools/merge-coverage.js"
