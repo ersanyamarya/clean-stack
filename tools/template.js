@@ -229,6 +229,16 @@ const indexStyles = `
   .category-summary {
     margin-bottom: var(--spacing-xl);
   }
+
+  .overall-coverage {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .overall-coverage .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+  }
 `;
 
 const detailStyles = `
@@ -254,7 +264,7 @@ const detailStyles = `
 
   .summary-card {
     background: white;
-    border-radius: var(--radius-md);
+    border-radius: var (--radius-md);
     padding: var(--spacing-xl);
     display: flex;
     flex-direction: column;
@@ -338,7 +348,7 @@ function getCoverageClass(coverage) {
   return 'coverage-low';
 }
 
-function generateOverviewHtml(projectCoverage, getPercentage) {
+function generateOverviewHtml(projectCoverage, getPercentage, overallMetrics) {
   return `
 <!DOCTYPE html>
 <html>
@@ -355,6 +365,28 @@ function generateOverviewHtml(projectCoverage, getPercentage) {
     <div class="subtitle">Coverage report by category and project</div>
     <div class="nav-links">
       <a href="nyc/index.html" class="nav-link">Standard NYC Report</a>
+    </div>
+  </div>
+
+  <div class="overall-coverage">
+    <h2>Overall Coverage</h2>
+    <div class="metric-grid">
+      <div class="metric ${getCoverageClass(overallMetrics.statements)}">
+        <div class="metric-label">Statements</div>
+        <div class="metric-value">${overallMetrics.statements}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(overallMetrics.branches)}">
+        <div class="metric-label">Branches</div>
+        <div class="metric-value">${overallMetrics.branches}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(overallMetrics.functions)}">
+        <div class="metric-label">Functions</div>
+        <div class="metric-value">${overallMetrics.functions}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(overallMetrics.lines)}">
+        <div class="metric-label">Lines</div>
+        <div class="metric-value">${overallMetrics.lines}%</div>
+      </div>
     </div>
   </div>
 

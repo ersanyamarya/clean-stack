@@ -106,6 +106,31 @@ try {
     return percentage % 1 === 0 ? percentage.toString() : percentage.toFixed(2);
   }
 
+  function calculateOverallMetrics(projectCoverage) {
+    const overall = {
+      statements: { total: 0, covered: 0 },
+      branches: { total: 0, covered: 0 },
+      functions: { total: 0, covered: 0 },
+      lines: { total: 0, covered: 0 },
+    };
+
+    Object.values(projectCoverage).forEach(category => {
+      Object.values(category.projects).forEach(project => {
+        ['statements', 'branches', 'functions', 'lines'].forEach(metric => {
+          overall[metric].total += project.summary[metric].total;
+          overall[metric].covered += project.summary[metric].covered;
+        });
+      });
+    });
+
+    return {
+      statements: getPercentage(overall.statements),
+      branches: getPercentage(overall.branches),
+      functions: getPercentage(overall.functions),
+      lines: getPercentage(overall.lines),
+    };
+  }
+
   console.log('Processing coverage data...');
   const coverage = JSON.parse(fs.readFileSync(outputFile, 'utf8'));
   const projectCoverage = {};
@@ -149,7 +174,8 @@ try {
   });
 
   console.log('Generating reports...');
-  fs.writeFileSync(overviewReportFile, generateOverviewHtml(projectCoverage, getPercentage));
+  const overallMetrics = calculateOverallMetrics(projectCoverage);
+  fs.writeFileSync(overviewReportFile, generateOverviewHtml(projectCoverage, getPercentage, overallMetrics));
 
   // Create separate detail files for each project
   Object.entries(projectCoverage).forEach(([category, categoryData]) => {

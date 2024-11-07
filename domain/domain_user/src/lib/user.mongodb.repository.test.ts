@@ -49,6 +49,22 @@ describe('UserMongoRepository', () => {
       const userJSON = JSON.parse(JSON.stringify(user));
       expect(userJSON.password).toBeUndefined();
     });
+
+    it('should fail when required fields are missing', async () => {
+      const invalidUser = { email: 'test@example.com' };
+      await expect(repository.createUser(invalidUser as any)).rejects.toThrow();
+    });
+
+    it('should fail when email is duplicate', async () => {
+      await repository.createUser(mockUser);
+      await expect(repository.createUser(mockUser)).rejects.toThrow();
+    });
+
+    it('should set timestamps on creation', async () => {
+      const user = await repository.createUser(mockUser);
+      expect(user.createdAt).toBeDefined();
+      expect(user.updatedAt).toBeDefined();
+    });
   });
 
   describe('getUser', () => {
@@ -108,6 +124,31 @@ describe('UserMongoRepository', () => {
       expect(result.data).toHaveLength(2);
       expect(result.total).toBe(3);
       expect(result.totalPages).toBe(2);
+    });
+
+    it('should handle empty result set', async () => {
+      const result = await repository.paginateUsers({}, { page: 1, limit: 10 });
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+      expect(result.totalPages).toBe(0);
+    });
+
+    it('should handle page number greater than total pages', async () => {
+      await repository.createUser(mockUser);
+      const result = await repository.paginateUsers({}, { page: 999, limit: 10 });
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(1);
+      expect(result.totalPages).toBe(1);
+    });
+
+    it('should handle special characters in filter', async () => {
+      await repository.createUser({
+        ...mockUser,
+        firstName: 'Test$Special',
+      });
+      const result = await repository.paginateUsers({ firstName: 'Test$Special' }, { page: 1, limit: 10 });
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].firstName).toBe('Test$Special');
     });
   });
 
