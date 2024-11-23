@@ -1,10 +1,10 @@
-import { Connection, FilterQuery, Model, Types } from 'mongoose';
+import { Connection, FilterQuery, Model, Types, models } from 'mongoose';
 import { UserRepository } from './user.repository';
 import { userSchema } from './user.schema';
 import { PaginatedResult, PaginationOptions, UserCreateInput, UserEntity, UserUpdateInput } from './user.types';
 
 export const createUserMongoRepository = (connection: Connection): UserRepository => {
-  const UserModel: Model<UserEntity> = connection.model<UserEntity>('User', userSchema);
+  const UserModel: Model<UserEntity> = models['User'] || connection.model<UserEntity>('User', userSchema);
 
   const getUser = async (id: string): Promise<UserEntity | null> => {
     const objectId = new Types.ObjectId(id);
