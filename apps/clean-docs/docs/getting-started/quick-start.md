@@ -37,6 +37,7 @@ bun run dev
 ```
 
 Your development environment is now running:
+
 - Main service: http://localhost:3000
 - User service: http://localhost:3001
 - Grafana (Observability): http://localhost:3000
@@ -51,6 +52,7 @@ curl http://localhost:3000/health
 ```
 
 You should see:
+
 ```json
 {
   "status": "ok",

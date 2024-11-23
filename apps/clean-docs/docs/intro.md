@@ -65,11 +65,13 @@ Clean Stack addresses common challenges in modern application development:
 ## Core Principles
 
 1. **Convention over Configuration**
+
    - Sensible defaults
    - Minimal setup required
    - Flexible when needed
 
 2. **Developer Experience First**
+
    - Comprehensive documentation
    - Type safety throughout
    - Intuitive APIs
@@ -81,7 +83,7 @@ Clean Stack addresses common challenges in modern application development:
 
 ## Getting Started
 
-Ready to build your first Clean Stack application? 
+Ready to build your first Clean Stack application?
 
 ```bash
 # Create a new Clean Stack project
@@ -122,6 +124,7 @@ graph LR
 ## Contributing
 
 We welcome contributions! Whether it's:
+
 - Reporting bugs
 - Improving documentation
 - Submitting feature requests

@@ -42,13 +42,11 @@ The `RateLimiterProvider` is passed as a parameter to the `createRateLimiter` fu
 
 ## Significance of Rate Limit Policies
 
-:::info Rate limit policies are a powerful feature of this rate limiter implementation: 
+:::info Rate limit policies are a powerful feature of this rate limiter implementation:
 
 1. **Efficient Traffic Management**: Allows fine-grained control over traffic flow.
 2. **Customizable Limits**: Supports different limits for different users or endpoints.
-3. **Consistency Management**: Helps maintain consistent application performance.
-:::
-Usage example:
+3. **Consistency Management**: Helps maintain consistent application performance. ::: Usage example:
 
 ```typescript
 await rateLimiter.isAllowedRateLimit('user:1');
