@@ -20,7 +20,7 @@ export default defineConfig({
     reporters: ['default'],
     coverage: {
       enabled: true,
-      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts'],
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts', '*.config.js'],
       reportsDirectory: '../../coverage/domain/domain_user',
       provider: 'v8',
       reporter: ['json', 'text'],

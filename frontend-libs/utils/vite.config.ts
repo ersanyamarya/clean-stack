@@ -16,6 +16,12 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
-    coverage: { reportsDirectory: '../../coverage/frontend-libs/utils', provider: 'v8' },
+    coverage: {
+      enabled: true,
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts', '*.config.js'],
+      reportsDirectory: '../../coverage/frontend-libs/utils',
+      provider: 'v8',
+      reporter: ['json', 'text'],
+    },
   },
 });
