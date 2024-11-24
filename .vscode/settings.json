@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["bodyparser", "opentelemetry", "otel", "OTLP", "pino", "proto"]
+  "cSpell.words": ["bodyparser", "opentelemetry", "otel", "OTLP", "pino", "proto"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
