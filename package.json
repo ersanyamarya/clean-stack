@@ -20,7 +20,8 @@
     "mongodb:down": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml down",
     "test": "rm -rf coverage && npm run clean && nx run-many --target=test --all --parallel",
     "test:merge:coverage": "npm run test && node ./tools/merge-coverage.js",
-    "shadcn": "TS_NODE_PROJECT=tsconfig.base.json shadcn"
+    "shadcn": "TS_NODE_PROJECT=tsconfig.base.json shadcn",
+    "shadcn:add": "TS_NODE_PROJECT=tsconfig.base.json shadcn add"
   },
   "dependencies": {
     "@docusaurus/core": "3.6.3",
@@ -37,6 +38,7 @@
     "@opentelemetry/exporter-trace-otlp-grpc": "^0.55.0",
     "@opentelemetry/sdk-node": "^0.55.0",
     "@radix-ui/react-avatar": "^1.1.1",
+    "@radix-ui/react-hover-card": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-router": "^1.82.2",
     "class-variance-authority": "^0.7.0",
@@ -44,12 +46,14 @@
     "http-status-codes": "^2.3.0",
     "koa": "^2.15.3",
     "koa-helmet": "^7.1.0",
+    "lucide-react": "^0.460.0",
     "mongoose": "^8.8.2",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",
     "prism-react-renderer": "^2.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "recharts": "^2.13.3",
     "redis": "^4.7.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

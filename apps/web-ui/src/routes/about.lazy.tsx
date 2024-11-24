@@ -1,9 +1,51 @@
+import { type ChartConfig, ChartContainer } from '@clean-stack/components/chart';
 import { createLazyFileRoute } from '@tanstack/react-router';
-
+import { Bar, BarChart } from 'recharts';
+const chartData = [
+  { month: 'January', desktop: 186, mobile: 80 },
+  { month: 'February', desktop: 305, mobile: 200 },
+  { month: 'March', desktop: 237, mobile: 120 },
+  { month: 'April', desktop: 73, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'June', desktop: 214, mobile: 140 },
+];
+const chartConfig = {
+  desktop: {
+    label: 'Desktop',
+    color: '#2563eb',
+  },
+  mobile: {
+    label: 'Mobile',
+    color: '#60a5fa',
+  },
+} satisfies ChartConfig;
 export const Route = createLazyFileRoute('/about')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return 'Hello /about!';
+  return (
+    <div className="flex flex-col items-center justify-center h-screen space-y-4">
+      <h1 className="text-4xl font-bold">About</h1>
+
+      <ChartContainer
+        config={chartConfig}
+        className="min-h-[200px] w-full">
+        <BarChart
+          accessibilityLayer
+          data={chartData}>
+          <Bar
+            dataKey="desktop"
+            fill="var(--color-desktop)"
+            radius={4}
+          />
+          <Bar
+            dataKey="mobile"
+            fill="var(--color-mobile)"
+            radius={4}
+          />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  );
 }
