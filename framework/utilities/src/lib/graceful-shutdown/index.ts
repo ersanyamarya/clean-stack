@@ -3,8 +3,6 @@ import { Logger } from '@clean-stack/framework/global-types';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { Socket as NetSocket } from 'net';
 
-/* eslint-disable @typescript-eslint/ban-types */
-
 interface Socket extends NetSocket {
   isIdle: boolean;
 }
@@ -72,13 +70,15 @@ const closeSockets = (sockets: SocketsMap, logger: Logger): void => {
 };
 
 /**
- * It closes all the sockets, then closes the server, and then exits the process
- * @param {Server} server - The HTTP server that we're shutting down.
- * @param {SocketsMap} sockets - A map of socket IDs to socket instances.
- * @param {Logger} logger - The logger instance.
- * @param {Function} [onShutdown] - A function that will be called when the server is shutting down.
+ * Gracefully shuts down the server and performs any necessary cleanup.
+ *
+ * @param logger - The logger instance to log messages.
+ * @param onShutdown - An optional callback function to execute additional shutdown logic.
+ * @param server - An optional server instance to close.
+ * @param sockets - An optional map of sockets to close.
+ * @returns A promise that resolves when the shutdown process is complete.
  */
-const shutdown = async (logger: Logger, onShutdown?: Function, server?: Server, sockets?: SocketsMap): Promise<void> => {
+const shutdown = async (logger: Logger, onShutdown?: () => Promise<void> | void, server?: Server, sockets?: SocketsMap): Promise<void> => {
   if (sockets) {
     closeSockets(sockets, logger);
   }
@@ -101,19 +101,14 @@ const shutdown = async (logger: Logger, onShutdown?: Function, server?: Server, 
 };
 
 /**
- * The `gracefulShutdown` function handles graceful shutdown of a server in response to SIGINT and
- * SIGTERM signals.
- * @param {Logger} logger - The `logger` parameter is an instance of a Logger class that is used for
- * logging messages and warnings in the application.
- * @param {Function} [onShutdown] - The `onShutdown` parameter is a function that can be passed to the
- * `gracefulShutdown` function. It represents a callback function that will be executed during the
- * shutdown process. This function can be used to perform any necessary cleanup or final actions before
- * the server shuts down completely.
- * @param {Server} [server] - The `server` parameter is a reference to the server instance that you
- * want to gracefully shut down. It is used to close the server and release any resources associated
- * with it during the shutdown process.
+ * Sets up graceful shutdown handlers for SIGINT and SIGTERM signals.
+ *
+ * @param logger - The logger instance to use for logging shutdown messages.
+ * @param onShutdown - An optional callback function to execute during shutdown.
+ *                      This function can return a Promise or void.
+ * @param server - An optional server instance to handle active connections during shutdown.
  */
-export const gracefulShutdown = (logger: Logger, onShutdown?: Function, server?: Server): void => {
+export const gracefulShutdown = (logger: Logger, onShutdown?: () => Promise<void> | void, server?: Server): void => {
   let sockets: SocketsMap = {};
 
   if (server) {
