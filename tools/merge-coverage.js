@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { generateOverviewHtml, generateDetailHtml, getCoverageClass } = require('./template');
+const { generateOverviewHtml, generateDetailHtml } = require('./template');
 const nycPath = require.resolve('nyc/bin/nyc.js');
 const httpServerPath = require.resolve('http-server/bin/http-server');
 
