@@ -25,7 +25,7 @@ const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
   otelCollectorUrl: 'OTEL_COLLECTOR_ADDRESS',
 };
 
-type AppConfig = z.infer<typeof configSchema>;
+export type AppConfig = z.infer<typeof configSchema>;
 
 export let config: AppConfig;
 

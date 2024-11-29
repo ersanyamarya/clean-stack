@@ -39,6 +39,8 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
 } {
   let telemetrySdk: NodeSDK | null = null;
   if (initiateTelemetry) {
+    console.log('Initializing telemetry SDK...');
+
     telemetrySdk = new NodeSDK({
       resource: new Resource({
         'service.name': serviceName,
@@ -61,7 +63,7 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
 
     telemetrySdk.start();
   }
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   const mainLogger = require('pino')({
     level: 'debug',
     transport: {
@@ -72,5 +74,6 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
     },
   });
 
+  mainLogger.info('Telemetry SDK initialized successfully.');
   return { telemetrySdk, mainLogger };
 }

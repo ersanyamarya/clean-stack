@@ -1,3 +1,5 @@
+import { mainLogger, telemetrySdk } from './init';
+
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
@@ -6,7 +8,6 @@ import { createRedisConnector, getRedisClient } from '@clean-stack/redis';
 import Router from '@koa/router';
 import { config } from './config';
 import controllers from './controllers';
-import { mainLogger, telemetrySdk } from './init';
 import clients from './service-clients';
 
 const {
