@@ -9,6 +9,7 @@ import { initReactI18next } from 'react-i18next';
 
 import './styles.css';
 // Import the generated route tree
+import { initFETelemetry } from 'frontend-telemetry';
 import Resources from './@types/resources';
 import { routeTree } from './routeTree.gen';
 
@@ -28,6 +29,13 @@ declare module 'i18next' {
     resources: Resources;
   }
 }
+
+initFETelemetry({
+  appName: 'my-react-app',
+  appVersion: '1.0.0',
+  collectorUrl: 'http://localhost:4318',
+  initiateTelemetry: true,
+});
 
 i18next
   .use(Backend)
