@@ -3,14 +3,16 @@ import { Button } from '@clean-stack/components/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@clean-stack/components/card';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@clean-stack/components/hover-card';
 import { createLazyFileRoute } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 export const Route = createLazyFileRoute('/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { t } = useTranslation('common');
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
-      <h1 className="text-4xl font-bold">Hello, world!</h1>
+      <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
       <p className="text-lg">This is a lazy-loaded route!</p>
       <Button
         onClick={() => {
