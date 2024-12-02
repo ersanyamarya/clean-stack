@@ -58,13 +58,7 @@ i18next
     defaultNS: 'common',
   });
 
-const loadingMarkup = (
-  <div className="py-4 text-center">
-    <h3>Loading..</h3>
-  </div>
-);
-
-function App({ children }: { children: React.ReactNode }) {
+function TrpcQueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -96,9 +90,9 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <App>
+      <TrpcQueryProvider>
         <RouterProvider router={router} />
-      </App>
+      </TrpcQueryProvider>
     </StrictMode>
   );
 }
