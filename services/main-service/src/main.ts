@@ -1,4 +1,5 @@
 import { mainLogger, telemetrySdk } from './init';
+import { trpcRouter } from './trpc_router';
 
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
@@ -6,6 +7,7 @@ import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/platform-features/cache';
 import { createRedisConnector, getRedisClient } from '@clean-stack/redis';
 import Router from '@koa/router';
+import { createKoaMiddleware } from 'trpc-koa-adapter';
 import { config } from './config';
 import controllers from './controllers';
 import clients from './service-clients';
@@ -75,7 +77,11 @@ async function main() {
 
   koaApp.use(router.routes());
   koaApp.use(router.allowedMethods());
-
+  const adapter = createKoaMiddleware({
+    router: trpcRouter,
+    prefix: '/trpc',
+  });
+  koaApp.use(adapter);
   const server = koaApp
     .listen(port, () => {
       mainLogger.info(`Server listening on ${address}`);

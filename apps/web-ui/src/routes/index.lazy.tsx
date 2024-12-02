@@ -4,16 +4,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@clean-stack/components/hover-card';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { trpc } from '../trpc_utils';
+
 export const Route = createLazyFileRoute('/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const userQuery = trpc.user.useQuery(1);
   const { t } = useTranslation('common');
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
       <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
       <p className="text-lg">This is a lazy-loaded route!</p>
+      <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
       <Button
         onClick={() => {
           alert('Hello, world!');

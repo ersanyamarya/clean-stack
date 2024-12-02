@@ -28,7 +28,8 @@
       "@clean-stack/redis": ["connectors/database/redis/src/index.ts"],
       "@clean-stack/styles/*": ["frontend-libs/components/src/styles/*"],
       "@clean-stack/utils": ["frontend-libs/utils/src/index.ts"],
-      "frontend-telemetry": ["frontend-libs/frontend-telemetry/src/index.ts"]
+      "@clean-stack/frontend-telemetry": ["frontend-libs/frontend-telemetry/src/index.ts"],
+      "@clean-stack/trpc-router": ["services/main-service/src/trpc_router.ts"]
     },
     "rootDir": ".",
     "skipDefaultLibCheck": true,
