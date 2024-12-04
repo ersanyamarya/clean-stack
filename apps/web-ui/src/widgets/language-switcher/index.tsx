@@ -1,10 +1,9 @@
 import { Button } from '@clean-stack/components/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@clean-stack/components/dropdown-menu';
-import { GlobeIcon } from '@radix-ui/react-icons';
+import { FlagIcon, GlobeIcon } from 'lucide-react';
 
-import { SVGProps, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { JSX } from 'react/jsx-runtime';
 
 const languages = [
   { code: 'en', name: 'English' },
@@ -30,10 +29,9 @@ export default function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center gap-2">
+          className="flex items-center gap-4">
           <GlobeIcon className="h-5 w-5" />
           <span>{languages.find(lang => lang.code === selectedLanguage)?.name}</span>
-          <ChevronDownIcon className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -44,73 +42,11 @@ export default function LanguageSwitcher() {
             key={lang.code}
             className="flex items-center gap-2"
             onSelect={() => onLanguageChange(lang.code)}>
-            <CodeXmlIcon className="h-5 w-5" />
-            <span>{lang.name} Arya</span>
+            <FlagIcon className="h-4 w-4" />
+            <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-function ChevronDownIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round">
-      <path d="m6 9 6 6 6-6" />
-    </svg>
-  );
-}
-
-function CodeXmlIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round">
-      <path d="m18 16 4-4-4-4" />
-      <path d="m6 8-4 4 4 4" />
-      <path d="m14.5 4-5 16" />
-    </svg>
-  );
-}
-
-function FlagIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round">
-      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-      <line
-        x1="4"
-        x2="4"
-        y1="22"
-        y2="15"
-      />
-    </svg>
   );
 }
