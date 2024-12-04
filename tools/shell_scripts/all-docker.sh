@@ -20,15 +20,27 @@ print_separator() {
 ALLOWED_COMMANDS="up down ps"
 COMMAND=$1
 
+# Validate docker is installed
+if ! command -v docker &>/dev/null; then
+  echo "${RED}Error: docker is not installed${NC}"
+  exit 1
+fi
+
+# Validate if docker daemon is running
+# if ! docker info &>/dev/null; then
+#   echo -e "${RED}Error: Docker daemon is not running${NC}"
+#   exit 1
+# fi
+
 # Validate docker-compose is installed
-if ! command -v docker-compose &>/dev/null; then
-  echo "${RED}Error: docker-compose is not installed${NC}"
+if ! command -v docker compose &>/dev/null; then
+  echo -e "${RED}Error: docker compose is not installed${NC}"
   exit 1
 fi
 
 # Validate base directory exists
 if [ ! -d "$BASE_DIR" ]; then
-  echo "${RED}Error: Directory $BASE_DIR does not exist${NC}"
+  echo -e "${RED}Error: Directory $BASE_DIR does not exist${NC}"
   exit 1
 fi
 
@@ -40,13 +52,13 @@ if [ -z "$ALL_DOCKER_COMPOSE_FILES" ]; then
 fi
 
 TEXT_LOGO="
-
+${GREEN}
   ____ _     _____    _    _   _      ____   ___   ____ _  _______ ____
  / ___| |   | ____|  / \  | \ | |    |  _ \ / _ \ / ___| |/ / ____|  _ \\
 | |   | |   |  _|   / _ \ |  \| |    | | | | | | | |   | ' /|  _| | |_) |
 | |___| |___| |___ / ___ \| |\  |    | |_| | |_| | |___| . \| |___|  _ <
  \____|_____|_____/_/   \_\_| \_|    |____/ \___/ \____|_|\_\_____|_| \_\\
-
+${NC}
 "
 
 HELP_TEXT_PARAGRAPH="
