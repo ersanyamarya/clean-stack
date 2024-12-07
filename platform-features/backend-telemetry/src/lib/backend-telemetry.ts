@@ -8,7 +8,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { Resource } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 export type TelemetryConfig = {
   serviceName: string;
   serviceVersion: string;
@@ -43,15 +43,15 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
 
     telemetrySdk = new NodeSDK({
       resource: new Resource({
-        'service.name': serviceName,
-        'service.version': serviceVersion,
+        [ATTR_SERVICE_NAME]: serviceName,
+        [ATTR_SERVICE_VERSION]: serviceVersion,
       }),
       traceExporter: new OTLPTraceExporter({
-        url: collectorUrl,
+        url: collectorUrl + '/v1/traces',
       }),
       metricReader: new PeriodicExportingMetricReader({
         exporter: new OTLPMetricExporter({
-          url: collectorUrl,
+          url: collectorUrl + '/v1/metrics',
         }),
       }),
       instrumentations: [
