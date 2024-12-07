@@ -14,7 +14,7 @@ BASE_DIR=${PLATFORM_SETUP_DIR:-"./PLATFORM_SETUP"}
 print_separator() {
   echo
   echo "----------------------------------------"
-  [ ! -z "$1" ] && echo "$1"
+  [ ! -z "$1" ] && echo -e "$1"
 }
 
 ALLOWED_COMMANDS="up down ps"
@@ -22,15 +22,15 @@ COMMAND=$1
 
 # Validate docker is installed
 if ! command -v docker &>/dev/null; then
-  echo "${RED}Error: docker is not installed${NC}"
+  echo -e "${RED}Error: docker is not installed${NC}"
   exit 1
 fi
 
-# Validate if docker daemon is running
-# if ! docker info &>/dev/null; then
-#   echo -e "${RED}Error: Docker daemon is not running${NC}"
-#   exit 1
-# fi
+Validate if docker daemon is running
+if ! docker info &>/dev/null; then
+  echo -e "${RED}Error: Docker daemon is not running${NC}"
+  exit 1
+fi
 
 # Validate docker-compose is installed
 if ! command -v docker compose &>/dev/null; then
@@ -47,7 +47,7 @@ fi
 ALL_DOCKER_COMPOSE_FILES=$(find "$BASE_DIR" -name "docker-compose.yml")
 
 if [ -z "$ALL_DOCKER_COMPOSE_FILES" ]; then
-  echo "${RED}No docker-compose files found in $BASE_DIR${NC}"
+  echo -e "${RED}No docker-compose files found in $BASE_DIR${NC}"
   exit 1
 fi
 
@@ -70,14 +70,14 @@ ${BLUE}ps${NC}:    lists all docker compose files in the $BASE_DIR sub dir
 ${BLUE}help${NC}:  shows this help text
 "
 
-echo "$TEXT_LOGO"
+echo -e "$TEXT_LOGO"
 print_separator "Found docker compose files:"
-echo "$ALL_DOCKER_COMPOSE_FILES"
+echo -e "$ALL_DOCKER_COMPOSE_FILES"
 print_separator
 
 if [ -z "$COMMAND" ] || [[ ! $ALLOWED_COMMANDS =~ $COMMAND ]]; then
   echo "HELP "
-  echo "$HELP_TEXT_PARAGRAPH"
+  echo -e "$HELP_TEXT_PARAGRAPH"
   exit 1
 fi
 
@@ -89,16 +89,16 @@ execute_docker_compose() {
 
   if [ "$cmd" == "up" ]; then
     if ! docker-compose -f "$file" up -d; then
-      echo "${RED}Failed to execute $cmd for $file${NC}"
+      echo -e "${RED}Failed to execute $cmd for $file${NC}"
       return 1
     fi
   else
     if ! docker-compose -f "$file" "$cmd"; then
-      echo "${RED}Failed to execute $cmd for $file${NC}"
+      echo -e "${RED}Failed to execute $cmd for $file${NC}"
       return 1
     fi
   fi
-  echo "${GREEN}Successfully executed $cmd for $file${NC}"
+  echo -e "${GREEN}Successfully executed $cmd for $file${NC}"
 }
 
 # Execute commands
