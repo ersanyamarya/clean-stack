@@ -1,6 +1,6 @@
-import '@clean-stack/styles/global.css';
+import './init';
 
-import { initFETelemetry } from '@clean-stack/frontend-telemetry';
+import '@clean-stack/styles/global.css';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -33,13 +33,6 @@ declare module 'i18next' {
     resources: Resources;
   }
 }
-
-initFETelemetry({
-  appName: 'my-react-app',
-  appVersion: '1.0.0',
-  collectorUrl: 'http://localhost:4318',
-  initiateTelemetry: true,
-});
 
 i18next
   .use(Backend)
