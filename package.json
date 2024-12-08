@@ -10,14 +10,7 @@
     "generate:docs": "typedoc --options typedoc.json && http-server docs -p 8888 -o",
     "lint": "nx run-many --target=lint --all --parallel",
     "lint:fix": "nx run-many --target=lint --fix --all --parallel",
-    "platform:cache": "docker compose -f PLATFORM_SETUP/cache_stack/docker-compose.yml up -d && open http://localhost:13333",
-    "platform:cache:down": "docker compose -f PLATFORM_SETUP/cache_stack/docker-compose.yml down",
-    "platform:observability": "docker compose -f PLATFORM_SETUP/observability_stack/docker-compose.yml up -d && open http://localhost:3000",
-    "platform:observability:down": "docker compose -f PLATFORM_SETUP/observability_stack/docker-compose.yml down",
-    "platform:all": "npm run platform:observability && npm run platform:cache",
-    "platform:all:down": "npm run platform:observability:down && npm run platform:cache:down",
-    "mongodb:up": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml up -d && open http://localhost:27018",
-    "mongodb:down": "docker compose -f PLATFORM_SETUP/mongo_stack/docker-compose.yml down",
+    "platform:all": "open http://localhost:13333 && open http://localhost:3000 && open http://localhost:27018",
     "docker:down": "./tools/shell_scripts/all-docker.sh down",
     "docker:up": "./tools/shell_scripts/all-docker.sh up",
     "test": "rm -rf coverage && npm run clean && nx run-many --target=test --all --parallel",
@@ -77,6 +70,7 @@
     "tailwindcss-animate": "^1.0.7",
     "trpc-koa-adapter": "^1.2.2",
     "tslib": "^2.8.1",
+    "web-vitals": "^4.2.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
