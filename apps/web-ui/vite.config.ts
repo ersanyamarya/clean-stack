@@ -1,9 +1,12 @@
 /// <reference types="vitest" />
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
+// @ts-ignore
 // import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 // import { join } from 'path';
-import react from '@vitejs/plugin-react';
+
+import viteReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -24,7 +27,7 @@ export default defineConfig({
     //   routeFileIgnorePrefix: '-',
     //   quoteStyle: 'single',
     // }),
-    react(),
+    viteReact(),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
   ],
