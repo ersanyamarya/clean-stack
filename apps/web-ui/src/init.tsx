@@ -1,8 +1,8 @@
 import { initFETelemetry } from '@clean-stack/frontend-telemetry';
+import { app, collectorUrl } from './config';
 
 initFETelemetry({
-  appName: 'web-ui',
-  appVersion: '1.0.0',
-  collectorUrl: 'http://localhost:4318',
+  ...app,
+  collectorUrl,
   initiateTelemetry: true,
 });

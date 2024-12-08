@@ -11,7 +11,7 @@ export const Route = createLazyFileRoute('/')({
 });
 
 function RouteComponent() {
-  const userQuery = trpc.user.useQuery('672a8e96f0f288e85c1bfc96');
+  const userQuery = trpc.user.useQuery('6755f38dac29504677e61456');
   const utils = trpc.useUtils();
   const { t } = useTranslation('common');
   return (
