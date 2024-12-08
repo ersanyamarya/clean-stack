@@ -8,18 +8,10 @@ services:
     environment:
       - REDIS_ARGS=--loglevel warning --save 60 1000 --appendonly yes
     volumes:
-      - redis-data:/data
+      - ./data/redis:/data
     networks:
       - cache-network
 
 networks:
   cache-network:
     driver: bridge
-
-volumes:
-  redis-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/redis

@@ -16,7 +16,7 @@ services:
     image: prom/prometheus
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
+      - ./data/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./config/grafana.ini:/etc/grafana/grafana.ini
       - ./config/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-      - grafana-data:/var/lib/grafana
+      - ./data/grafana:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -43,7 +43,7 @@ services:
     image: grafana/loki
     volumes:
       - ./config/loki-config.yml:/etc/loki/local-config.yml
-      - loki-data:/tmp/loki
+      - ./data/loki:/tmp/loki
     # ports:
     #   - '3100:3100'
     command: -config.file=/etc/loki/local-config.yml
@@ -55,7 +55,7 @@ services:
     command: ['-config.file=/etc/tempo.yml']
     volumes:
       - ./config/tempo-config.yml:/etc/tempo.yml
-      - tempo-data:/tmp/tempo
+      - ./data/tempo:/tmp/tempo
     # ports:
     #   - '3200:3200' # tempo
     #   - '4317' # otlp grpc
@@ -66,29 +66,3 @@ services:
 networks:
   otel-network:
     driver: bridge
-
-volumes:
-  prometheus-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/prometheus
-  grafana-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/grafana
-  loki-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/loki
-  tempo-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/tempo

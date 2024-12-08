@@ -121,7 +121,7 @@ for DOCKER_COMPOSE_FILE in $ALL_DOCKER_COMPOSE_FILES; do
     echo "Data dir: $DATA_DIR"
     if [ -d "$DATA_DIR" ]; then
       print_separator "Cleaning data directory $DATA_DIR"
-      rm -rf "$DATA_DIR"/**/*
+      rm -rf "$DATA_DIR"/*
     fi
 
   else
