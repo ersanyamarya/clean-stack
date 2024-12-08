@@ -3,8 +3,8 @@ services:
     image: mongo
     restart: always
     volumes:
-      - ./mongodata/data:/data/db
-      - ./mongodata/log:/data/log
+      - mongo-db:/data/db
+      - mongo-log:/var/log
       - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
     ports:
       - 27017:27017
@@ -33,3 +33,17 @@ services:
 networks:
   mongo-network:
     driver: bridge
+
+volumes:
+  mongo-db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/db
+  mongo-log:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/log

@@ -14,10 +14,10 @@ BASE_DIR=${PLATFORM_SETUP_DIR:-"./PLATFORM_SETUP"}
 print_separator() {
   echo
   echo "----------------------------------------"
-  [ ! -z "$1" ] && echo -e "$1"
+  [ ! -z "$1" ] && echo "$1"
 }
 
-ALLOWED_COMMANDS="up down ps"
+ALLOWED_COMMANDS="up down ps clean"
 COMMAND=$1
 
 # Validate docker is installed
@@ -81,6 +81,14 @@ if [ -z "$COMMAND" ] || [[ ! $ALLOWED_COMMANDS =~ $COMMAND ]]; then
   exit 1
 fi
 
+# function to take a file path and return the path of the directory and data directory
+get_data_dir() {
+  local file_path=$1
+  local dir_path=$(dirname "$file_path")
+  local data_dir="$dir_path/data"
+  echo "$data_dir"
+}
+
 # Function to execute docker-compose command
 execute_docker_compose() {
   local file=$1
@@ -92,18 +100,33 @@ execute_docker_compose() {
       echo -e "${RED}Failed to execute $cmd for $file${NC}"
       return 1
     fi
+  elif [ "$cmd" == "down" ]; then
+    if ! docker-compose -f "$file" down -v; then
+      echo -e "${RED}Failed to execute $cmd for $file${NC}"
+      return 1
+    fi
   else
     if ! docker-compose -f "$file" "$cmd"; then
       echo -e "${RED}Failed to execute $cmd for $file${NC}"
       return 1
     fi
   fi
-  echo -e "${GREEN}Successfully executed $cmd for $file${NC}"
+  echo "${GREEN}Successfully executed $cmd for $file${NC}"
 }
 
 # Execute commands
 for DOCKER_COMPOSE_FILE in $ALL_DOCKER_COMPOSE_FILES; do
-  execute_docker_compose "$DOCKER_COMPOSE_FILE" "$COMMAND"
+  if [ "$COMMAND" == "clean" ]; then
+    DATA_DIR=$(get_data_dir "$DOCKER_COMPOSE_FILE")
+    echo "Data dir: $DATA_DIR"
+    if [ -d "$DATA_DIR" ]; then
+      print_separator "Cleaning data directory $DATA_DIR"
+      rm -rf "$DATA_DIR"/**/*
+    fi
+
+  else
+    execute_docker_compose "$DOCKER_COMPOSE_FILE" "$COMMAND"
+  fi
 done
 
 print_separator "${GREEN}All operations completed${NC}"
