@@ -1,18 +1,17 @@
 import './init';
 
 import '@clean-stack/styles/global.css';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+
+import { context, propagation } from '@opentelemetry/api';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { httpBatchLink } from '@trpc/client';
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 import { StrictMode, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
-
-import './styles.css';
-// Import the generated route tree
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
 import Resources from './@types/resources';
 import { routeTree } from './routeTree.gen';
 import { trpc } from './trpc_utils';
@@ -58,9 +57,13 @@ function TrpcQueryProvider({ children }: { children: React.ReactNode }) {
       links: [
         httpBatchLink({
           url: 'http://localhost:9900/trpc',
-          // You can pass any HTTP headers you wish here
           async headers() {
+            const carrier = {};
+            propagation.inject(context.active(), carrier);
+            console.log('carrier', carrier);
+
             return {
+              ...carrier,
               authorization: 'Bearer 123',
             };
           },

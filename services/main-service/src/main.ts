@@ -1,5 +1,5 @@
 import { mainLogger, telemetrySdk } from './init';
-import { trpcRouter } from './trpc_router';
+import { createContext, trpcRouter } from './trpc_router';
 
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
@@ -79,6 +79,7 @@ async function main() {
   koaApp.use(router.allowedMethods());
   const adapter = createKoaMiddleware({
     router: trpcRouter,
+    createContext,
     prefix: '/trpc',
   });
   koaApp.use(adapter);

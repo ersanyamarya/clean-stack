@@ -9,6 +9,7 @@ import { Resource } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { IncomingMessage } from 'http';
 export type TelemetryConfig = {
   serviceName: string;
   serviceVersion: string;
@@ -57,6 +58,16 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
       instrumentations: [
         getNodeAutoInstrumentations({
           '@opentelemetry/instrumentation-fs': { enabled: false },
+          '@opentelemetry/instrumentation-http': {
+            enabled: true,
+            requestHook: (span, request) => {
+              if (request instanceof IncomingMessage) {
+                const path = request.url?.split('?')[0] || '';
+                const method = request.method || '';
+                span.updateName(`${method} ${path}`);
+              }
+            },
+          },
         }),
       ],
     });

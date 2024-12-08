@@ -11,7 +11,7 @@ export const Route = createLazyFileRoute('/')({
 });
 
 function RouteComponent() {
-  const userQuery = trpc.user.useQuery(1);
+  const userQuery = trpc.user.useQuery('672a8e96f0f288e85c1bfc96');
   const { t } = useTranslation('common');
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">

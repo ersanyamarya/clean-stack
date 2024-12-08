@@ -1,68 +1,100 @@
+import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
+import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
+import { context, Context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
+import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { initTRPC } from '@trpc/server';
-// Create custom tRPC middleware for telemetry
+import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
+import { listUsers } from './service-clients/user-service';
 
-const ALL_USERS = [
-  { id: 1, name: 'bob' },
-  { id: 2, name: 'alice' },
-];
+propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
-const trpc = initTRPC.create();
+export const getTracer = () => trace.getTracer('trpc-server');
 
-// const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input }) => {
-//   const tracer = trace.getTracer('trpc-server');
+export const sanitizeForAttribute = (value: unknown): string => {
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+};
 
-//   return tracer.startActiveSpan(`tRPC.${type}.${path}`, async span => {
-//     try {
-//       // Add input details as span attributes for better tracing
-//       span.setAttribute('trpc.path', path);
-//       span.setAttribute('trpc.type', type);
-//       if (input) {
-//         span.setAttribute('trpc.input', JSON.stringify(input));
-//       }
+const createContext = ({ req, res }: CreateTrpcKoaContextOptions) => {
+  const extractedContext = propagation.extract(context.active(), req.headers);
+  const activeSpan = trace.getSpan(extractedContext);
 
-//       // Use context to propagate the span
-//       return context.with(trace.setSpan(context.active(), span), async () => {
-//         const result = await next();
+  if (!activeSpan) {
+    console.warn('No active span found in extracted context');
+  }
 
-//         // Optional: Add result details to span
-//         span.setAttribute('trpc.result', JSON.stringify(result));
-//         span.setStatus({ code: SpanStatusCode.OK });
+  return { tracingContext: extractedContext };
+};
 
-//         return result;
-//       });
-//     } catch (error) {
-//       span.setStatus({
-//         code: SpanStatusCode.ERROR,
-//         message: error instanceof Error ? error.message : 'Unknown error',
-//       });
+type TrpcContext = Awaited<ReturnType<typeof createContext>>;
 
-//       if (error instanceof Error) {
-//         span.recordException(error);
-//         span.setAttribute('error.stack', error.stack || 'No stack trace');
-//       }
+const trpc = initTRPC.context<TrpcContext>().create();
 
-//       throw error;
-//     } finally {
-//       span.end();
-//     }
-//   });
-// });
+const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input, ctx }) => {
+  const parentContext = ctx.tracingContext as Context;
+  const tracer = getTracer();
+  const spanName = `tRPC ${type.toUpperCase()} ${path}`;
 
-export const publicProcedure = trpc.procedure;
-// .use(telemetryMiddleware);
+  return context.with(parentContext, () =>
+    tracer.startActiveSpan(
+      spanName,
+      {
+        attributes: {
+          'trpc.path': path,
+          'trpc.type': type,
+          'trpc.input': input ? sanitizeForAttribute(input) : undefined,
+          'span.kind': 'server',
+        },
+      },
+      undefined, // Let it automatically use the active context
+      async span => {
+        try {
+          const result = await next();
+
+          span.setAttribute('trpc.result', sanitizeForAttribute(result));
+          span.setStatus({ code: SpanStatusCode.OK });
+
+          return result;
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : 'Unknown error',
+          });
+
+          if (error instanceof Error) {
+            span.recordException(error);
+            span.setAttribute('error.type', error.constructor.name);
+            span.setAttribute('error.message', error.message);
+            span.setAttribute('error.stack', error.stack || '');
+          }
+
+          throw error;
+        } finally {
+          span.end();
+        }
+      }
+    )
+  );
+});
+
+export const publicProcedure = trpc.procedure.use(telemetryMiddleware);
 const trpcRouter = trpc.router({
   user: publicProcedure
-    .input(Number)
+    .input(String)
     .output(Object)
-    .query(req => {
-      return ALL_USERS.find(user => req.input === user.id);
+    .query(async req => {
+      const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });
+      return users.users.find(user => req.input === user.id);
     }),
-  users: publicProcedure.query(() => {
-    // throw new Error('Not implemented');
-    return ALL_USERS;
+  users: publicProcedure.query(async () => {
+    const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });
+    return users;
   }),
 });
 
-export { trpcRouter };
+export { createContext, trpcRouter };
 
 export type AppRouter = typeof trpcRouter;
