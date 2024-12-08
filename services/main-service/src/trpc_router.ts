@@ -1,6 +1,6 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
-import { context, Context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
+import { context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 
 import { initTRPC } from '@trpc/server';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
@@ -32,49 +32,46 @@ type TrpcContext = Awaited<ReturnType<typeof createContext>>;
 const trpc = initTRPC.context<TrpcContext>().create();
 
 const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input, ctx }) => {
-  const parentContext = ctx.tracingContext as Context;
   const tracer = getTracer();
   const spanName = `tRPC ${type.toUpperCase()} ${path}`;
 
-  return context.with(parentContext, () =>
-    tracer.startActiveSpan(
-      spanName,
-      {
-        attributes: {
-          'trpc.path': path,
-          'trpc.type': type,
-          'trpc.input': input ? sanitizeForAttribute(input) : undefined,
-          'span.kind': 'server',
-        },
+  return tracer.startActiveSpan(
+    spanName,
+    {
+      attributes: {
+        'trpc.path': path,
+        'trpc.type': type,
+        'trpc.input': input ? sanitizeForAttribute(input) : undefined,
+        'span.kind': 'server',
       },
-      undefined, // Let it automatically use the active context
-      async span => {
-        try {
-          const result = await next();
+    },
+    undefined, // Let it automatically use the active context
+    async span => {
+      try {
+        const result = await next();
 
-          span.setAttribute('trpc.result', sanitizeForAttribute(result));
-          span.setStatus({ code: SpanStatusCode.OK });
+        span.setAttribute('trpc.result', sanitizeForAttribute(result));
+        span.setStatus({ code: SpanStatusCode.OK });
 
-          return result;
-        } catch (error) {
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error instanceof Error ? error.message : 'Unknown error',
-          });
+        return result;
+      } catch (error) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : 'Unknown error',
+        });
 
-          if (error instanceof Error) {
-            span.recordException(error);
-            span.setAttribute('error.type', error.constructor.name);
-            span.setAttribute('error.message', error.message);
-            span.setAttribute('error.stack', error.stack || '');
-          }
-
-          throw error;
-        } finally {
-          span.end();
+        if (error instanceof Error) {
+          span.recordException(error);
+          span.setAttribute('error.type', error.constructor.name);
+          span.setAttribute('error.message', error.message);
+          span.setAttribute('error.stack', error.stack || '');
         }
+
+        throw error;
+      } finally {
+        span.end();
       }
-    )
+    }
   );
 });
 

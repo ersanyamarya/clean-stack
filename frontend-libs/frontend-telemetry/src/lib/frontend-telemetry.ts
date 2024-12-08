@@ -42,31 +42,42 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
     spanProcessors: [new BatchSpanProcessor(otlpExporter)],
   });
 
-  // Register the tracer provider
+  const contextManager = new ZoneContextManager();
+  const propagator = new B3Propagator();
+
+  // Register the tracer provider with propagator
   provider.register({
-    contextManager: new ZoneContextManager(),
-    propagator: new B3Propagator(),
+    contextManager,
+    propagator,
   });
 
-  // Register auto-instrumentations
   registerInstrumentations({
     instrumentations: [
       getWebAutoInstrumentations({
-        '@opentelemetry/instrumentation-document-load': {
-          enabled: true,
-        },
-        '@opentelemetry/instrumentation-user-interaction': {
-          enabled: true,
-        },
         '@opentelemetry/instrumentation-fetch': {
           enabled: true,
           clearTimingResources: true,
+          propagateTraceHeaderCorsUrls: [/.*/], // Match all URLs
+          // applyCustomAttributesOnSpan: span => {
+          //   span.setAttribute('client.name', appName);
+          //   // Debug log the trace context
+          //   const currentContext = context.active();
+          //   const spanContext = trace.getSpan(currentContext)?.spanContext();
+          //   console.debug('Current trace context:', spanContext);
+          // },
         },
         '@opentelemetry/instrumentation-xml-http-request': {
           enabled: true,
           clearTimingResources: true,
+          propagateTraceHeaderCorsUrls: [/.*/], // Match all URLs
         },
+        '@opentelemetry/instrumentation-document-load': { enabled: true },
+        '@opentelemetry/instrumentation-user-interaction': { enabled: true },
       }),
     ],
+    tracerProvider: provider,
   });
+
+  // Debug log to confirm initialization
+  console.debug('OpenTelemetry initialization completed');
 };

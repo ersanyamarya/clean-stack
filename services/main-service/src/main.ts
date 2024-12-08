@@ -76,13 +76,21 @@ async function main() {
   });
 
   koaApp.use(router.routes());
-  koaApp.use(router.allowedMethods());
-  const adapter = createKoaMiddleware({
-    router: trpcRouter,
-    createContext,
-    prefix: '/trpc',
+
+  koaApp.use(async function allowedMethodsMiddleware(ctx, next) {
+    await router.allowedMethods()(ctx as any, next);
   });
-  koaApp.use(adapter);
+
+  koaApp.use(async function setupTrpcAdapterMiddleware(ctx, next) {
+    const adapter = createKoaMiddleware({
+      router: trpcRouter,
+      createContext,
+      prefix: '/trpc',
+    });
+
+    return adapter(ctx, next);
+  });
+
   const server = koaApp
     .listen(port, () => {
       mainLogger.info(`Server listening on ${address}`);

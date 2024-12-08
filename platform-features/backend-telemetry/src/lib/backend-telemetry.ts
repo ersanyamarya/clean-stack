@@ -5,6 +5,7 @@ diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { B3Propagator } from '@opentelemetry/propagator-b3';
 import { Resource } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -56,6 +57,7 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
           url: collectorUrl + '/v1/metrics',
         }),
       }),
+      textMapPropagator: new B3Propagator(),
       instrumentations: [
         getNodeAutoInstrumentations({
           '@opentelemetry/instrumentation-fs': { enabled: false },
