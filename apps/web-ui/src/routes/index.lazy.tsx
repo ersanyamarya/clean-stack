@@ -12,6 +12,7 @@ export const Route = createLazyFileRoute('/')({
 
 function RouteComponent() {
   const userQuery = trpc.user.useQuery('672a8e96f0f288e85c1bfc96');
+  const utils = trpc.useUtils();
   const { t } = useTranslation('common');
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
@@ -19,8 +20,9 @@ function RouteComponent() {
       <p className="text-lg">This is a lazy-loaded route!</p>
       <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
       <Button
-        onClick={() => {
-          alert('Hello, world!');
+        onClick={async () => {
+          const users = await utils.users.fetch();
+          console.log(users);
         }}>
         Click me Now !
       </Button>
