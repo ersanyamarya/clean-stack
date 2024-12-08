@@ -1,5 +1,5 @@
 import cors from '@koa/cors';
-import Koa, { Context } from 'koa';
+import Koa, { Context, Next } from 'koa';
 
 import { Logger } from '@clean-stack/framework/global-types';
 import { bodyParser } from '@koa/bodyparser';
@@ -27,8 +27,7 @@ export type ServerEssentialsOptions = {
 export async function getKoaServer({ logger, errorCallback, serviceName, serviceVersion, localeCookieName }: ServerEssentialsOptions) {
   logger.info('Setting up Koa Server');
   const app = new Koa();
-  app.use(helmet());
-  app.use(async (ctx, next) => {
+  async function setupContextMiddleware(ctx: Context, next: Next) {
     try {
       ctx.logger = logger;
       ctx.serviceName = serviceName;
@@ -44,7 +43,12 @@ export async function getKoaServer({ logger, errorCallback, serviceName, service
     } catch (error) {
       errorCallback(error, ctx);
     }
+  }
+
+  app.use(async function securityHeadersMiddleware(ctx, next) {
+    return helmet()(ctx, next);
   });
+  app.use(setupContextMiddleware);
   app.use(cors());
 
   app.use(

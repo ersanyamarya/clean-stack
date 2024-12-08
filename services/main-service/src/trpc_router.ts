@@ -1,12 +1,10 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
 import { context, Context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
-import { W3CTraceContextPropagator } from '@opentelemetry/core';
+
 import { initTRPC } from '@trpc/server';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
 import { listUsers } from './service-clients/user-service';
-
-propagation.setGlobalPropagator(new W3CTraceContextPropagator());
 
 export const getTracer = () => trace.getTracer('trpc-server');
 
@@ -19,14 +17,14 @@ export const sanitizeForAttribute = (value: unknown): string => {
 };
 
 const createContext = ({ req, res }: CreateTrpcKoaContextOptions) => {
-  const extractedContext = propagation.extract(context.active(), req.headers);
-  const activeSpan = trace.getSpan(extractedContext);
+  const tracingContext = propagation.extract(context.active(), req.headers);
+  const activeSpan = trace.getSpan(tracingContext);
 
   if (!activeSpan) {
     console.warn('No active span found in extracted context');
   }
 
-  return { tracingContext: extractedContext };
+  return { tracingContext };
 };
 
 type TrpcContext = Awaited<ReturnType<typeof createContext>>;

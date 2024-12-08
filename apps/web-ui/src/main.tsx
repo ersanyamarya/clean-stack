@@ -2,7 +2,6 @@ import './init';
 
 import '@clean-stack/styles/global.css';
 
-import { context, propagation } from '@opentelemetry/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { httpBatchLink } from '@trpc/client';
@@ -58,12 +57,7 @@ function TrpcQueryProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           url: 'http://localhost:9900/trpc',
           async headers() {
-            const carrier = {};
-            propagation.inject(context.active(), carrier);
-            console.log('carrier', carrier);
-
             return {
-              ...carrier,
               authorization: 'Bearer 123',
             };
           },
