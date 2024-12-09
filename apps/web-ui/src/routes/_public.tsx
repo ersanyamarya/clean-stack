@@ -1,11 +1,15 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { isAuthenticated } from '../appwriteClient';
+import LanguageSwitcher from '../widgets/language-switcher';
 export const Route = createFileRoute('/_public')({
   component: RouteComponent,
   notFoundComponent: () => <h1>Not Found</h1>,
-  beforeLoad: async ctx => {
-    console.log('beforeLoad', ctx);
+  beforeLoad: async ({ location }) => {
+    if (await isAuthenticated()) {
+      throw redirect({ to: '/' });
+    }
   },
+  loader: () => <h1>Loading...</h1>,
 });
 
 function RouteComponent() {
@@ -15,8 +19,17 @@ function RouteComponent() {
         <h1 className="text-primary-foreground text-4xl">Where Magic Happens !</h1>
       </div>
       <div className="flex-1  justify-center items-center  flex">
+        <FloatingButton />
         <Outlet />
       </div>
+    </div>
+  );
+}
+
+function FloatingButton() {
+  return (
+    <div className="fixed bottom-4 right-4">
+      <LanguageSwitcher />
     </div>
   );
 }

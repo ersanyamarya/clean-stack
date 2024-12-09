@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 const languages = [
   { code: 'en', name: 'English' },
   { code: 'de', name: 'Deutsch' },
+  { code: 'hi', name: 'हिंदी' },
 ];
 
 export default function LanguageSwitcher() {

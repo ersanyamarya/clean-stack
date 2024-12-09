@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@clean-stack/components/hover-card';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { trpc } from '../trpc_utils';
+import { trpc } from '../../trpcUtils';
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/_private/')({
   component: RouteComponent,
 });
 
