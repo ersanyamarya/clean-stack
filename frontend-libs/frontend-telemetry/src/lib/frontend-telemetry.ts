@@ -82,7 +82,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         '@opentelemetry/instrumentation-fetch': {
           enabled: true,
           clearTimingResources: true,
-          propagateTraceHeaderCorsUrls: [/.*/], // Match all URLs
+          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/], // Match only localhost URLs
           applyCustomAttributesOnSpan: span => {
             const spanData = Object.assign({}, span) as any;
             const url = spanData.attributes?.['http.url'];
@@ -92,7 +92,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         '@opentelemetry/instrumentation-xml-http-request': {
           enabled: true,
           clearTimingResources: true,
-          propagateTraceHeaderCorsUrls: [/.*/], // Match all URLs
+          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/], // Match only localhost URLs
         },
         '@opentelemetry/instrumentation-document-load': { enabled: true },
         '@opentelemetry/instrumentation-user-interaction': { enabled: true },

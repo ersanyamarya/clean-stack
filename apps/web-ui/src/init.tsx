@@ -4,5 +4,5 @@ import { app, collectorUrl } from './config';
 initFETelemetry({
   ...app,
   collectorUrl,
-  initiateTelemetry: false,
+  initiateTelemetry: true,
 });
