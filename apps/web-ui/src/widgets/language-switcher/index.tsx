@@ -36,11 +36,11 @@ export default function LanguageSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-48">
+        className="w-32">
         {languages.map(lang => (
           <DropdownMenuItem
             key={lang.code}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${lang.code === selectedLanguage ? 'bg-accent text-accent-foreground' : ''}`}
             onSelect={() => onLanguageChange(lang.code)}>
             <FlagIcon className="h-4 w-4" />
             <span>{lang.name}</span>
