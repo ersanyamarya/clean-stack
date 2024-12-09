@@ -12,6 +12,7 @@
   "aliases": {
     "ui": "frontend-libs/components/src/ui",
     "components": "@clean-stack/components",
-    "utils": "@clean-stack/utils"
+    "utils": "@clean-stack/utils",
+    "hooks": "frontend-libs/components/src/hooks"
   }
 }

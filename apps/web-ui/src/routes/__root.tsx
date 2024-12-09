@@ -1,3 +1,4 @@
+import { Toaster } from '@clean-stack/components/toaster';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import * as React from 'react';
@@ -8,6 +9,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <React.Fragment>
+      <Toaster />
       <Outlet />
       <TanStackRouterDevtools />
     </React.Fragment>

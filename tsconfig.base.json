@@ -13,6 +13,7 @@
     "moduleResolution": "node",
     "paths": {
       "@clean-stack/components/*": ["frontend-libs/components/src/ui/*"],
+      "@clean-stack/react-hooks/*": ["frontend-libs/components/src/hooks/*"],
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
       "@clean-stack/fe-utils": ["frontend-libs/fe-utils/src/index.ts"],
