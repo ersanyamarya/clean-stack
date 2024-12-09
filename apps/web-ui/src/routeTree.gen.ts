@@ -8,173 +8,159 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicImport } from './routes/_public'
-import { Route as PrivateImport } from './routes/_private'
-import { Route as PublicLoginImport } from './routes/_public/login'
+import { Route as rootRoute } from './routes/__root';
+import { Route as PrivateImport } from './routes/_private';
+import { Route as PublicImport } from './routes/_public';
+import { Route as PublicLoginImport } from './routes/_public/login';
 
 // Create Virtual Routes
 
-const PrivateIndexLazyImport = createFileRoute('/_private/')()
-const PrivateAboutLazyImport = createFileRoute('/_private/about')()
+const PrivateIndexLazyImport = createFileRoute('/_private/')();
+const PrivateAboutLazyImport = createFileRoute('/_private/about')();
 
 // Create/Update Routes
 
 const PublicRoute = PublicImport.update({
   id: '/_public',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PrivateRoute = PrivateImport.update({
   id: '/_private',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PrivateIndexLazyRoute = PrivateIndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() =>
-  import('./routes/_private/index.lazy').then((d) => d.Route),
-)
+} as any).lazy(() => import('./routes/_private/index.lazy').then(d => d.Route));
 
 const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() =>
-  import('./routes/_private/about.lazy').then((d) => d.Route),
-)
+} as any).lazy(() => import('./routes/_private/about.lazy').then(d => d.Route));
 
 const PublicLoginRoute = PublicLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_private': {
-      id: '/_private'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PrivateImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_private';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PrivateImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PublicImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_public';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PublicImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_private/about': {
-      id: '/_private/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof PrivateAboutLazyImport
-      parentRoute: typeof PrivateImport
-    }
+      id: '/_private/about';
+      path: '/about';
+      fullPath: '/about';
+      preLoaderRoute: typeof PrivateAboutLazyImport;
+      parentRoute: typeof PrivateImport;
+    };
     '/_private/': {
-      id: '/_private/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof PrivateIndexLazyImport
-      parentRoute: typeof PrivateImport
-    }
+      id: '/_private/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof PrivateIndexLazyImport;
+      parentRoute: typeof PrivateImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 interface PrivateRouteChildren {
-  PrivateAboutLazyRoute: typeof PrivateAboutLazyRoute
-  PrivateIndexLazyRoute: typeof PrivateIndexLazyRoute
+  PrivateAboutLazyRoute: typeof PrivateAboutLazyRoute;
+  PrivateIndexLazyRoute: typeof PrivateIndexLazyRoute;
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateAboutLazyRoute: PrivateAboutLazyRoute,
   PrivateIndexLazyRoute: PrivateIndexLazyRoute,
-}
+};
 
-const PrivateRouteWithChildren =
-  PrivateRoute._addFileChildren(PrivateRouteChildren)
+const PrivateRouteWithChildren = PrivateRoute._addFileChildren(PrivateRouteChildren);
 
 interface PublicRouteChildren {
-  PublicLoginRoute: typeof PublicLoginRoute
+  PublicLoginRoute: typeof PublicLoginRoute;
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
-}
+};
 
-const PublicRouteWithChildren =
-  PublicRoute._addFileChildren(PublicRouteChildren)
+const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren);
 
 export interface FileRoutesByFullPath {
-  '': typeof PublicRouteWithChildren
-  '/login': typeof PublicLoginRoute
-  '/about': typeof PrivateAboutLazyRoute
-  '/': typeof PrivateIndexLazyRoute
+  '': typeof PublicRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/about': typeof PrivateAboutLazyRoute;
+  '/': typeof PrivateIndexLazyRoute;
 }
 
 export interface FileRoutesByTo {
-  '': typeof PublicRouteWithChildren
-  '/login': typeof PublicLoginRoute
-  '/about': typeof PrivateAboutLazyRoute
-  '/': typeof PrivateIndexLazyRoute
+  '': typeof PublicRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/about': typeof PrivateAboutLazyRoute;
+  '/': typeof PrivateIndexLazyRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_private': typeof PrivateRouteWithChildren
-  '/_public': typeof PublicRouteWithChildren
-  '/_public/login': typeof PublicLoginRoute
-  '/_private/about': typeof PrivateAboutLazyRoute
-  '/_private/': typeof PrivateIndexLazyRoute
+  __root__: typeof rootRoute;
+  '/_private': typeof PrivateRouteWithChildren;
+  '/_public': typeof PublicRouteWithChildren;
+  '/_public/login': typeof PublicLoginRoute;
+  '/_private/about': typeof PrivateAboutLazyRoute;
+  '/_private/': typeof PrivateIndexLazyRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/about' | '/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '' | '/login' | '/about' | '/'
-  id:
-    | '__root__'
-    | '/_private'
-    | '/_public'
-    | '/_public/login'
-    | '/_private/about'
-    | '/_private/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '' | '/login' | '/about' | '/';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '' | '/login' | '/about' | '/';
+  id: '__root__' | '/_private' | '/_public' | '/_public/login' | '/_private/about' | '/_private/';
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  PrivateRoute: typeof PrivateRouteWithChildren
-  PublicRoute: typeof PublicRouteWithChildren
+  PrivateRoute: typeof PrivateRouteWithChildren;
+  PublicRoute: typeof PublicRouteWithChildren;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   PrivateRoute: PrivateRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
-}
+};
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {
