@@ -1,15 +1,14 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { isAuthenticated } from '../appwriteClient';
 import LanguageSwitcher from '../widgets/language-switcher';
 export const Route = createFileRoute('/_public')({
   component: RouteComponent,
   notFoundComponent: () => <h1>Not Found</h1>,
-  beforeLoad: async ({ location }) => {
-    if (await isAuthenticated()) {
+  beforeLoad: async ({ context }) => {
+    const { isAuthenticated } = context;
+    if (isAuthenticated) {
       throw redirect({ to: '/' });
     }
   },
-  loader: () => <h1>Loading...</h1>,
 });
 
 function RouteComponent() {

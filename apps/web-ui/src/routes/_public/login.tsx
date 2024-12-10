@@ -5,14 +5,18 @@ import { Input } from '@clean-stack/components/input';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Ghost } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useLoginForm } from './-useAuth';
+import { useLoginForm } from './-useAuthForms';
 export const Route = createFileRoute('/_public/login')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { t } = useTranslation('authentication');
-  const { loginForm, onLogin } = useLoginForm();
+  const { loginForm, onLogin, isAuthLoading } = useLoginForm();
+
+  if (isAuthLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Card className="mx-auto max-w-sm">

@@ -1,25 +1,23 @@
 import { Button } from '@clean-stack/components/button';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { account, isAuthenticated } from '../appwriteClient';
+import useAuthState from '../global-state';
 import LanguageSwitcher from '../widgets/language-switcher';
 
 export const Route = createFileRoute('/_private')({
   component: RouteComponent,
-  beforeLoad: async ({ location }) => {
-    if (!(await isAuthenticated())) {
+  beforeLoad: async ({ context }) => {
+    const { isAuthenticated } = context;
+    if (!isAuthenticated) {
       throw redirect({ to: '/login' });
     }
   },
 });
 
 function RouteComponent() {
+  const { logout } = useAuthState();
   async function onLogoutClick() {
-    try {
-      await account.deleteSession('current');
-      window.location.href = '/login';
-    } catch (error) {
-      console.log({ onLogoutClick: error });
-    }
+    await logout();
+    window.location.href = '/login';
   }
 
   return (

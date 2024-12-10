@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
-import Resources from './@types/resources';
+import Resources from '../@types/resources';
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -18,7 +18,7 @@ i18next
   .init({
     supportedLngs: ['en', 'de', 'hi'],
     fallbackLng: 'en',
-    debug: true,
+    debug: false,
 
     detection: {
       order: ['localStorage', 'cookie', 'htmlTag'],

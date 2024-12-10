@@ -1,6 +1,6 @@
-import { Account, Client } from 'appwrite';
+import { Account, Client, ID } from 'appwrite';
 
-import { appWriteConfig } from './config';
+import { appWriteConfig } from '../utils/config';
 
 const client = new Client().setEndpoint(appWriteConfig.endpoint).setProject(appWriteConfig.projectId);
 
@@ -15,4 +15,4 @@ export async function isAuthenticated(): Promise<boolean> {
   }
 }
 
-export { account, client };
+export { account, client, ID };

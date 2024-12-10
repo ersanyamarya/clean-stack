@@ -1,13 +1,13 @@
-import { useToast } from '@clean-stack/react-hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TFunction } from 'i18next';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { account } from '../../appwriteClient';
+import useAuthState from '../../global-state';
 export function useLoginForm() {
   const { t } = useTranslation('authentication');
-  const { toast } = useToast();
+
+  const { loginWithEmail, isAuthLoading } = useAuthState();
 
   const loginFormSchema = z.object({
     email: getEmailSchema(t),
@@ -24,21 +24,17 @@ export function useLoginForm() {
 
   async function onLogin(values: z.infer<typeof loginFormSchema>) {
     const { email, password } = values;
-
-    try {
-      await account.createEmailPasswordSession(email, password);
-      window.location.href = '/';
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Invalid credentials',
-        nonce: 'error',
-        variant: 'destructive',
-      });
-    }
+    await loginWithEmail(email, password, {
+      onSuccess: () => {
+        window.location.href = '/';
+      },
+      onError: error => {
+        loginForm.reset();
+      },
+    });
   }
 
-  return { loginForm, onLogin };
+  return { loginForm, onLogin, isAuthLoading, loginFormSchema };
 }
 
 export function useRegister() {
