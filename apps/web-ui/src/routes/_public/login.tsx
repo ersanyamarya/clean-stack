@@ -30,6 +30,7 @@ function RouteComponent() {
                 name="email"
                 label={t('email')}
                 type="email"
+                autoComplete="email"
                 isLoading={isAuthLoading}
               />
               <TextInputFormField
@@ -37,6 +38,7 @@ function RouteComponent() {
                 name="password"
                 label={t('password')}
                 type="password"
+                autoComplete="current-password"
                 isLoading={isAuthLoading}
                 rightElement={
                   <Link
