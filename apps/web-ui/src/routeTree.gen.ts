@@ -15,7 +15,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as PublicImport } from './routes/_public'
 import { Route as PrivateImport } from './routes/_private'
+import { Route as PublicRegisterImport } from './routes/_public/register'
 import { Route as PublicLoginImport } from './routes/_public/login'
+import { Route as PublicForgetPasswordImport } from './routes/_public/forget-password'
 
 // Create Virtual Routes
 
@@ -50,9 +52,21 @@ const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
   import('./routes/_private/about.lazy').then((d) => d.Route),
 )
 
+const PublicRegisterRoute = PublicRegisterImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicRoute,
+} as any)
+
 const PublicLoginRoute = PublicLoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any)
+
+const PublicForgetPasswordRoute = PublicForgetPasswordImport.update({
+  id: '/forget-password',
+  path: '/forget-password',
   getParentRoute: () => PublicRoute,
 } as any)
 
@@ -74,11 +88,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
     }
+    '/_public/forget-password': {
+      id: '/_public/forget-password'
+      path: '/forget-password'
+      fullPath: '/forget-password'
+      preLoaderRoute: typeof PublicForgetPasswordImport
+      parentRoute: typeof PublicImport
+    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof PublicLoginImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/register': {
+      id: '/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublicRegisterImport
       parentRoute: typeof PublicImport
     }
     '/_private/about': {
@@ -114,11 +142,15 @@ const PrivateRouteWithChildren =
   PrivateRoute._addFileChildren(PrivateRouteChildren)
 
 interface PublicRouteChildren {
+  PublicForgetPasswordRoute: typeof PublicForgetPasswordRoute
   PublicLoginRoute: typeof PublicLoginRoute
+  PublicRegisterRoute: typeof PublicRegisterRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
+  PublicForgetPasswordRoute: PublicForgetPasswordRoute,
   PublicLoginRoute: PublicLoginRoute,
+  PublicRegisterRoute: PublicRegisterRoute,
 }
 
 const PublicRouteWithChildren =
@@ -126,14 +158,18 @@ const PublicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof PublicRouteWithChildren
+  '/forget-password': typeof PublicForgetPasswordRoute
   '/login': typeof PublicLoginRoute
+  '/register': typeof PublicRegisterRoute
   '/about': typeof PrivateAboutLazyRoute
   '/': typeof PrivateIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '': typeof PublicRouteWithChildren
+  '/forget-password': typeof PublicForgetPasswordRoute
   '/login': typeof PublicLoginRoute
+  '/register': typeof PublicRegisterRoute
   '/about': typeof PrivateAboutLazyRoute
   '/': typeof PrivateIndexLazyRoute
 }
@@ -142,21 +178,25 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_private': typeof PrivateRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
+  '/_public/forget-password': typeof PublicForgetPasswordRoute
   '/_public/login': typeof PublicLoginRoute
+  '/_public/register': typeof PublicRegisterRoute
   '/_private/about': typeof PrivateAboutLazyRoute
   '/_private/': typeof PrivateIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/about' | '/'
+  fullPaths: '' | '/forget-password' | '/login' | '/register' | '/about' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/login' | '/about' | '/'
+  to: '' | '/forget-password' | '/login' | '/register' | '/about' | '/'
   id:
     | '__root__'
     | '/_private'
     | '/_public'
+    | '/_public/forget-password'
     | '/_public/login'
+    | '/_public/register'
     | '/_private/about'
     | '/_private/'
   fileRoutesById: FileRoutesById
@@ -196,11 +236,21 @@ export const routeTree = rootRoute
     "/_public": {
       "filePath": "_public.tsx",
       "children": [
-        "/_public/login"
+        "/_public/forget-password",
+        "/_public/login",
+        "/_public/register"
       ]
+    },
+    "/_public/forget-password": {
+      "filePath": "_public/forget-password.tsx",
+      "parent": "/_public"
     },
     "/_public/login": {
       "filePath": "_public/login.tsx",
+      "parent": "/_public"
+    },
+    "/_public/register": {
+      "filePath": "_public/register.tsx",
       "parent": "/_public"
     },
     "/_private/about": {

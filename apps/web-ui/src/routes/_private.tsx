@@ -1,7 +1,7 @@
 import { Button } from '@clean-stack/components/button';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import useAuthState from '../global-state';
-import LanguageSwitcher from '../widgets/language-switcher';
+import LanguageSwitcher from '../widgets/LanguageSwitcher';
 
 export const Route = createFileRoute('/_private')({
   component: RouteComponent,

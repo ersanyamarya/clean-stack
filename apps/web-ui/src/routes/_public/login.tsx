@@ -42,7 +42,7 @@ function RouteComponent() {
                 isLoading={isAuthLoading}
                 rightElement={
                   <Link
-                    href="#"
+                    to="/forget-password"
                     className="inline-block text-sm underline">
                     {t('forgotPassword')}
                   </Link>
@@ -64,8 +64,7 @@ function RouteComponent() {
               <div className="mt-4 text-center text-sm">
                 {t('dontHaveAnAccount')}{' '}
                 <Link
-                  disabled
-                  href="#"
+                  to="/register"
                   className="underline">
                   {t('signUp')}
                 </Link>

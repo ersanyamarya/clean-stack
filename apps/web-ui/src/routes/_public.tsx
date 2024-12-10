@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import LanguageSwitcher from '../widgets/language-switcher';
+import LanguageSwitcher from '../widgets/LanguageSwitcher';
 export const Route = createFileRoute('/_public')({
   component: RouteComponent,
   notFoundComponent: () => <h1>Not Found</h1>,
