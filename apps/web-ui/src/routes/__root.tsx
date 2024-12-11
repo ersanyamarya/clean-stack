@@ -1,6 +1,5 @@
 import { Toaster } from '@clean-stack/components/toaster';
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import * as React from 'react';
 
 type RouterContext = {
@@ -16,7 +15,7 @@ function RootComponent() {
     <React.Fragment>
       <Toaster />
       <Outlet />
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </React.Fragment>
   );
 }
