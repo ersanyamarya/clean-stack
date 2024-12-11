@@ -31,7 +31,7 @@ export async function getKoaServer({ logger, errorCallback, serviceName, service
   async function setupContextMiddleware(ctx: Context, next: Next) {
     const childLogger = logger.child({ reqInfo: getRequestInfo(ctx) });
     try {
-      ctx.logger = logger;
+      ctx.logger = childLogger;
       ctx.serviceName = serviceName;
       ctx.serviceVersion = serviceVersion;
 
