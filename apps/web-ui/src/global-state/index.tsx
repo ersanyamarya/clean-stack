@@ -1,6 +1,7 @@
 import { useToast } from '@clean-stack/react-hooks/use-toast';
 import { AppwriteException } from 'appwrite';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { account, ID } from './appwriteClient';
 import { IAuthStaCallbacks, IUseAuthStateReturn, useGlobalState } from './state';
 
@@ -9,6 +10,7 @@ export default function useAuthState(): IUseAuthStateReturn {
   const [isAuthLoading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { t } = useTranslation('authentication');
 
   useEffect(() => {
     if (authError)
@@ -50,8 +52,16 @@ export default function useAuthState(): IUseAuthStateReturn {
       onSuccess?.();
     } catch (error) {
       if (error instanceof AppwriteException) {
+        const type = error.type;
+        console.log({
+          type,
+          message: setAuthError(error.message),
+        });
+
+        if (type === 'user_invalid_credentials') setAuthError(t('user_invalid_credentials'));
+        else setAuthError(error.message);
+
         onError?.(error);
-        setAuthError(error.message);
       } else console.error(error);
     } finally {
       setLoading(false);

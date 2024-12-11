@@ -20,5 +20,7 @@
   "passwordOneNumber": "Password must contain at least one number",
   "passwordOneSpecialCharacter": "Password must contain at least one special character",
   "dontHaveAnAccount": "Don't have an account?",
-  "signUp": "Sign Up"
+  "signUp": "Sign Up",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "user_invalid_credentials": "Invalid email or password"
 }

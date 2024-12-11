@@ -1,11 +1,12 @@
+import { Logger } from '@clean-stack/framework/global-types';
 import { Metadata, sendUnaryData, ServerUnaryCall, status } from '@grpc/grpc-js';
 
 export type ServiceController<Request, Response> = (call: ServerUnaryCall<Request, Response>, callback: sendUnaryData<Response>) => void;
 
 export type ServiceControllerErrorHandler = (error: unknown) => Metadata;
 export type ServiceControllerAuth<User> = (metadata: Metadata) => Promise<User>;
-export type ProtectedServiceControllerHandler<Request, Response, User> = (request: Request, user: User) => Promise<Response>;
-export type ServiceControllerHandler<Request, Response> = (request: Request) => Promise<Response>;
+export type ProtectedServiceControllerHandler<Request, Response, User> = (request: Request, user: User, logger: Logger) => Promise<Response>;
+export type ServiceControllerHandler<Request, Response> = (request: Request, logger: Logger) => Promise<Response>;
 
 /**
  * The function `protectedServiceController` handles requests with authentication and error handling in
@@ -30,13 +31,15 @@ export type ServiceControllerHandler<Request, Response> = (request: Request) => 
 export function protectedServiceController<Request, Response, User>(
   handleRequest: ProtectedServiceControllerHandler<Request, Response, User>,
   handleError: ServiceControllerErrorHandler,
-  auth: ServiceControllerAuth<User>
+  auth: ServiceControllerAuth<User>,
+  logger: Logger
 ): ServiceController<Request, Response> {
   return async (call: ServerUnaryCall<Request, Response>, callback: sendUnaryData<Response>) => {
     try {
+      const childLogger = logger.child(createGrpcRequestMetadata<Request>(call, 'protectedServiceController'));
       const user = await auth(call.metadata);
 
-      const response = await handleRequest(call.request, user);
+      const response = await handleRequest(call.request, user, childLogger);
 
       callback(null, response);
     } catch (error) {
@@ -62,14 +65,30 @@ export function protectedServiceController<Request, Response, User>(
  */
 export function serviceController<Request, Response>(
   handleRequest: ServiceControllerHandler<Request, Response>,
-  errorHandler: ServiceControllerErrorHandler
+  errorHandler: ServiceControllerErrorHandler,
+  logger: Logger
 ): ServiceController<Request, Response> {
   return async (call: ServerUnaryCall<Request, Response>, callback: sendUnaryData<Response>) => {
+    const childLogger = logger.child(createGrpcRequestMetadata<Request>(call, 'publicServiceController'));
     try {
-      const response = await handleRequest(call.request);
+      const response = await handleRequest(call.request, childLogger);
       callback(null, response);
     } catch (error) {
       callback({ code: status.INTERNAL, details: 'Internal Server Error', metadata: errorHandler(error) }, null);
     }
+  };
+}
+export function createGrpcRequestMetadata<Request>(
+  call: ServerUnaryCall<Request, Response>,
+  type: 'publicServiceController' | 'protectedServiceController' = 'publicServiceController'
+): Record<string, unknown> {
+  return {
+    kind: 'grpc request',
+    type,
+    path: call.getPath(),
+    peer: call.getPeer(),
+    host: call.getHost(),
+    request: call.request,
+    metadata: call.metadata.toJSON(),
   };
 }

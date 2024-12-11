@@ -16,6 +16,7 @@
  * debugging.
  */
 export type Logger = {
+  child(arg0: Record<string, unknown>): Logger;
   info: (...params: unknown[]) => void;
   warn: (...params: unknown[]) => void;
   error: (...params: unknown[]) => void;

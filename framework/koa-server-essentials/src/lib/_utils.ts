@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import { getKoaServer, ServerEssentialsOptions } from './koa-server';
 
 export const mockLogger: Logger = {
+  child: vi.fn(() => mockLogger),
   info: vi.fn(),
   error: vi.fn(),
   debug: vi.fn(),

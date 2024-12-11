@@ -1,9 +1,9 @@
 {
   "locale": "hi",
   "login": "लॉगिन",
-  "loginSubtitle": "अपने खाते में लॉगिन करने के लिए नीचे अपना ईमेल दर्ज करें",
+  "loginSubtitle": "अपने account में लॉगिन करने के लिए नीचे अपना ईमेल दर्ज करें",
   "register": "रजिस्टर",
-  "registerSubtitle": "खाते के लिए पंजीकरण करने के लिए नीचे अपना ईमेल दर्ज करें",
+  "registerSubtitle": "account के लिए पंजीकरण करने के लिए नीचे अपना ईमेल दर्ज करें",
   "email": "ईमेल",
   "password": "पासवर्ड",
   "name": "नाम",
@@ -19,6 +19,8 @@
   "passwordOneLowercase": "पासवर्ड में कम से कम एक लोअरकेस अक्षर होना चाहिए",
   "passwordOneNumber": "पासवर्ड में कम से कम एक संख्या होनी चाहिए",
   "passwordOneSpecialCharacter": "पासवर्ड में कम से कम एक विशेष वर्ण होना चाहिए",
-  "dontHaveAnAccount": "क्या आपके पास खाता नहीं है?",
-  "signUp": "साइन अप करें"
+  "dontHaveAnAccount": "क्या आपके पास account नहीं है?",
+  "signUp": "साइन अप करें",
+  "alreadyHaveAnAccount": "क्या आपके पास पहले से एक account है?",
+  "user_invalid_credentials": "अमान्य ईमेल या पासवर्ड"
 }

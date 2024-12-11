@@ -20,5 +20,7 @@
   "passwordOneNumber": "Das Passwort muss mindestens eine Zahl enthalten",
   "passwordOneSpecialCharacter": "Das Passwort muss mindestens ein Sonderzeichen enthalten",
   "dontHaveAnAccount": "Sie haben kein Konto?",
-  "signUp": "Register"
+  "signUp": "Register",
+  "alreadyHaveAnAccount": "Sie haben bereits ein Konto?",
+  "user_invalid_credentials": "Ungültige E-Mail oder ungültiges Passwort"
 }

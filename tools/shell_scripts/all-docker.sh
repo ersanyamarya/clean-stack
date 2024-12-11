@@ -10,11 +10,10 @@ NC='\033[0m' # No Color
 # Allow overriding base directory through environment variable
 BASE_DIR=${PLATFORM_SETUP_DIR:-"./PLATFORM_SETUP"}
 
-# Helper function for printing separators
 print_separator() {
   echo
   echo "----------------------------------------"
-  [ ! -z "$1" ] && echo "$1"
+  [ ! -z "$1" ] && echo -e "$1"
 }
 
 ALLOWED_COMMANDS="up down ps clean"
@@ -111,7 +110,7 @@ execute_docker_compose() {
       return 1
     fi
   fi
-  echo "${GREEN}Successfully executed $cmd for $file${NC}"
+  echo -e "${GREEN}Successfully executed $cmd for $file${NC}"
 }
 
 # Execute commands

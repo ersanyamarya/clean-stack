@@ -79,6 +79,15 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
   }
 
   const mainLogger = require('pino')({
+    messageKey: 'message',
+    base: {
+      serviceName,
+      serviceVersion,
+      environment: process.env['NODE_ENV'],
+    },
+    serializers: {
+      err: require('pino').stdSerializers.err,
+    },
     level: 'debug',
     transport: {
       target: 'pino-pretty',

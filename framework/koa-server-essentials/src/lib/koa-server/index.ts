@@ -4,6 +4,7 @@ import Koa, { Context, Next } from 'koa';
 import { Logger } from '@clean-stack/framework/global-types';
 import { bodyParser } from '@koa/bodyparser';
 import helmet from 'koa-helmet';
+import getRequestInfo from './request-parser';
 
 declare module 'koa' {
   interface BaseContext {
@@ -28,6 +29,7 @@ export async function getKoaServer({ logger, errorCallback, serviceName, service
   logger.info('Setting up Koa Server');
   const app = new Koa();
   async function setupContextMiddleware(ctx: Context, next: Next) {
+    const childLogger = logger.child({ reqInfo: getRequestInfo(ctx) });
     try {
       ctx.logger = logger;
       ctx.serviceName = serviceName;
