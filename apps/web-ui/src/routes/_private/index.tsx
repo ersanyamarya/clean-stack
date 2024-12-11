@@ -2,15 +2,24 @@ import { Alert, AlertDescription, AlertTitle } from '@clean-stack/components/ale
 import { Button } from '@clean-stack/components/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@clean-stack/components/card';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@clean-stack/components/hover-card';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 import { trpc } from '../../providers/TrpcProvider/trpcUtils';
 
-export const Route = createLazyFileRoute('/_private/')({
+const sidebar = z.object({
+  isOpen: z.boolean().optional().default(true),
+  selected: z.string().optional().default('home'),
+});
+
+export const Route = createFileRoute('/_private/')({
+  validateSearch: sidebar,
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const sidebarState = Route.useSearch();
+  const navigate = Route.useNavigate();
   const userQuery = trpc.user.useQuery('6755f38dac29504677e61456');
   const utils = trpc.useUtils();
   const { t } = useTranslation('common');
@@ -18,6 +27,8 @@ function RouteComponent() {
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
       <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
       <p className="text-lg">This is a lazy-loaded route!</p>
+      <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
+
       <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
       <Button
         onClick={async () => {
