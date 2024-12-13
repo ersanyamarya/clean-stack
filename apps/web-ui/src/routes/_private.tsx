@@ -38,7 +38,7 @@ function RouteComponent() {
   return (
     <SidebarProvider
       title="Clean Stack"
-      defaultOpen={sidebarState.isOpen}>
+      open={sidebarState.isOpen}>
       <AppSidebar />
       <main>
         <SidebarTrigger onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })} />

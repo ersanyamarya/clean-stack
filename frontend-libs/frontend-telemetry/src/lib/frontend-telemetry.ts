@@ -13,7 +13,7 @@ import { Resource } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { ATTR_CLIENT_ADDRESS, ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 export type FETelemetryConfig = {
   appName: string;
   appVersion: string;
@@ -48,6 +48,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
   const resource = new Resource({
     [ATTR_SERVICE_NAME]: appName,
     [ATTR_SERVICE_VERSION]: appVersion,
+    [ATTR_CLIENT_ADDRESS]: window.location.origin,
   });
 
   const { otlpExporter, otlpMetricExporter } = createExporters(collectorUrl);
@@ -82,7 +83,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         '@opentelemetry/instrumentation-fetch': {
           enabled: true,
           clearTimingResources: true,
-          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/], // Match only localhost URLs
+          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/, /^http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d+)?\/.*$/], // Match localhost and IP addresses
           applyCustomAttributesOnSpan: span => {
             const spanData = Object.assign({}, span) as any;
             const url = spanData.attributes?.['http.url'];
@@ -92,7 +93,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         '@opentelemetry/instrumentation-xml-http-request': {
           enabled: true,
           clearTimingResources: true,
-          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/], // Match only localhost URLs
+          propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/, /^http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d+)?\/.*$/], // Match localhost and IP addresses
         },
         '@opentelemetry/instrumentation-document-load': { enabled: true },
         '@opentelemetry/instrumentation-user-interaction': { enabled: true },

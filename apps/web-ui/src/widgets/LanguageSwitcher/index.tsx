@@ -12,7 +12,12 @@ const languages = [
 ];
 
 export default function LanguageSwitcher() {
-  const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('i18nextLng') || 'en');
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('i18nextLng') || 'en';
+    }
+    return 'en';
+  });
   const { t, i18n } = useTranslation('common');
 
   useEffect(() => {

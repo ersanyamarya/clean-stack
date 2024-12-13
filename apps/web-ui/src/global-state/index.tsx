@@ -40,8 +40,9 @@ export default function useAuthState(): IUseAuthStateReturn {
       });
     } catch {
       clearUserData();
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const loginWithEmail = async (email: string, password: string, { onSuccess, onError }: IAuthStaCallbacks = {}) => {
