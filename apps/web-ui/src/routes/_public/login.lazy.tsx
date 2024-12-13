@@ -1,13 +1,13 @@
 import { Button } from '@clean-stack/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@clean-stack/components/card';
 import { Form } from '@clean-stack/components/form';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createLazyFileRoute, Link } from '@tanstack/react-router';
 import { Ghost } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { TextInputFormField } from '../../widgets/TextInputFormField';
 import { useLoginForm } from './-useAuthForms';
 
-export const Route = createFileRoute('/_public/login')({
+export const Route = createLazyFileRoute('/_public/login')({
   component: RouteComponent,
 });
 

@@ -26,7 +26,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col items-center justify-center h-screen space-y-4">
       <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
-      <p className="text-lg">This is a lazy-loaded route!</p>
+
       <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
 
       <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>

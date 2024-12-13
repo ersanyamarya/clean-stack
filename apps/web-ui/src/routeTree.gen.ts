@@ -16,12 +16,14 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PublicImport } from './routes/_public'
 import { Route as PrivateImport } from './routes/_private'
 import { Route as PrivateIndexImport } from './routes/_private/index'
-import { Route as PublicRegisterImport } from './routes/_public/register'
-import { Route as PublicLoginImport } from './routes/_public/login'
-import { Route as PublicForgetPasswordImport } from './routes/_public/forget-password'
 
 // Create Virtual Routes
 
+const PublicRegisterLazyImport = createFileRoute('/_public/register')()
+const PublicLoginLazyImport = createFileRoute('/_public/login')()
+const PublicForgetPasswordLazyImport = createFileRoute(
+  '/_public/forget-password',
+)()
 const PrivateAboutLazyImport = createFileRoute('/_private/about')()
 
 // Create/Update Routes
@@ -42,6 +44,28 @@ const PrivateIndexRoute = PrivateIndexImport.update({
   getParentRoute: () => PrivateRoute,
 } as any)
 
+const PublicRegisterLazyRoute = PublicRegisterLazyImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/register.lazy').then((d) => d.Route),
+)
+
+const PublicLoginLazyRoute = PublicLoginLazyImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
+
+const PublicForgetPasswordLazyRoute = PublicForgetPasswordLazyImport.update({
+  id: '/forget-password',
+  path: '/forget-password',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/forget-password.lazy').then((d) => d.Route),
+)
+
 const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
   id: '/about',
   path: '/about',
@@ -49,24 +73,6 @@ const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
 } as any).lazy(() =>
   import('./routes/_private/about.lazy').then((d) => d.Route),
 )
-
-const PublicRegisterRoute = PublicRegisterImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => PublicRoute,
-} as any)
-
-const PublicLoginRoute = PublicLoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => PublicRoute,
-} as any)
-
-const PublicForgetPasswordRoute = PublicForgetPasswordImport.update({
-  id: '/forget-password',
-  path: '/forget-password',
-  getParentRoute: () => PublicRoute,
-} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -86,33 +92,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
     }
-    '/_public/forget-password': {
-      id: '/_public/forget-password'
-      path: '/forget-password'
-      fullPath: '/forget-password'
-      preLoaderRoute: typeof PublicForgetPasswordImport
-      parentRoute: typeof PublicImport
-    }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginImport
-      parentRoute: typeof PublicImport
-    }
-    '/_public/register': {
-      id: '/_public/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof PublicRegisterImport
-      parentRoute: typeof PublicImport
-    }
     '/_private/about': {
       id: '/_private/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof PrivateAboutLazyImport
       parentRoute: typeof PrivateImport
+    }
+    '/_public/forget-password': {
+      id: '/_public/forget-password'
+      path: '/forget-password'
+      fullPath: '/forget-password'
+      preLoaderRoute: typeof PublicForgetPasswordLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/register': {
+      id: '/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublicRegisterLazyImport
+      parentRoute: typeof PublicImport
     }
     '/_private/': {
       id: '/_private/'
@@ -140,15 +146,15 @@ const PrivateRouteWithChildren =
   PrivateRoute._addFileChildren(PrivateRouteChildren)
 
 interface PublicRouteChildren {
-  PublicForgetPasswordRoute: typeof PublicForgetPasswordRoute
-  PublicLoginRoute: typeof PublicLoginRoute
-  PublicRegisterRoute: typeof PublicRegisterRoute
+  PublicForgetPasswordLazyRoute: typeof PublicForgetPasswordLazyRoute
+  PublicLoginLazyRoute: typeof PublicLoginLazyRoute
+  PublicRegisterLazyRoute: typeof PublicRegisterLazyRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
-  PublicForgetPasswordRoute: PublicForgetPasswordRoute,
-  PublicLoginRoute: PublicLoginRoute,
-  PublicRegisterRoute: PublicRegisterRoute,
+  PublicForgetPasswordLazyRoute: PublicForgetPasswordLazyRoute,
+  PublicLoginLazyRoute: PublicLoginLazyRoute,
+  PublicRegisterLazyRoute: PublicRegisterLazyRoute,
 }
 
 const PublicRouteWithChildren =
@@ -156,19 +162,19 @@ const PublicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof PublicRouteWithChildren
-  '/forget-password': typeof PublicForgetPasswordRoute
-  '/login': typeof PublicLoginRoute
-  '/register': typeof PublicRegisterRoute
   '/about': typeof PrivateAboutLazyRoute
+  '/forget-password': typeof PublicForgetPasswordLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/register': typeof PublicRegisterLazyRoute
   '/': typeof PrivateIndexRoute
 }
 
 export interface FileRoutesByTo {
   '': typeof PublicRouteWithChildren
-  '/forget-password': typeof PublicForgetPasswordRoute
-  '/login': typeof PublicLoginRoute
-  '/register': typeof PublicRegisterRoute
   '/about': typeof PrivateAboutLazyRoute
+  '/forget-password': typeof PublicForgetPasswordLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/register': typeof PublicRegisterLazyRoute
   '/': typeof PrivateIndexRoute
 }
 
@@ -176,26 +182,26 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_private': typeof PrivateRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_public/forget-password': typeof PublicForgetPasswordRoute
-  '/_public/login': typeof PublicLoginRoute
-  '/_public/register': typeof PublicRegisterRoute
   '/_private/about': typeof PrivateAboutLazyRoute
+  '/_public/forget-password': typeof PublicForgetPasswordLazyRoute
+  '/_public/login': typeof PublicLoginLazyRoute
+  '/_public/register': typeof PublicRegisterLazyRoute
   '/_private/': typeof PrivateIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/forget-password' | '/login' | '/register' | '/about' | '/'
+  fullPaths: '' | '/about' | '/forget-password' | '/login' | '/register' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/forget-password' | '/login' | '/register' | '/about' | '/'
+  to: '' | '/about' | '/forget-password' | '/login' | '/register' | '/'
   id:
     | '__root__'
     | '/_private'
     | '/_public'
+    | '/_private/about'
     | '/_public/forget-password'
     | '/_public/login'
     | '/_public/register'
-    | '/_private/about'
     | '/_private/'
   fileRoutesById: FileRoutesById
 }
@@ -239,21 +245,21 @@ export const routeTree = rootRoute
         "/_public/register"
       ]
     },
-    "/_public/forget-password": {
-      "filePath": "_public/forget-password.tsx",
-      "parent": "/_public"
-    },
-    "/_public/login": {
-      "filePath": "_public/login.tsx",
-      "parent": "/_public"
-    },
-    "/_public/register": {
-      "filePath": "_public/register.tsx",
-      "parent": "/_public"
-    },
     "/_private/about": {
       "filePath": "_private/about.lazy.tsx",
       "parent": "/_private"
+    },
+    "/_public/forget-password": {
+      "filePath": "_public/forget-password.lazy.tsx",
+      "parent": "/_public"
+    },
+    "/_public/login": {
+      "filePath": "_public/login.lazy.tsx",
+      "parent": "/_public"
+    },
+    "/_public/register": {
+      "filePath": "_public/register.lazy.tsx",
+      "parent": "/_public"
     },
     "/_private/": {
       "filePath": "_private/index.tsx",
