@@ -96,7 +96,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
           propagateTraceHeaderCorsUrls: [/^http:\/\/localhost(:\d+)?\/.*$/], // Match localhost and IP addresses
         },
         '@opentelemetry/instrumentation-document-load': { enabled: true },
-        '@opentelemetry/instrumentation-user-interaction': { enabled: true },
+        '@opentelemetry/instrumentation-user-interaction': { enabled: false },
       }),
     ],
     tracerProvider: tracingProvider,
