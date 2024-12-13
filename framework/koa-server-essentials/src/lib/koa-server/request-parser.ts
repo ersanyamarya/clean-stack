@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 
-type RequestInfo = {
+export type RequestInfo = {
   ip: string | string[] | undefined;
   userAgent: {
     browser: string;

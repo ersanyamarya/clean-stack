@@ -1,6 +1,6 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
-import { context, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 import { initTRPC } from '@trpc/server';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
@@ -17,21 +17,29 @@ export const sanitizeForAttribute = (value: unknown): string => {
 };
 
 const createContext = ({ req, res }: CreateTrpcKoaContextOptions) => {
-  const tracingContext = propagation.extract(context.active(), req.headers);
-  const activeSpan = trace.getSpan(tracingContext);
+  // console.log({
+  //   auth: req.headers.authorization,
+  // });
 
-  if (!activeSpan) {
-    console.warn('No active span found in extracted context');
-  }
+  // const tracingContext = propagation.extract(context.active(), req.headers);
+  // const activeSpan = trace.getSpan(tracingContext);
 
-  return { tracingContext };
+  // if (!activeSpan) {
+  //   console.warn('No active span found in extracted context');
+  // }
+
+  // return { tracingContext };
+  return {
+    auth: req.headers.authorization,
+    devToken: req.headers['x-dev-token'],
+  };
 };
 
 type TrpcContext = Awaited<ReturnType<typeof createContext>>;
 
 const trpc = initTRPC.context<TrpcContext>().create();
 
-const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input, ctx }) => {
+const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input, meta }) => {
   const tracer = getTracer();
   const spanName = `tRPC ${type.toUpperCase()} ${path}`;
 
@@ -50,7 +58,7 @@ const telemetryMiddleware = trpc.middleware(async ({ path, type, next, input, ct
       try {
         const result = await next();
 
-        span.setAttribute('trpc.result', sanitizeForAttribute(result));
+        // span.setAttribute('trpc.result', sanitizeForAttribute(result));
         span.setStatus({ code: SpanStatusCode.OK });
 
         return result;

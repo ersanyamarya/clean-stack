@@ -47,6 +47,18 @@ async function main() {
     serviceVersion,
   });
 
+  // add ctx info to trace spans
+
+  // koaApp.use(async function addContextToTraces(ctx, next) {
+  //   const currentSpan = trace.getSpan(context.active());
+  //   const requestInfo = ctx.requestInfo;
+  //   if (currentSpan) {
+  //     currentSpan.setAttribute('req.info', JSON.stringify(requestInfo));
+  //     ctx.tracer = currentSpan;
+  //   }
+  //   await next();
+  // });
+
   setupRootRoute(
     {
       serviceName,
