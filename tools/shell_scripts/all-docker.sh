@@ -1,5 +1,5 @@
 # find and run all docker compose files in the PLATFORM_SETUP sub dir
-# supports 3 commands up, down, ps.
+# supports 3 commands up, down, ps, pull, clean
 
 # Define colors
 GREEN='\033[0;32m'
@@ -16,7 +16,7 @@ print_separator() {
   [ ! -z "$1" ] && echo -e "$1"
 }
 
-ALLOWED_COMMANDS="up down ps clean"
+ALLOWED_COMMANDS="up down ps clean pull"
 COMMAND=$1
 
 # Validate docker is installed
@@ -66,6 +66,8 @@ ${GREEN}Available commands:${NC}
 ${BLUE}up${NC}:    starts all docker compose files in the $BASE_DIR sub dir
 ${BLUE}down${NC}:  stops all docker compose files in the $BASE_DIR sub dir
 ${BLUE}ps${NC}:    lists all docker compose files in the $BASE_DIR sub dir
+${BLUE}pull${NC}:  pulls all docker compose files in the $BASE_DIR sub dir
+${BLUE}clean${NC}: deletes all data directories in the $BASE_DIR sub dir
 ${BLUE}help${NC}:  shows this help text
 "
 
