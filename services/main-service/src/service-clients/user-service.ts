@@ -1,4 +1,4 @@
-import { ServiceUserClient } from '@clean-stack/grpc-proto';
+import { ServiceUserClient } from '@clean-stack/grpc-proto/user';
 import { credentials } from '@grpc/grpc-js';
 
 const USER_SERVICE_ADDRESS = 'localhost:9901';

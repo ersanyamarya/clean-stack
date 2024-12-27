@@ -1,5 +1,5 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
-import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto';
+import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto/user';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 import { initTRPC } from '@trpc/server';

@@ -2,7 +2,7 @@ import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
-import { ServiceUserService } from '@clean-stack/grpc-proto';
+import { ServiceUserService } from '@clean-stack/grpc-proto/user';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
 import { userServiceServer } from './service';

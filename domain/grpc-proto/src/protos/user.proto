@@ -4,6 +4,8 @@ package user.v1;
 
 import "google/protobuf/timestamp.proto";
 
+import "llm.proto";
+
 service ServiceUser {
   rpc GetUser(UserIdMessage) returns (UserGenericResponse);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);

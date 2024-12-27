@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package llm.v1;
+
+
+service ServiceLLM {
+  rpc EnhanceQueryText(EnhanceQueryTextRequest) returns (EnhanceQueryTextResponse);
+}
+
+message EnhanceQueryTextRequest {
+    string text = 1;
+    string context = 2;
+}
+
+message EnhanceQueryTextResponse {
+    string enhancedText = 1;
+}

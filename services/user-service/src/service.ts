@@ -10,7 +10,7 @@ import {
   UpdateUserRequest,
   UserGenericResponse,
   UserIdMessage,
-} from '@clean-stack/grpc-proto';
+} from '@clean-stack/grpc-proto/user';
 
 export function userServiceServer(userRepository: UserRepository, errorHandler: ServiceControllerErrorHandler, logger: Logger): ServiceUserServer {
   return {
