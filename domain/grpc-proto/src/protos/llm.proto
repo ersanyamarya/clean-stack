@@ -8,10 +8,10 @@ service ServiceLLM {
 }
 
 message EnhanceQueryTextRequest {
-    string text = 1;
-    string context = 2;
+    string prompt = 1; // This is the text that needs to be enhanced
+    string enhancementContext = 2; // This is used to provide some information about how to enhance the prompt
 }
 
 message EnhanceQueryTextResponse {
-    string enhancedText = 1;
+    string enhancedPrompt = 1; // This is the enhanced text
 }

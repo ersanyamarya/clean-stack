@@ -22,25 +22,28 @@ import {
 export const protobufPackage = 'llm.v1';
 
 export interface EnhanceQueryTextRequest {
-  text: string;
-  context: string;
+  /** This is the text that needs to be enhanced */
+  prompt: string;
+  /** This is used to provide some information about how to enhance the prompt */
+  enhancementContext: string;
 }
 
 export interface EnhanceQueryTextResponse {
-  enhancedText: string;
+  /** This is the enhanced text */
+  enhancedPrompt: string;
 }
 
 function createBaseEnhanceQueryTextRequest(): EnhanceQueryTextRequest {
-  return { text: '', context: '' };
+  return { prompt: '', enhancementContext: '' };
 }
 
 export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
   encode(message: EnhanceQueryTextRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.text !== '') {
-      writer.uint32(10).string(message.text);
+    if (message.prompt !== '') {
+      writer.uint32(10).string(message.prompt);
     }
-    if (message.context !== '') {
-      writer.uint32(18).string(message.context);
+    if (message.enhancementContext !== '') {
+      writer.uint32(18).string(message.enhancementContext);
     }
     return writer;
   },
@@ -57,7 +60,7 @@ export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
             break;
           }
 
-          message.text = reader.string();
+          message.prompt = reader.string();
           continue;
         }
         case 2: {
@@ -65,7 +68,7 @@ export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
             break;
           }
 
-          message.context = reader.string();
+          message.enhancementContext = reader.string();
           continue;
         }
       }
@@ -79,18 +82,18 @@ export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
 
   fromJSON(object: any): EnhanceQueryTextRequest {
     return {
-      text: isSet(object.text) ? globalThis.String(object.text) : '',
-      context: isSet(object.context) ? globalThis.String(object.context) : '',
+      prompt: isSet(object.prompt) ? globalThis.String(object.prompt) : '',
+      enhancementContext: isSet(object.enhancementContext) ? globalThis.String(object.enhancementContext) : '',
     };
   },
 
   toJSON(message: EnhanceQueryTextRequest): unknown {
     const obj: any = {};
-    if (message.text !== '') {
-      obj.text = message.text;
+    if (message.prompt !== '') {
+      obj.prompt = message.prompt;
     }
-    if (message.context !== '') {
-      obj.context = message.context;
+    if (message.enhancementContext !== '') {
+      obj.enhancementContext = message.enhancementContext;
     }
     return obj;
   },
@@ -100,20 +103,20 @@ export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
   },
   fromPartial<I extends Exact<DeepPartial<EnhanceQueryTextRequest>, I>>(object: I): EnhanceQueryTextRequest {
     const message = createBaseEnhanceQueryTextRequest();
-    message.text = object.text ?? '';
-    message.context = object.context ?? '';
+    message.prompt = object.prompt ?? '';
+    message.enhancementContext = object.enhancementContext ?? '';
     return message;
   },
 };
 
 function createBaseEnhanceQueryTextResponse(): EnhanceQueryTextResponse {
-  return { enhancedText: '' };
+  return { enhancedPrompt: '' };
 }
 
 export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   encode(message: EnhanceQueryTextResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.enhancedText !== '') {
-      writer.uint32(10).string(message.enhancedText);
+    if (message.enhancedPrompt !== '') {
+      writer.uint32(10).string(message.enhancedPrompt);
     }
     return writer;
   },
@@ -130,7 +133,7 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
             break;
           }
 
-          message.enhancedText = reader.string();
+          message.enhancedPrompt = reader.string();
           continue;
         }
       }
@@ -143,13 +146,13 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   },
 
   fromJSON(object: any): EnhanceQueryTextResponse {
-    return { enhancedText: isSet(object.enhancedText) ? globalThis.String(object.enhancedText) : '' };
+    return { enhancedPrompt: isSet(object.enhancedPrompt) ? globalThis.String(object.enhancedPrompt) : '' };
   },
 
   toJSON(message: EnhanceQueryTextResponse): unknown {
     const obj: any = {};
-    if (message.enhancedText !== '') {
-      obj.enhancedText = message.enhancedText;
+    if (message.enhancedPrompt !== '') {
+      obj.enhancedPrompt = message.enhancedPrompt;
     }
     return obj;
   },
@@ -159,7 +162,7 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   },
   fromPartial<I extends Exact<DeepPartial<EnhanceQueryTextResponse>, I>>(object: I): EnhanceQueryTextResponse {
     const message = createBaseEnhanceQueryTextResponse();
-    message.enhancedText = object.enhancedText ?? '';
+    message.enhancedPrompt = object.enhancedPrompt ?? '';
     return message;
   },
 };
