@@ -1,16 +1,14 @@
 import { mainLogger, telemetrySdk } from './init';
 
 import { errorHandler } from '@clean-stack/custom-errors';
-import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
-import { ServiceUserService } from '@clean-stack/grpc-proto/user';
+
+import { ServiceLLMService } from '@clean-stack/grpc-proto/llm';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
-import { userServiceServer } from './service';
+import { llmServiceServer } from './service';
 
-import { createUserMongoRepository } from '@clean-stack/domain_user';
+import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
-import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
-import { Connection } from 'mongoose';
 import { config } from './config';
 
 const handleError: ServiceControllerErrorHandler = error => {
@@ -26,27 +24,16 @@ const handleError: ServiceControllerErrorHandler = error => {
   return metadata;
 };
 
-const mongoDBConnector = createMongoDBConnector(mainLogger, {
-  uri: config.mongoConnectionUri,
-  name: 'mongodb',
-});
-
 async function main() {
   exceptions(mainLogger);
 
-  const { name: mongoDBName, healthCheck: mongoDBHealthCheck } = await mongoDBConnector.connect();
-
   const server = new Server();
-
-  const connection: Connection = getMongoDBConnection();
-
-  const userUseCase = createUserMongoRepository(connection);
 
   const address = config.address;
   try {
-    const userService = userServiceServer(userUseCase, handleError, mainLogger);
+    const llmService = llmServiceServer(handleError, mainLogger);
 
-    server.addService(ServiceUserService, userService);
+    server.addService(ServiceLLMService, llmService);
   } catch (error) {
     mainLogger.error(`Failed to add service: ${error}`);
   }
@@ -56,17 +43,16 @@ async function main() {
       mainLogger.error(`Failed to bind server to ${address}: ${err}`);
       process.exit(1);
     }
-    mainLogger.info(`Server listening on ${address}`);
+    mainLogger.info(`Service name: ${address}`);
   });
 
-  const onsShutdown = async () => {
+  const onShutdown = async () => {
     mainLogger.info('Shutting down server');
     server.forceShutdown();
     telemetrySdk.shutdown();
-    await mongoDBConnector.disconnect();
   };
 
-  gracefulShutdown(mainLogger, onsShutdown);
+  gracefulShutdown(mainLogger, onShutdown);
 }
 
 main().catch(error => {

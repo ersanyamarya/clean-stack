@@ -2,7 +2,9 @@ import { Alert, AlertDescription, AlertTitle } from '@clean-stack/components/ale
 import { Button } from '@clean-stack/components/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@clean-stack/components/card';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@clean-stack/components/hover-card';
+import { Input } from '@clean-stack/components/input';
 import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { trpc } from '../../providers/TrpcProvider/trpcUtils';
@@ -20,24 +22,35 @@ export const Route = createFileRoute('/_private/')({
 function RouteComponent() {
   const sidebarState = Route.useSearch();
   const navigate = Route.useNavigate();
-  const userQuery = trpc.user.useQuery('6755f38dac29504677e61456');
+  const userQuery = trpc.user.useQuery('67726218d9d2abd698ae1b5b');
+  const enhancePromptQuery = trpc.enhanceQueryText.useMutation();
   const utils = trpc.useUtils();
   const { t } = useTranslation('common');
+  const [value, setValue] = useState('');
   return (
-    <div className="flex flex-col items-center justify-center h-screen space-y-4">
+    <div className="flex flex-col items-center justify-center h-screen space-y-4 p-4">
       <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
 
       <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
 
       <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
-      <Button
-        onClick={async () => {
-          const users = await utils.users.fetch();
-          console.log(users);
-        }}>
-        Click me Now !
-      </Button>
-      <pre></pre>
+
+      <div className="flex space-x-4 w-full">
+        <Input
+          placeholder="query"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          // {...debounceFieldProps}
+        />
+        <Button
+          onClick={async () => {
+            enhancePromptQuery.mutate({ prompt: value, enhancementContext: 'context' });
+          }}>
+          Click me Now !
+        </Button>
+      </div>
+      <pre>{JSON.stringify({ data: enhancePromptQuery.data, value }, null, 2)}</pre>
+
       <Card>
         <CardHeader>
           <CardTitle>

@@ -1,10 +1,13 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
+import { EnhanceQueryTextRequest, EnhanceQueryTextResponse } from '@clean-stack/grpc-proto/llm';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto/user';
+import { enhanceQueryText } from './service-clients/llm-service';
+import { listUsers } from './service-clients/user-service';
+
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 import { initTRPC } from '@trpc/server';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
-import { listUsers } from './service-clients/user-service';
 
 export const getTracer = () => trace.getTracer('trpc-server');
 
@@ -96,6 +99,13 @@ const trpcRouter = trpc.router({
     const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit: 10, page: 1 });
     return users;
   }),
+  enhanceQueryText: publicProcedure
+    .input(EnhanceQueryTextRequest)
+    .output(EnhanceQueryTextResponse)
+    .mutation(async req => {
+      const response = await grpcClientPromisify<EnhanceQueryTextRequest, EnhanceQueryTextResponse>(enhanceQueryText())(req.input);
+      return response;
+    }),
 });
 
 export { createContext, trpcRouter };

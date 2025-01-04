@@ -13,7 +13,6 @@
     "moduleResolution": "node",
     "paths": {
       "@clean-stack/components/*": ["frontend-libs/components/src/ui/*"],
-      "@clean-stack/react-hooks/*": ["frontend-libs/components/src/hooks/*"],
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
       "@clean-stack/fe-utils": ["frontend-libs/fe-utils/src/index.ts"],
@@ -27,6 +26,7 @@
       "@clean-stack/platform-features/backend-telemetry": ["platform-features/backend-telemetry/src/index.ts"],
       "@clean-stack/platform-features/cache": ["platform-features/cache/src/index.ts"],
       "@clean-stack/rate-limiter": ["platform-features/rate-limiter/src/index.ts"],
+      "@clean-stack/react-hooks/*": ["frontend-libs/components/src/hooks/*"],
       "@clean-stack/redis": ["connectors/database/redis/src/index.ts"],
       "@clean-stack/styles/*": ["frontend-libs/components/src/styles/*"],
       "@clean-stack/trpc-router": ["services/main-service/src/trpc_router.ts"],
