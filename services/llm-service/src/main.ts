@@ -5,6 +5,7 @@ import { errorHandler } from '@clean-stack/custom-errors';
 import { ServiceLLMService } from '@clean-stack/grpc-proto/llm';
 import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
+import { AzureChatOpenAI } from '@langchain/openai';
 import { llmServiceServer } from './service';
 
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
@@ -27,11 +28,20 @@ const handleError: ServiceControllerErrorHandler = error => {
 async function main() {
   exceptions(mainLogger);
 
+  console.log('config', config.azureOpenAi);
+
+  const llm = new AzureChatOpenAI({
+    ...config.azureOpenAi,
+    temperature: 0,
+    maxTokens: undefined,
+    maxRetries: 2,
+  });
+
   const server = new Server();
 
   const address = config.address;
   try {
-    const llmService = llmServiceServer(handleError, mainLogger);
+    const llmService = llmServiceServer(llm, handleError, mainLogger);
 
     server.addService(ServiceLLMService, llmService);
   } catch (error) {
