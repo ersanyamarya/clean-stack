@@ -101,7 +101,7 @@ const trpcRouter = trpc.router({
   }),
   enhanceQueryText: publicProcedure
     .input(EnhanceQueryTextRequest)
-    .output(EnhanceQueryTextResponse)
+    // .output(EnhanceQueryTextResponse)
     .mutation(async req => {
       const response = await grpcClientPromisify<EnhanceQueryTextRequest, EnhanceQueryTextResponse>(enhanceQueryText())(req.input);
       return response;

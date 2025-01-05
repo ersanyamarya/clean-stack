@@ -49,7 +49,7 @@ function RouteComponent() {
           Click me Now !
         </Button>
       </div>
-      <pre>{JSON.stringify({ data: enhancePromptQuery.data, value }, null, 2)}</pre>
+      <pre>{JSON.stringify({ enhancedPrompt: enhancePromptQuery.data?.enhancedPrompt, value }, null, 2)}</pre>
 
       <Card>
         <CardHeader>
