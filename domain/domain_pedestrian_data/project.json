@@ -1,0 +1,17 @@
+{
+  "name": "domain_pedestrian_data",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "domain/domain_pedestrian_data/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project domain_pedestrian_data --web",
+  "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/domain/domain_pedestrian_data"
+      }
+    }
+  }
+}

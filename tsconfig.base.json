@@ -14,6 +14,7 @@
     "paths": {
       "@clean-stack/components/*": ["frontend-libs/components/src/ui/*"],
       "@clean-stack/custom-errors": ["domain/custom-errors/src/index.ts"],
+      "@clean-stack/domain_pedestrian_data": ["domain/domain_pedestrian_data/src/index.ts"],
       "@clean-stack/domain_user": ["domain/domain_user/src/index.ts"],
       "@clean-stack/fe-utils": ["frontend-libs/fe-utils/src/index.ts"],
       "@clean-stack/framework/global-types": ["framework/global-types/src/index.ts"],
