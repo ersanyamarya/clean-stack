@@ -5,6 +5,7 @@ package llm.v1;
 
 service ServiceLLM {
   rpc EnhanceQueryText(EnhanceQueryTextRequest) returns (EnhanceQueryTextResponse);
+  rpc MongooseAggregation(MongooseAggregationRequest) returns (MongooseAggregationResponse);
 }
 
 message EnhanceQueryTextRequest {
@@ -15,3 +16,13 @@ message EnhanceQueryTextRequest {
 message EnhanceQueryTextResponse {
     string enhancedPrompt = 1; // This is the enhanced text
 }
+
+message MongooseAggregationRequest {
+    string query = 1; // This is the query that needs to be executed
+    string schema = 2; // This is the schema that needs to be used
+}
+
+message MongooseAggregationResponse {
+    string result = 1; // This is the result of the query
+}
+

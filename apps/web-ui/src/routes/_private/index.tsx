@@ -32,9 +32,9 @@ function RouteComponent() {
       <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
 
       <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
-
-      <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
-
+      <code>
+        <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
+      </code>
       <div className="flex space-x-4 w-full">
         <Input
           placeholder="query"
@@ -49,7 +49,9 @@ function RouteComponent() {
           Click me Now !
         </Button>
       </div>
-      <pre>{JSON.stringify({ enhancedPrompt: enhancePromptQuery.data?.enhancedPrompt, value }, null, 2)}</pre>
+      <code className="w-full">
+        <pre>{JSON.stringify({ enhancedPrompt: enhancePromptQuery.data?.enhancedPrompt, value }, null, 2)}</pre>
+      </code>
 
       <Card>
         <CardHeader>

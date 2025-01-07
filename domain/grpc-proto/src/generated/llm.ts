@@ -33,6 +33,18 @@ export interface EnhanceQueryTextResponse {
   enhancedPrompt: string;
 }
 
+export interface MongooseAggregationRequest {
+  /** This is the query that needs to be executed */
+  query: string;
+  /** This is the schema that needs to be used */
+  schema: string;
+}
+
+export interface MongooseAggregationResponse {
+  /** This is the result of the query */
+  result: string;
+}
+
 function createBaseEnhanceQueryTextRequest(): EnhanceQueryTextRequest {
   return { prompt: '', enhancementContext: '' };
 }
@@ -167,6 +179,140 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   },
 };
 
+function createBaseMongooseAggregationRequest(): MongooseAggregationRequest {
+  return { query: '', schema: '' };
+}
+
+export const MongooseAggregationRequest: MessageFns<MongooseAggregationRequest> = {
+  encode(message: MongooseAggregationRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.query !== '') {
+      writer.uint32(10).string(message.query);
+    }
+    if (message.schema !== '') {
+      writer.uint32(18).string(message.schema);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): MongooseAggregationRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMongooseAggregationRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.query = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.schema = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MongooseAggregationRequest {
+    return {
+      query: isSet(object.query) ? globalThis.String(object.query) : '',
+      schema: isSet(object.schema) ? globalThis.String(object.schema) : '',
+    };
+  },
+
+  toJSON(message: MongooseAggregationRequest): unknown {
+    const obj: any = {};
+    if (message.query !== '') {
+      obj.query = message.query;
+    }
+    if (message.schema !== '') {
+      obj.schema = message.schema;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MongooseAggregationRequest>, I>>(base?: I): MongooseAggregationRequest {
+    return MongooseAggregationRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MongooseAggregationRequest>, I>>(object: I): MongooseAggregationRequest {
+    const message = createBaseMongooseAggregationRequest();
+    message.query = object.query ?? '';
+    message.schema = object.schema ?? '';
+    return message;
+  },
+};
+
+function createBaseMongooseAggregationResponse(): MongooseAggregationResponse {
+  return { result: '' };
+}
+
+export const MongooseAggregationResponse: MessageFns<MongooseAggregationResponse> = {
+  encode(message: MongooseAggregationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.result !== '') {
+      writer.uint32(10).string(message.result);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): MongooseAggregationResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMongooseAggregationResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.result = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MongooseAggregationResponse {
+    return { result: isSet(object.result) ? globalThis.String(object.result) : '' };
+  },
+
+  toJSON(message: MongooseAggregationResponse): unknown {
+    const obj: any = {};
+    if (message.result !== '') {
+      obj.result = message.result;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<MongooseAggregationResponse>, I>>(base?: I): MongooseAggregationResponse {
+    return MongooseAggregationResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<MongooseAggregationResponse>, I>>(object: I): MongooseAggregationResponse {
+    const message = createBaseMongooseAggregationResponse();
+    message.result = object.result ?? '';
+    return message;
+  },
+};
+
 export type ServiceLLMService = typeof ServiceLLMService;
 export const ServiceLLMService = {
   enhanceQueryText: {
@@ -178,10 +324,20 @@ export const ServiceLLMService = {
     responseSerialize: (value: EnhanceQueryTextResponse) => Buffer.from(EnhanceQueryTextResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => EnhanceQueryTextResponse.decode(value),
   },
+  mongooseAggregation: {
+    path: '/llm.v1.ServiceLLM/MongooseAggregation',
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: MongooseAggregationRequest) => Buffer.from(MongooseAggregationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => MongooseAggregationRequest.decode(value),
+    responseSerialize: (value: MongooseAggregationResponse) => Buffer.from(MongooseAggregationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => MongooseAggregationResponse.decode(value),
+  },
 } as const;
 
 export interface ServiceLLMServer extends UntypedServiceImplementation {
   enhanceQueryText: handleUnaryCall<EnhanceQueryTextRequest, EnhanceQueryTextResponse>;
+  mongooseAggregation: handleUnaryCall<MongooseAggregationRequest, MongooseAggregationResponse>;
 }
 
 export interface ServiceLLMClient extends Client {
@@ -196,6 +352,21 @@ export interface ServiceLLMClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: EnhanceQueryTextResponse) => void
+  ): ClientUnaryCall;
+  mongooseAggregation(
+    request: MongooseAggregationRequest,
+    callback: (error: ServiceError | null, response: MongooseAggregationResponse) => void
+  ): ClientUnaryCall;
+  mongooseAggregation(
+    request: MongooseAggregationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MongooseAggregationResponse) => void
+  ): ClientUnaryCall;
+  mongooseAggregation(
+    request: MongooseAggregationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MongooseAggregationResponse) => void
   ): ClientUnaryCall;
 }
 
