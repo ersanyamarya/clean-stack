@@ -1,13 +1,16 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
-import { EnhanceQueryTextRequest, EnhanceQueryTextResponse } from '@clean-stack/grpc-proto/llm';
+import { EnhanceQueryTextRequest, EnhanceQueryTextResponse, MongooseAggregationRequest, MongooseAggregationResponse } from '@clean-stack/grpc-proto/llm';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto/user';
 import { enhanceQueryText } from './service-clients/llm-service';
 import { listUsers } from './service-clients/user-service';
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
+import { mongooseSchemaToText } from '@clean-stack/mongodb-connector';
 import { initTRPC } from '@trpc/server';
+import { pedestrianDataSchema } from 'domain/domain_pedestrian_data/src/lib/use_case_pedestrian_data/pedestrian_data.schema';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
+import { string } from 'zod';
 
 export const getTracer = () => trace.getTracer('trpc-server');
 
@@ -106,6 +109,14 @@ const trpcRouter = trpc.router({
       const response = await grpcClientPromisify<EnhanceQueryTextRequest, EnhanceQueryTextResponse>(enhanceQueryText())(req.input);
       return response;
     }),
+  generateMongooseAggregation: publicProcedure.input(string).mutation(async req => {
+    const schema = mongooseSchemaToText(pedestrianDataSchema);
+    const response = await grpcClientPromisify<MongooseAggregationRequest, MongooseAggregationResponse>(enhanceQueryText())({
+      query: req.input.toString(),
+      schema,
+    });
+    return response;
+  }),
 });
 
 export { createContext, trpcRouter };

@@ -22,3 +22,8 @@ export const enhanceQueryText = () => {
   checkClientInitialized();
   return llm_service_client.enhanceQueryText.bind(llm_service_client);
 };
+
+export const mongooseAggregation = () => {
+  checkClientInitialized();
+  return llm_service_client.mongooseAggregation.bind(llm_service_client);
+};
