@@ -10,6 +10,8 @@ import { llmServiceServer } from './service';
 
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
+import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
+import { Connection } from 'mongoose';
 import { config } from './config';
 
 const handleError: ServiceControllerErrorHandler = error => {
@@ -24,12 +26,15 @@ const handleError: ServiceControllerErrorHandler = error => {
 
   return metadata;
 };
-
+const mongoDBConnector = createMongoDBConnector(mainLogger, {
+  uri: config.mongoConnectionUri,
+  name: 'mongodb',
+});
 async function main() {
   exceptions(mainLogger);
 
-  console.log('config', config.azureOpenAi);
-
+  const { name: mongoDBName, healthCheck: mongoDBHealthCheck } = await mongoDBConnector.connect();
+  const connection: Connection = getMongoDBConnection();
   const llm = new AzureChatOpenAI({
     ...config.azureOpenAi,
     temperature: 0,
@@ -60,9 +65,35 @@ async function main() {
     mainLogger.info('Shutting down server');
     server.forceShutdown();
     telemetrySdk.shutdown();
+    await mongoDBConnector.disconnect();
   };
 
   gracefulShutdown(mainLogger, onShutdown);
+  // console.log(mongooseSchemaToText(pedestrianSchema));
+
+  // const fileData = loadDataFromFIle() as any;
+  // const pedestrianModel = getPedestrianModel(connection);
+  // mainLogger.info(fileData.features.length);
+
+  // fileData.features.forEach(async (feature: any) => {
+  //   try {
+  //     const pedestrian = new pedestrianModel({
+  //       geometry: {
+  //         type: feature.geometry.type,
+  //         coordinates: feature.geometry.coordinates,
+  //       },
+  //       properties: {
+  //         ...feature.properties,
+  //         details_zones: JSON.parse(feature.properties.details_zones),
+  //       },
+  //     });
+  //     await pedestrian.save();
+  //     mainLogger.info('Pedestrian data saved');
+  //   } catch (error) {
+  //     mainLogger.error(feature, error.message, 'Failed to save pedestrian data ');
+  //     exit(1);
+  //   }
+  // });
 }
 
 main().catch(error => {

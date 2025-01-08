@@ -19,6 +19,11 @@ export const Route = createFileRoute('/_private/')({
   component: RouteComponent,
 });
 
+const RefineContext = `This dataset contains real-time pedestrian traffic counts, weather conditions (temperature, rain, cloudiness), timestamps, and precise geo-coordinates (longitude/latitude)
+for multiple streets in Würzburg, Germany, structured as GeoJSON features with polygon boundaries and location-specific properties
+Only queries related to a dataset is possible and not abstract and general queries like "What is the weather today?" or "What is the population of Germany?"
+`;
+
 function RouteComponent() {
   const sidebarState = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -35,6 +40,8 @@ function RouteComponent() {
       <code>
         <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
       </code>
+      <h1 className="text-4xl font-bold">Enhance Prompt</h1>
+      <h2>{RefineContext}</h2>
       <div className="flex space-x-4 w-full">
         <Input
           placeholder="query"
@@ -44,13 +51,16 @@ function RouteComponent() {
         />
         <Button
           onClick={async () => {
-            enhancePromptQuery.mutate({ prompt: value, enhancementContext: 'context' });
+            enhancePromptQuery.mutate({
+              prompt: value,
+              enhancementContext: RefineContext,
+            });
           }}>
           Click me Now !
         </Button>
       </div>
       <code className="w-full">
-        <pre>{JSON.stringify({ enhancedPrompt: enhancePromptQuery.data?.enhancedPrompt, value }, null, 2)}</pre>
+        <pre>{JSON.stringify(enhancePromptQuery.data?.enhancedPrompt, null, 2)}</pre>
       </code>
 
       <Card>
