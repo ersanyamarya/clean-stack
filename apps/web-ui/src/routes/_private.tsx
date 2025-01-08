@@ -40,7 +40,7 @@ function RouteComponent() {
       title="Clean Stack"
       open={sidebarState.isOpen}>
       <AppSidebar />
-      <main>
+      <main className="flex flex-col w-full h-screen overflow-x-hidden">
         <SidebarTrigger onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })} />
         <Outlet />
       </main>

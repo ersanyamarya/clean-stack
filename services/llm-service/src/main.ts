@@ -8,6 +8,7 @@ import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 import { AzureChatOpenAI } from '@langchain/openai';
 import { llmServiceServer } from './service';
 
+import { createPedestrianMongoRepository } from '@clean-stack/domain_pedestrian_data';
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
@@ -46,7 +47,8 @@ async function main() {
 
   const address = config.address;
   try {
-    const llmService = llmServiceServer(llm, handleError, mainLogger);
+    const pedestrianRepository = createPedestrianMongoRepository(connection);
+    const llmService = llmServiceServer(pedestrianRepository, llm, handleError, mainLogger);
 
     server.addService(ServiceLLMService, llmService);
   } catch (error) {
@@ -73,6 +75,27 @@ async function main() {
 
   // const fileData = loadDataFromFIle() as any;
   // const pedestrianModel = getPedestrianModel(connection);
+  // mainLogger.info('Pedestrian model created');
+  // const aggr = await pedestrianModel.aggregate([
+  //   {
+  //     $match: {
+  //       'properties.location_name': 'Schönbornstraße',
+  //       'properties.timestamp': {
+  //         $gte: 1736160000,
+  //         $lt: 1736246400,
+  //       },
+  //     },
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 0,
+  //       temperature: '$properties.temperature',
+  //       pedestrians_count: '$properties.pedestrians_count',
+  //     },
+  //   },
+  // ]);
+  // mainLogger.info({ found: true, aggr }, 'Aggregation result');
+
   // mainLogger.info(fileData.features.length);
 
   // fileData.features.forEach(async (feature: any) => {

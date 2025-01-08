@@ -1,16 +1,26 @@
 import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
 import { EnhanceQueryTextRequest, EnhanceQueryTextResponse, MongooseAggregationRequest, MongooseAggregationResponse } from '@clean-stack/grpc-proto/llm';
 import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto/user';
-import { enhanceQueryText } from './service-clients/llm-service';
+import { enhanceQueryText, mongooseAggregation } from './service-clients/llm-service';
 import { listUsers } from './service-clients/user-service';
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
+import { pedestrianSchema } from '@clean-stack/domain_pedestrian_data';
 import { mongooseSchemaToText } from '@clean-stack/mongodb-connector';
 import { initTRPC } from '@trpc/server';
-import { pedestrianDataSchema } from 'domain/domain_pedestrian_data/src/lib/use_case_pedestrian_data/pedestrian_data.schema';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
-import { string } from 'zod';
+import { z } from 'zod';
+
+const schema = mongooseSchemaToText(pedestrianSchema);
+const RefineContext =
+  `This dataset contains real-time pedestrian traffic counts, weather conditions (temperature, rain, cloudiness), timestamps, and precise geo-coordinates (longitude/latitude)
+for multiple streets in Würzburg, Germany, structured as GeoJSON features with polygon boundaries and location-specific properties
+Only queries related to a dataset is possible and not abstract and general queries like "What is the weather today?" or "What is the population of Germany?"
+
+Here is the schema for the dataset:
+${schema}
+` as const;
 
 export const getTracer = () => trace.getTracer('trpc-server');
 
@@ -103,19 +113,24 @@ const trpcRouter = trpc.router({
     return users;
   }),
   enhanceQueryText: publicProcedure
-    .input(EnhanceQueryTextRequest)
+    .input(z.string())
     // .output(EnhanceQueryTextResponse)
     .mutation(async req => {
-      const response = await grpcClientPromisify<EnhanceQueryTextRequest, EnhanceQueryTextResponse>(enhanceQueryText())(req.input);
+      const response = await grpcClientPromisify<EnhanceQueryTextRequest, EnhanceQueryTextResponse>(enhanceQueryText())({
+        enhancementContext: RefineContext,
+        prompt: req.input.toString(),
+      });
       return response;
     }),
-  generateMongooseAggregation: publicProcedure.input(string).mutation(async req => {
-    const schema = mongooseSchemaToText(pedestrianDataSchema);
-    const response = await grpcClientPromisify<MongooseAggregationRequest, MongooseAggregationResponse>(enhanceQueryText())({
-      query: req.input.toString(),
+  generateMongooseAggregation: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+    const response = await grpcClientPromisify<MongooseAggregationRequest, MongooseAggregationResponse>(mongooseAggregation())({
+      query: input,
       schema,
     });
-    return response;
+    console.log(response.result);
+
+    const result = JSON.parse(response.result);
+    return result;
   }),
 });
 

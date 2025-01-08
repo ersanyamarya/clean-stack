@@ -1,5 +1,6 @@
 import { Connection, Model, models } from 'mongoose';
 import { createPedestrianMongoRepository } from './pedestrian_data.mongodb.repository';
+import { PedestrianDataRepository } from './pedestrian_data.repository';
 import { pedestrianSchema } from './pedestrian_data.schema';
 import { PedestrianEntity } from './pedestrian_data.types';
 
@@ -8,4 +9,4 @@ const getPedestrianModel = (connection: Connection): Model<PedestrianEntity> => 
   return PedestrianDataMongooseModel as Model<PedestrianEntity>;
 };
 
-export { createPedestrianMongoRepository, getPedestrianModel, pedestrianSchema };
+export { createPedestrianMongoRepository, getPedestrianModel, PedestrianDataRepository, pedestrianSchema };
