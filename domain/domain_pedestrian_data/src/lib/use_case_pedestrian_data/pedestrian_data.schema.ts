@@ -62,7 +62,7 @@ export const pedestrianSchema = new Schema<PedestrianEntity>(
 );
 
 pedestrianSchema.pre('save', function (next) {
-  const timestamp = this.properties.timestamp * 1000 || Date.now();
+  const timestamp = this.properties.timestamp;
   const date = new Date(timestamp);
   this.createdAt = date;
   this.updatedAt = date;

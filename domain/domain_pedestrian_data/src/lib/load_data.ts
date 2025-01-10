@@ -1,8 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 
-const geoJsonFilePath = '/Users/sanyam.arya/Desktop/geojson.json';
-
-export function loadDataFromFIle(): string {
+export function loadDataFromFIle(geoJsonFilePath = '/Users/sanyam.arya/Desktop/geojson.json'): string {
   // check if file exists
   if (!existsSync(geoJsonFilePath)) throw new Error('File does not exist');
 
