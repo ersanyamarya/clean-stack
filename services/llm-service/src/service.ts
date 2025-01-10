@@ -1,44 +1,12 @@
 import { PedestrianDataRepository } from '@clean-stack/domain_pedestrian_data';
 import { Logger } from '@clean-stack/framework/global-types';
 import { serviceController, ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
-import {
-  EnhanceQueryTextRequest,
-  EnhanceQueryTextResponse,
-  MongooseAggregationRequest,
-  MongooseAggregationResponse,
-  ServiceLLMServer,
-} from '@clean-stack/grpc-proto/llm';
+import { EnhanceQueryTextResponse, MongooseAggregationRequest, MongooseAggregationResponse, ServiceLLMServer } from '@clean-stack/grpc-proto/llm';
 import { AzureChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
+import { enhanceTheQuery } from './operations/enhance_query_text';
 
 // Schema Definitions
-const enhanceQueryResponseSchema = z.object({
-  relevantToContext: z.boolean(),
-  enhancedPrompt: z.string().nullable(),
-  suggestions: z.array(z.string()).nullable(),
-});
-
-// Prompt Templates
-const QUERY_ENHANCEMENT_PROMPT = `You are an expert prompt engineer. Use the enhancement context to refine the prompt.
-
-Respond ONLY with a clean JSON object in this exact format:
-{
-  "relevantToContext": boolean,
-  "enhancedPrompt": string or null,
-  "suggestions": array of strings or null
-}
-
-Rules:
-1. If prompt is relevant to context:
-   - Set relevantToContext: true
-   - Set enhancedPrompt to the improved prompt
-   - Set suggestions to null
-2. If prompt is not relevant:
-   - Set relevantToContext: false
-   - Set enhancedPrompt to null
-   - Set suggestions to array of 2-3 relevant examples (use real street names and specific queries)
-
-Do not include any markdown formatting, code blocks, or additional text.`;
 
 const MONGOOSE_AGGREGATION_PROMPT = (
   schema: string
@@ -125,27 +93,6 @@ function processLlmResponse<T>(content: string, schema: z.ZodType<T>, logger: Lo
 }
 
 // Service Methods
-async function enhanceQueryText(llm: AzureChatOpenAI, request: EnhanceQueryTextRequest, logger: Logger): Promise<EnhanceQueryTextResponse> {
-  logger.debug('Executing query text enhancement');
-  const resultLlm = await llm.invoke([
-    ['system', QUERY_ENHANCEMENT_PROMPT],
-    ['assistant', 'I will return only a clean JSON object.'],
-    [
-      'user',
-      `Enhancement Context: ${request.enhancementContext}
-       Prompt: ${request.prompt}`,
-    ],
-  ]);
-
-  const validationResult = processLlmResponse(resultLlm.content.toString(), enhanceQueryResponseSchema, logger);
-
-  return EnhanceQueryTextResponse.fromJSON({
-    enhancedPrompt: validationResult.enhancedPrompt || '',
-    relevantToContext: validationResult.relevantToContext,
-    suggestions: validationResult.suggestions || [],
-  });
-}
-
 async function mongooseAggregation(
   pedestrianRepository: PedestrianDataRepository,
   llm: AzureChatOpenAI,
@@ -184,7 +131,20 @@ export function llmServiceServer(
   logger: Logger
 ): ServiceLLMServer {
   return {
-    enhanceQueryText: serviceController((request, logger) => enhanceQueryText(llm, request, logger), errorHandler, logger),
+    enhanceQueryText: serviceController(
+      async (request, logger) => {
+        const { enhancementContext, prompt } = request;
+        const validationResult = await enhanceTheQuery(llm, enhancementContext, prompt);
+        logger.debug({ validationResult }, 'Enhanced query result');
+        return EnhanceQueryTextResponse.fromJSON({
+          enhancedPrompt: validationResult.enhancedPrompt || '',
+          relevantToContext: validationResult.relevantToContext,
+          suggestions: validationResult.suggestions || [],
+        });
+      },
+      errorHandler,
+      logger
+    ),
     mongooseAggregation: serviceController((request, logger) => mongooseAggregation(pedestrianRepository, llm, request, logger), errorHandler, logger),
   };
 }

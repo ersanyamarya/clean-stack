@@ -120,7 +120,6 @@ const trpcRouter = trpc.router({
         enhancementContext: RefineContext,
         prompt: req.input.toString(),
       });
-      console.log(response);
 
       return { response };
     }),
@@ -129,7 +128,6 @@ const trpcRouter = trpc.router({
       query: input,
       schema,
     });
-    console.log(response.result);
 
     const result = JSON.parse(response.result);
     return result;
