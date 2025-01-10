@@ -1,7 +1,7 @@
 import httpStatusCodes from 'http-status-codes';
 import { z } from 'zod';
 
-export const errorCodes = {
+export const appErrorCodes = {
   RESOURCE_NOT_FOUND: {
     en: '{resource} not found',
     de: '{resource} nicht gefunden',
@@ -37,4 +37,4 @@ export const errorCodes = {
  * This type is derived from the keys of the `errorCodes` object,
  * ensuring that only valid error code keys are used.
  */
-export type ERROR_CODE_KEYS = keyof typeof errorCodes;
+export type APP_ERROR_CODE_KEYS = keyof typeof appErrorCodes;

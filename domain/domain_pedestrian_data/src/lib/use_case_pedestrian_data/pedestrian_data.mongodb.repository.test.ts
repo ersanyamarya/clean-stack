@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { createPedestrianMongoRepository } from './pedestrian_data.mongodb.repository';
+import { PedestrianCreateInput } from './pedestrian_data.types';
 
 describe('PedestrianMongoRepository', () => {
   let mongoServer: MongoMemoryServer;
@@ -24,42 +25,50 @@ describe('PedestrianMongoRepository', () => {
     await connection.collection('pedestrians').deleteMany({});
   });
 
-  const mockPedestrianData = {
-    timestamp: 1632632400000,
-    weather_condition: 'clear',
-    temperature: 20,
-    pedestrians_count: 10,
-    location_id: 1,
-    location_name: 'Test Location',
-    geo_point_2d: { lon: 51.5074, lat: -0.1278 },
-    details_ltr_pedestrians_count: 5,
-    details_rtl_pedestrians_count: 5,
-    details_adult_pedestrians_count: 5,
-    details_child_pedestrians_count: 5,
-    details_adult_ltr_pedestrians_count: 5,
-    details_adult_rtl_pedestrians_count: 5,
-    details_child_ltr_pedestrians_count: 5,
-    details_child_rtl_pedestrians_count: 5,
-    details_zones: [
-      {
-        id: 1,
-        pedestrians_count: 5,
-        ltr_pedestrians_count: 3,
-        rtl_pedestrians_count: 2,
-        adult_pedestrians_count: 3,
-        child_pedestrians_count: 2,
-      },
-    ],
+  const mockPedestrianData: PedestrianCreateInput = {
+    type: 'Feature',
     geometry: {
-      coordinates: [[[51.5074, -0.1278]]],
-      type: 'Point',
+      type: 'Polygon',
+      coordinates: [[[123.456, 78.91]]],
+    },
+    properties: {
+      timestamp: Date.now(),
+      weather_condition: 'clear-day',
+      temperature: 25,
+      pedestrians_count: 10,
+      unverified: 0,
+      location_id: 1,
+      location_name: 'Test Location',
+      geo_point_2d: {
+        lon: 123.456,
+        lat: 78.91,
+      },
+      details_ltr_pedestrians_count: 5,
+      details_rtl_pedestrians_count: 5,
+      details_adult_pedestrians_count: 8,
+      details_child_pedestrians_count: 2,
+      details_adult_ltr_pedestrians_count: 4,
+      details_adult_rtl_pedestrians_count: 4,
+      details_child_ltr_pedestrians_count: 1,
+      details_child_rtl_pedestrians_count: 1,
+      details_zones: [
+        {
+          id: 1,
+          pedestrians_count: 10,
+          ltr_pedestrians_count: 5,
+          rtl_pedestrians_count: 5,
+          adult_pedestrians_count: 8,
+          child_pedestrians_count: 2,
+        },
+      ],
     },
   };
 
   describe('createPedestrianData', () => {
     it('should create new pedestrian data', async () => {
       const data = await repository.createPedestrianData(mockPedestrianData);
-      expect(data).toMatchObject(mockPedestrianData);
+      expect(data.type).toBe(mockPedestrianData.type);
+      expect(data.properties).toMatchObject(mockPedestrianData.properties);
       expect(data._id).toBeDefined();
     });
 
@@ -75,7 +84,10 @@ describe('PedestrianMongoRepository', () => {
       await repository.createPedestrianData(mockPedestrianData);
       await repository.createPedestrianData({
         ...mockPedestrianData,
-        location_name: 'Another Location',
+        properties: {
+          ...mockPedestrianData.properties,
+          location_name: 'Another Location',
+        },
       });
 
       const data = await repository.listPedestrianData({});
@@ -86,14 +98,17 @@ describe('PedestrianMongoRepository', () => {
       await repository.createPedestrianData(mockPedestrianData);
       await repository.createPedestrianData({
         ...mockPedestrianData,
-        location_name: 'Another Location',
+        properties: {
+          ...mockPedestrianData.properties,
+          location_name: 'Another Location',
+        },
       });
 
       const data = await repository.listPedestrianData({
-        location_name: mockPedestrianData.location_name,
+        'properties.location_name': mockPedestrianData.properties.location_name,
       });
       expect(data).toHaveLength(1);
-      expect(data[0].location_name).toBe(mockPedestrianData.location_name);
+      expect(data[0].properties.location_name).toBe(mockPedestrianData.properties.location_name);
     });
   });
 
@@ -103,11 +118,17 @@ describe('PedestrianMongoRepository', () => {
         repository.createPedestrianData(mockPedestrianData),
         repository.createPedestrianData({
           ...mockPedestrianData,
-          location_name: 'Location 2',
+          properties: {
+            ...mockPedestrianData.properties,
+            location_name: 'Location 2',
+          },
         }),
         repository.createPedestrianData({
           ...mockPedestrianData,
-          location_name: 'Location 3',
+          properties: {
+            ...mockPedestrianData.properties,
+            location_name: 'Location 3',
+          },
         }),
       ]);
 
@@ -146,14 +167,17 @@ describe('PedestrianMongoRepository', () => {
       await repository.createPedestrianData(mockPedestrianData);
       await repository.createPedestrianData({
         ...mockPedestrianData,
-        pedestrians_count: 20,
+        properties: {
+          ...mockPedestrianData.properties,
+          pedestrians_count: 20,
+        },
       });
 
       const result = await repository.aggregatePedestrianData<{ _id: null; totalCount: number }>([
         {
           $group: {
             _id: null,
-            totalCount: { $sum: '$pedestrians_count' },
+            totalCount: { $sum: '$properties.pedestrians_count' },
           },
         },
       ]);

@@ -1,9 +1,10 @@
+import { RequestValidationError } from '@clean-stack/custom-errors';
 import Router from '@koa/router';
 import Koa from 'koa';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { isRequestValidationError, koaCallback, RequestValidationError } from '.';
+import { koaCallback } from '.';
 import { appInstance, mockErrorCallback } from '../_utils';
 
 // Define Zod schemas for testing
@@ -50,18 +51,6 @@ describe('koaCallback Error Handling', () => {
     app.use(router.routes());
     app.on('error', mockErrorCallback);
     vi.clearAllMocks();
-  });
-
-  describe('Test isRequestValidationError function', () => {
-    it('should return true for RequestValidationError', () => {
-      const error = new RequestValidationError('INVALID_QUERY_PARAMS', []);
-      expect(isRequestValidationError(error)).toBe(true);
-    });
-
-    it('should return false for other errors', () => {
-      const error = new Error('Test Error');
-      expect(isRequestValidationError(error)).toBe(false);
-    });
   });
 
   describe('Query Parameter Validation', () => {

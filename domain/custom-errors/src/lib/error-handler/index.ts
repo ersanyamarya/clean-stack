@@ -1,4 +1,4 @@
-import { AppError, ERROR_CODE_KEYS, isAppError } from '../app-error';
+import { APP_ERROR_CODE_KEYS, AppError, isAppError } from '../app-error';
 
 export type ErrorHandlerReturnType = {
   name: string;
@@ -25,7 +25,7 @@ export const allowedErrors: AllowedError[] = [
   {
     check: isAppError,
     process: (error: unknown) => {
-      const appError = error as AppError<ERROR_CODE_KEYS>;
+      const appError = error as AppError<APP_ERROR_CODE_KEYS>;
       return {
         name: 'AppError',
         status: appError.statusCode,

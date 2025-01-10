@@ -44,7 +44,6 @@ interface PedestrianDetails {
 }
 
 export interface PedestrianData extends PedestrianDetails {
-  _id: Types.ObjectId;
   timestamp: number;
   weather_condition: WeatherCondition;
   temperature: number;
@@ -56,6 +55,7 @@ export interface PedestrianData extends PedestrianDetails {
 }
 
 export interface PedestrianEntity {
+  _id: Types.ObjectId;
   type: string;
   geometry: GeoPolygon;
   properties: PedestrianData;

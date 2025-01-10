@@ -1,10 +1,10 @@
 import httpStatusCodes from 'http-status-codes';
 import { describe, expect, it } from 'vitest';
-import { ERROR_CODE_KEYS } from './codes';
+import { APP_ERROR_CODE_KEYS } from './codes';
 import { AppError, isAppError } from './index';
 
 describe('AppError', () => {
-  const errorCode: ERROR_CODE_KEYS = 'RESOURCE_NOT_FOUND';
+  const errorCode: APP_ERROR_CODE_KEYS = 'RESOURCE_NOT_FOUND';
 
   it('should create an instance of AppError with correct properties', () => {
     const context = { userId: 123 };
@@ -27,7 +27,7 @@ describe('AppError', () => {
   });
 
   it('should set statusCode to INTERNAL_SERVER_ERROR if errorCode is not found', () => {
-    const invalidErrorCode = 'INVALID_ERROR_CODE' as ERROR_CODE_KEYS;
+    const invalidErrorCode = 'INVALID_ERROR_CODE' as APP_ERROR_CODE_KEYS;
     const error = new AppError(invalidErrorCode);
 
     expect(error.statusCode).toBe(httpStatusCodes.INTERNAL_SERVER_ERROR);
