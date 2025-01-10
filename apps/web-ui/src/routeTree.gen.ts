@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PublicImport } from './routes/_public'
 import { Route as PrivateImport } from './routes/_private'
 import { Route as PrivateIndexImport } from './routes/_private/index'
+import { Route as PrivateMakeImport } from './routes/_private/make'
 
 // Create Virtual Routes
 
@@ -74,6 +75,12 @@ const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
   import('./routes/_private/about.lazy').then((d) => d.Route),
 )
 
+const PrivateMakeRoute = PrivateMakeImport.update({
+  id: '/make',
+  path: '/make',
+  getParentRoute: () => PrivateRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -91,6 +98,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
+    }
+    '/_private/make': {
+      id: '/_private/make'
+      path: '/make'
+      fullPath: '/make'
+      preLoaderRoute: typeof PrivateMakeImport
+      parentRoute: typeof PrivateImport
     }
     '/_private/about': {
       id: '/_private/about'
@@ -133,11 +147,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface PrivateRouteChildren {
+  PrivateMakeRoute: typeof PrivateMakeRoute
   PrivateAboutLazyRoute: typeof PrivateAboutLazyRoute
   PrivateIndexRoute: typeof PrivateIndexRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
+  PrivateMakeRoute: PrivateMakeRoute,
   PrivateAboutLazyRoute: PrivateAboutLazyRoute,
   PrivateIndexRoute: PrivateIndexRoute,
 }
@@ -162,6 +178,7 @@ const PublicRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof PublicRouteWithChildren
+  '/make': typeof PrivateMakeRoute
   '/about': typeof PrivateAboutLazyRoute
   '/forget-password': typeof PublicForgetPasswordLazyRoute
   '/login': typeof PublicLoginLazyRoute
@@ -171,6 +188,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof PublicRouteWithChildren
+  '/make': typeof PrivateMakeRoute
   '/about': typeof PrivateAboutLazyRoute
   '/forget-password': typeof PublicForgetPasswordLazyRoute
   '/login': typeof PublicLoginLazyRoute
@@ -182,6 +200,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_private': typeof PrivateRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
+  '/_private/make': typeof PrivateMakeRoute
   '/_private/about': typeof PrivateAboutLazyRoute
   '/_public/forget-password': typeof PublicForgetPasswordLazyRoute
   '/_public/login': typeof PublicLoginLazyRoute
@@ -191,13 +210,28 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/about' | '/forget-password' | '/login' | '/register' | '/'
+  fullPaths:
+    | ''
+    | '/make'
+    | '/about'
+    | '/forget-password'
+    | '/login'
+    | '/register'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/about' | '/forget-password' | '/login' | '/register' | '/'
+  to:
+    | ''
+    | '/make'
+    | '/about'
+    | '/forget-password'
+    | '/login'
+    | '/register'
+    | '/'
   id:
     | '__root__'
     | '/_private'
     | '/_public'
+    | '/_private/make'
     | '/_private/about'
     | '/_public/forget-password'
     | '/_public/login'
@@ -233,6 +267,7 @@ export const routeTree = rootRoute
     "/_private": {
       "filePath": "_private.tsx",
       "children": [
+        "/_private/make",
         "/_private/about",
         "/_private/"
       ]
@@ -244,6 +279,10 @@ export const routeTree = rootRoute
         "/_public/login",
         "/_public/register"
       ]
+    },
+    "/_private/make": {
+      "filePath": "_private/make.tsx",
+      "parent": "/_private"
     },
     "/_private/about": {
       "filePath": "_private/about.lazy.tsx",

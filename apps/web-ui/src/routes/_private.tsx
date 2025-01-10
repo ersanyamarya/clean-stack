@@ -10,7 +10,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@clean-stack/components/sidebar';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, redirect } from '@tanstack/react-router';
+import { HomeIcon, MagnetIcon } from 'lucide-react';
 import { z } from 'zod';
 import useAuthState from '../global-state';
 import LanguageSwitcher from '../widgets/LanguageSwitcher';
@@ -62,8 +63,25 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <h2> Apple</h2>
+          <SidebarGroupContent className="space-y-4">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 p-2"
+              activeProps={{
+                className: 'bg-primary-foreground text-primary',
+              }}>
+              <HomeIcon size={24} />
+              <p>Home</p>
+            </Link>
+            <Link
+              to="/make"
+              className="flex items-center space-x-2 p-2"
+              activeProps={{
+                className: 'bg-primary-foreground text-primary',
+              }}>
+              <MagnetIcon size={24} />
+              <p>Better Prompt</p>
+            </Link>
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup />

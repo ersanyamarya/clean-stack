@@ -14,29 +14,28 @@ const sidebar = z.object({
   selected: z.string().optional().default('home'),
 });
 
-export const Route = createFileRoute('/_private/')({
+export const Route = createFileRoute('/_private/make')({
   validateSearch: sidebar,
   component: RouteComponent,
 });
-const SUGGESTIONS = [
-  'What is the pedestrian count for Schönbornstraße during each weather conditions?',
-  'Provide the pedestrian count for each weather condition for Schönbornstraße at on 1 January 2025',
-  'List all streets with more than 1000 pedestrians for each weather condition.',
-];
+
 function RouteComponent() {
   const { toast } = useToast();
   const sidebarState = Route.useSearch();
   const navigate = Route.useNavigate();
   const userQuery = trpc.user.useQuery('67726218d9d2abd698ae1b5b');
-  const enhancePromptQuery = trpc.enhanceQueryText.useMutation({});
-  const mongooseAggregationQuery = trpc.generateMongooseAggregation.useMutation({
-    onError(error) {
-      toast({ title: 'Error', description: error.message, type: 'foreground', color: 'red' });
+  const enhancePromptQuery = trpc.enhanceQueryText.useMutation({
+    onSettled(data, error, variables, context) {
+      if (data) {
+        setSUGGESTIONS(data.response.suggestions);
+      }
     },
   });
+  const mongooseAggregationQuery = trpc.generateMongooseAggregation.useMutation();
   const utils = trpc.useUtils();
   const { t } = useTranslation('common');
   const [value, setValue] = useState('');
+  const [SUGGESTIONS, setSUGGESTIONS] = useState<Array<string>>([]);
   return (
     <div className="flex flex-col items-center justify-center space-y-4 p-4">
       {/* <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
@@ -44,20 +43,20 @@ function RouteComponent() {
       <code>
         <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
       </code> */}
-      <h1 className="text-4xl font-bold"> Pedestrian Data for Würzburg, Germany</h1>
+      <h1 className="text-3xl font-bold">Make Prompts Better: Pedestrian Data for Würzburg, Germany</h1>
       <div className="flex space-x-4 w-full">
         <Input
-          placeholder="query"
+          placeholder="prompt"
           value={value}
           onChange={e => setValue(e.target.value)}
           // {...debounceFieldProps}
         />
         <Button
-          disabled={mongooseAggregationQuery.isPending || !value}
+          disabled={enhancePromptQuery.isPending || !value}
           onClick={async () => {
-            mongooseAggregationQuery.mutate(value);
+            enhancePromptQuery.mutate(value);
           }}>
-          {mongooseAggregationQuery.isPending ? <Loader2 className="animate-spin" /> : <Wand size={24} />}
+          {enhancePromptQuery.isPending ? <Loader2 className="animate-spin" /> : <Wand size={24} />}
           Get Results !
         </Button>
       </div>
@@ -83,9 +82,10 @@ function RouteComponent() {
           <CardDescription>{value}</CardDescription>
         </CardHeader>
         <CardContent>
-          <pre>{JSON.stringify(mongooseAggregationQuery.data, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(enhancePromptQuery.data, null, 2)}</pre> */}
+          <p>{enhancePromptQuery.data?.response.enhancedPrompt}</p>
         </CardContent>
-        <CardFooter>Pedestrian Würzburg, Germany</CardFooter>
+        <CardFooter></CardFooter>
       </Card>
       {/* <HoverCard>
         <HoverCardTrigger>Hover</HoverCardTrigger>

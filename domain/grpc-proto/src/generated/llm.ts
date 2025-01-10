@@ -31,6 +31,10 @@ export interface EnhanceQueryTextRequest {
 export interface EnhanceQueryTextResponse {
   /** This is the enhanced text */
   enhancedPrompt: string;
+  /** This is the information that is relevant to the context */
+  relevantToContext: string;
+  /** list of suggestions */
+  suggestions: string[];
 }
 
 export interface MongooseAggregationRequest {
@@ -122,13 +126,19 @@ export const EnhanceQueryTextRequest: MessageFns<EnhanceQueryTextRequest> = {
 };
 
 function createBaseEnhanceQueryTextResponse(): EnhanceQueryTextResponse {
-  return { enhancedPrompt: '' };
+  return { enhancedPrompt: '', relevantToContext: '', suggestions: [] };
 }
 
 export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   encode(message: EnhanceQueryTextResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.enhancedPrompt !== '') {
       writer.uint32(10).string(message.enhancedPrompt);
+    }
+    if (message.relevantToContext !== '') {
+      writer.uint32(18).string(message.relevantToContext);
+    }
+    for (const v of message.suggestions) {
+      writer.uint32(26).string(v!);
     }
     return writer;
   },
@@ -148,6 +158,22 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
           message.enhancedPrompt = reader.string();
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.relevantToContext = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.suggestions.push(reader.string());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -158,13 +184,23 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   },
 
   fromJSON(object: any): EnhanceQueryTextResponse {
-    return { enhancedPrompt: isSet(object.enhancedPrompt) ? globalThis.String(object.enhancedPrompt) : '' };
+    return {
+      enhancedPrompt: isSet(object.enhancedPrompt) ? globalThis.String(object.enhancedPrompt) : '',
+      relevantToContext: isSet(object.relevantToContext) ? globalThis.String(object.relevantToContext) : '',
+      suggestions: globalThis.Array.isArray(object?.suggestions) ? object.suggestions.map((e: any) => globalThis.String(e)) : [],
+    };
   },
 
   toJSON(message: EnhanceQueryTextResponse): unknown {
     const obj: any = {};
     if (message.enhancedPrompt !== '') {
       obj.enhancedPrompt = message.enhancedPrompt;
+    }
+    if (message.relevantToContext !== '') {
+      obj.relevantToContext = message.relevantToContext;
+    }
+    if (message.suggestions?.length) {
+      obj.suggestions = message.suggestions;
     }
     return obj;
   },
@@ -175,6 +211,8 @@ export const EnhanceQueryTextResponse: MessageFns<EnhanceQueryTextResponse> = {
   fromPartial<I extends Exact<DeepPartial<EnhanceQueryTextResponse>, I>>(object: I): EnhanceQueryTextResponse {
     const message = createBaseEnhanceQueryTextResponse();
     message.enhancedPrompt = object.enhancedPrompt ?? '';
+    message.relevantToContext = object.relevantToContext ?? '';
+    message.suggestions = object.suggestions?.map(e => e) || [];
     return message;
   },
 };

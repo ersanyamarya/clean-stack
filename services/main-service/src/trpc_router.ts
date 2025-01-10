@@ -120,7 +120,9 @@ const trpcRouter = trpc.router({
         enhancementContext: RefineContext,
         prompt: req.input.toString(),
       });
-      return response;
+      console.log(response);
+
+      return { response };
     }),
   generateMongooseAggregation: publicProcedure.input(z.string()).mutation(async ({ input }) => {
     const response = await grpcClientPromisify<MongooseAggregationRequest, MongooseAggregationResponse>(mongooseAggregation())({

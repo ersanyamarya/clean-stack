@@ -15,6 +15,9 @@ message EnhanceQueryTextRequest {
 
 message EnhanceQueryTextResponse {
     string enhancedPrompt = 1; // This is the enhanced text
+    string relevantToContext = 2; // This is the information that is relevant to the context
+    // list of suggestions
+    repeated string suggestions = 3;
 }
 
 message MongooseAggregationRequest {

@@ -163,13 +163,17 @@ async function mongooseAggregation(
 
   const parsedPipeline = processLlmResponse(resultLlm.content.toString(), z.array(z.any()), logger);
 
-  const result = await pedestrianRepository.aggregatePedestrianData(parsedPipeline);
+  try {
+    const result = await pedestrianRepository.aggregatePedestrianData(parsedPipeline);
 
-  logger.debug({ result, parsedPipeline }, 'Aggregation result');
+    logger.debug({ result, parsedPipeline }, 'Aggregation result');
 
-  return MongooseAggregationResponse.fromJSON({
-    result: JSON.stringify(result),
-  });
+    return MongooseAggregationResponse.fromJSON({
+      result: JSON.stringify(result),
+    });
+  } catch (error) {
+    logger.error({ parsedPipeline, error }, 'Failed to execute aggregation pipeline');
+  }
 }
 
 // Main Service Export
