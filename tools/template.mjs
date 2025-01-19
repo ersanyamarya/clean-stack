@@ -1,5 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Read custom.css to extract color variables
 const customCssPath = path.join(__dirname, '../apps/clean-docs/src/css/custom.css');
@@ -531,8 +535,5 @@ function generateDetailHtml(category, project, data, metrics, getPercentage) {
 </html>`;
 }
 
-module.exports = {
-  generateOverviewHtml,
-  generateDetailHtml,
-  getCoverageClass,
-};
+// Convert CommonJS exports to ES module exports
+export { generateDetailHtml, generateOverviewHtml, getCoverageClass };

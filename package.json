@@ -14,7 +14,7 @@
     "docker:down": "./tools/shell_scripts/all-docker.sh down",
     "docker:up": "./tools/shell_scripts/all-docker.sh up",
     "test": "rm -rf coverage && npm run clean && nx run-many --target=test --all --parallel",
-    "test:merge:coverage": "npm run test && node ./tools/merge-coverage.js",
+    "test:merge:coverage": "npm run test && node ./tools/merge-coverage.mjs",
     "shadcn": "TS_NODE_PROJECT=tsconfig.base.json shadcn",
     "shadcn:add": "TS_NODE_PROJECT=tsconfig.base.json shadcn add"
   },

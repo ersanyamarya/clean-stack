@@ -1,9 +1,18 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const { generateOverviewHtml, generateDetailHtml } = require('./template');
+/* eslint-disable security/detect-object-injection */
+import { execSync, exec } from 'child_process';
+import fs from 'fs';
+import { createRequire } from 'module';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { generateDetailHtml, generateOverviewHtml } from './template.mjs';
+import logger from './utils/color-level-logger.mjs';
+
+const require = createRequire(import.meta.url);
 const nycPath = require.resolve('nyc/bin/nyc.js');
 const httpServerPath = require.resolve('http-server/bin/http-server');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const coverageDir = path.join('coverage');
 const outputFile = path.join(coverageDir, 'merged-coverage.json');
@@ -31,7 +40,7 @@ function getProjectRoot(filePath) {
 }
 
 try {
-  console.log('Scanning for coverage files...');
+  logger.info('Scanning for coverage files...');
   const coverageFiles = fs
     .readdirSync(coverageDir, { recursive: true })
     .filter(file => file.endsWith('coverage-final.json'))
@@ -41,11 +50,11 @@ try {
     throw new Error('No coverage files found');
   }
 
-  console.log(`Found ${coverageFiles.length} coverage files`);
+  logger.info(`Found ${coverageFiles.length} coverage files`);
 
   coverageFiles.forEach(file => {
     const newFileName = file.replaceAll('/', '-');
-    console.log(`Processing: ${newFileName}`);
+    logger.info(`Processing: ${newFileName}`);
     execSync(`mv ${file} ${coverageDir}/${newFileName}`);
   });
 
@@ -55,7 +64,7 @@ try {
   const nycReportDir = path.join(coverageDir, 'nyc');
 
   // Update NYC report generation command
-  console.log('Generating standard NYC report...');
+  logger.info('Generating standard NYC report...');
   execSync(`${nycPath} report --reporter=html --reporter=text -t coverage --report-dir=${nycReportDir}`, {
     stdio: 'inherit',
   });
@@ -131,7 +140,7 @@ try {
     };
   }
 
-  console.log('Processing coverage data...');
+  logger.info('Processing coverage data...');
   const coverage = JSON.parse(fs.readFileSync(outputFile, 'utf8'));
   const projectCoverage = {};
 
@@ -173,7 +182,7 @@ try {
     projectCoverage[category].fileCount++;
   });
 
-  console.log('Generating reports...');
+  logger.info('Generating reports...');
   const overallMetrics = calculateOverallMetrics(projectCoverage);
   fs.writeFileSync(overviewReportFile, generateOverviewHtml(projectCoverage, getPercentage, overallMetrics));
 
@@ -205,12 +214,12 @@ try {
   });
   execSync(`rm -rf ${outputFile}`);
 
-  console.log('Starting HTTP server...');
+  logger.info('Starting HTTP server...');
   execSync(`${httpServerPath} ./coverage -p 9999 -o`, {
     stdio: 'inherit',
   });
 } catch (error) {
-  console.error('\n🚨');
-  console.error(error);
+  logger.error('\n🚨');
+  logger.error(error);
   process.exit(1);
 }
