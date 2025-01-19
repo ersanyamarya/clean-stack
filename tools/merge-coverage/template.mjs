@@ -1,12 +1,7 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Read custom.css to extract color variables
-const customCssPath = path.join(__dirname, '../apps/clean-docs/src/css/custom.css');
+const customCssPath = 'apps/clean-docs/src/css/custom.css';
 const customCss = fs.readFileSync(customCssPath, 'utf8');
 
 const sharedStyles = `

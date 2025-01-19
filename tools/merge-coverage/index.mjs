@@ -1,11 +1,11 @@
 /* eslint-disable security/detect-object-injection */
-import { execSync, exec } from 'child_process';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import logger from '../utils/color-level-logger.mjs';
 import { generateDetailHtml, generateOverviewHtml } from './template.mjs';
-import logger from './utils/color-level-logger.mjs';
 
 const require = createRequire(import.meta.url);
 const nycPath = require.resolve('nyc/bin/nyc.js');
@@ -13,7 +13,7 @@ const httpServerPath = require.resolve('http-server/bin/http-server');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const cleanStackRoot = path.join(__dirname, '../../');
 const coverageDir = path.join('coverage');
 const outputFile = path.join(coverageDir, 'merged-coverage.json');
 
@@ -22,7 +22,6 @@ const overviewReportFile = path.join(coverageDir, 'index.html');
 const detailsReportFile = path.join(coverageDir, 'details.html');
 
 function getProjectRoot(filePath) {
-  const cleanStackRoot = path.join(__dirname, '..');
   const relativePath = filePath.replace(cleanStackRoot, '');
   const parts = relativePath.split('/').filter(Boolean);
 

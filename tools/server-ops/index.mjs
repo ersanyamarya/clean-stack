@@ -1,20 +1,13 @@
+/* eslint-disable no-async-promise-executor */
 import { z } from 'zod';
-import { $, useBash } from 'zx';
+import { $, fs, useBash } from 'zx';
+import logger from '../utils/color-level-logger.mjs';
 
 useBash();
 
 // Configuration Constants
-const SPLIT_SIZE = '16m';
+const SPLIT_SIZE = '16m'; // 16 MB
 const MAX_CONCURRENT_TRANSFERS = 4;
-
-// ANSI Color Constants
-const Colors = {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-};
 
 // Schema Definitions
 const ServerSchema = z.object({
@@ -30,11 +23,15 @@ const server = {
   publicKeyPath: '~/.ssh/the-one.pem',
 };
 
-// Utility Functions
-function log(message, color = Colors.reset) {
-  console.log(`${color}${message}${Colors.reset}`);
+function isLargeTransfer(bytes) {
+  const inMbs = (bytes / 1024 / 1024).toFixed(2);
+  console.log(inMbs);
+  const splitSize = SPLIT_SIZE.split('m')[0];
+
+  return inMbs > splitSize * 2;
 }
 
+// Utility Functions
 function formatBytes(bytes) {
   const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
@@ -86,7 +83,8 @@ function validateServer(server) {
   try {
     return ServerSchema.parse(server);
   } catch (error) {
-    throw new Error(`Invalid server configuration: ${error.message}`);
+    logger.error(`Invalid server configuration: ${error.message}`);
+    throw error;
   }
 }
 
@@ -101,7 +99,7 @@ function generateSSHOptionsString(server) {
     sshOptions.push(`${username}@${hostname}`);
     return sshOptions.join(' ');
   } catch (error) {
-    log(`Failed to generate SSH options string: ${error.message}`, Colors.red);
+    logger.error(`Failed to generate SSH options string: ${error.message}`);
     throw error;
   }
 }
@@ -115,12 +113,12 @@ async function runOnServer(command, server) {
     validateServer(server);
     const sshOptions = await generateSSHOptionsString(server);
     const sshCommand = ['ssh', ...sshOptions.split(' '), '-t', command];
-    log(`Executing: ${sshCommand.join(' ')}`, Colors.blue);
+    logger.info(`Executing: ${sshCommand.join(' ')}`);
     const output = await $`${sshCommand}`;
-    log('Command executed successfully', Colors.green);
+    logger.success('Command executed successfully');
     return output;
   } catch (error) {
-    log(`Failed to run command on server: ${error.message}`, Colors.red);
+    logger.error(`Failed to run command on server: ${error.message}`);
     throw error;
   }
 }
@@ -130,13 +128,13 @@ async function updateServer(server) {
     validateServer(server);
     const commands = ['sudo apt update -y', 'sudo apt upgrade -y', 'sudo apt autoremove -y', 'sudo apt autoclean'];
 
-    log('Starting server update...', Colors.yellow);
+    logger.warn('Starting server update...');
     for (const command of commands) {
       await runOnServer(command, server);
     }
-    log('Server updated successfully', Colors.green);
+    logger.success('Server updated successfully');
   } catch (error) {
-    log(`Failed to update server: ${error.message}`, Colors.red);
+    logger.error(`Failed to update server: ${error.message}`);
     throw error;
   }
 }
@@ -148,29 +146,34 @@ async function installPackagesOnServer(server, packages) {
       throw new Error('Please provide a valid packages array');
     }
 
-    log('Starting package installation...', Colors.yellow);
+    logger.warn('Starting package installation...');
     for (const pkg of packages) {
       const command = `sudo apt install -y ${pkg}`;
       await runOnServer(command, server);
     }
-    log('Packages installed successfully', Colors.green);
+    logger.success('Packages installed successfully');
   } catch (error) {
-    log(`Failed to install packages on server: ${error.message}`, Colors.red);
+    logger.error(`Failed to install packages on server: ${error.message}`);
     throw error;
   }
 }
 
 // File Operations
-async function getDirectorySize(path) {
+function getDirectorySize(path) {
   try {
-    const { stdout: macSize } = await $`du -sk ${path} | cut -f1`.nothrow();
-    if (macSize) return parseInt(macSize) * 1024;
+    const stats = fs.statSync(path);
+    if (!stats.isDirectory()) {
+      return stats.size;
+    }
 
-    const { stdout: linuxSize } = await $`du -s --bytes ${path} | cut -f1`;
-    return parseInt(linuxSize);
+    const files = fs.readdirSync(path, { withFileTypes: true });
+    return files.reduce((acc, file) => {
+      const filePath = `${path}/${file.name}`;
+      return acc + (file.isDirectory() ? getDirectorySize(filePath) : fs.statSync(filePath).size);
+    }, 0);
   } catch (error) {
-    const { stdout: nodeSize } = await $`find ${path} -type f -exec ls -l {} \\; | awk '{sum += $5} END {print sum}'`;
-    return parseInt(nodeSize || '0');
+    logger.error(`Failed to get directory size: ${error.message}`);
+    return 0;
   }
 }
 
@@ -227,7 +230,13 @@ async function transferFileWithProgress(file, options, onProgress) {
 }
 
 // Main Transfer Function
-async function copyToServer(server, sourcePath, destinationPath) {
+async function transferLargeToServer(server, sourcePath, destinationPath) {
+  //check if the sourcePath is valid
+  if (!fs.existsSync(sourcePath)) {
+    logger.error('Source path does not exist: ' + sourcePath);
+    return;
+  }
+
   const abortController = new AbortController();
 
   try {
@@ -236,14 +245,15 @@ async function copyToServer(server, sourcePath, destinationPath) {
       throw new Error('Please provide valid source and destination paths');
     }
 
-    log('Creating directories on server...', Colors.yellow);
+    logger.warn('Creating directories on server...');
     await runOnServer(`mkdir -p ${destinationPath}`, server);
+    await runOnServer(`rm -rf ${destinationPath}/temp && rm -rf ${destinationPath}/${sourcePath.split('/').pop()}`, server);
     await runOnServer(`mkdir -p ${destinationPath}/temp`, server);
 
-    log('Creating temporary directory locally', Colors.yellow);
+    logger.warn('Creating temporary directory locally');
     await $`mkdir -p temp`;
 
-    log('Compressing data...', Colors.yellow);
+    logger.warn('Compressing data...');
     const startTime = Date.now();
     process.stdout.write('\x1B[?25l');
 
@@ -255,19 +265,19 @@ async function copyToServer(server, sourcePath, destinationPath) {
     process.stdout.write('\x1B[?25h\n');
 
     const zipSize = (await $`stat -f %z temp/data.zip`).stdout.trim();
-    log(`Final compressed size: ${formatBytes(parseInt(zipSize))}`, Colors.blue);
+    logger.info(`Final compressed size: ${formatBytes(parseInt(zipSize))}`);
 
-    log('Splitting data...', Colors.yellow);
+    logger.warn('Splitting data...');
     const splitStartTime = Date.now();
     await $`split -b ${SPLIT_SIZE} temp/data.zip temp/data.zip.part`;
     const splitEndTime = Date.now();
-    log(`Split completed in ${formatTime((splitEndTime - splitStartTime) / 1000)}`, Colors.blue);
+    logger.info(`Split completed in ${formatTime((splitEndTime - splitStartTime) / 1000)}`);
 
     const splitFiles = (await $`ls temp/data.zip.part*`).stdout.trim().split('\n');
     const totalFiles = splitFiles.length;
     const totalSize = parseInt(zipSize);
 
-    log(`Copying ${totalFiles} parts to server (${formatBytes(totalSize)} total)...`, Colors.yellow);
+    logger.warn(`Copying ${totalFiles} parts to server (${formatBytes(totalSize)} total)...`);
     const { username, hostname, publicKeyPath } = server;
     const scpOptions = publicKeyPath ? ['-i', publicKeyPath] : [];
 
@@ -349,26 +359,61 @@ async function copyToServer(server, sourcePath, destinationPath) {
 
     process.stdout.write('\x1B[?25h\n');
 
-    log('Merging files on server...', Colors.yellow);
+    logger.warn('Merging files on server...');
     await runOnServer(`cd ${destinationPath}/temp && cat data.zip.part* > data.zip`, server);
 
-    log('Unzipping files on server...', Colors.yellow);
+    logger.warn('Unzipping files on server...');
     await runOnServer(`cd ${destinationPath}/temp && unzip -o data.zip -d ${destinationPath}`, server);
 
-    log('Cleaning up temporary files...', Colors.yellow);
+    logger.warn('Cleaning up temporary files...');
     await runOnServer(`rm -rf ${destinationPath}/temp`, server);
     await $`rm -rf temp`;
 
     const totalTime = (Date.now() - startTime) / 1000;
     const avgSpeed = totalSize / totalTime;
-    log(`Transfer completed in ${totalTime.toFixed(1)}s (avg. ${formatSpeed(avgSpeed)})`, Colors.green);
+    logger.success(`Transfer completed in ${totalTime.toFixed(1)}s (avg. ${formatSpeed(avgSpeed)})`);
   } catch (error) {
     abortController.abort();
     process.stdout.write('\x1B[?25h');
-    log(`Failed to copy files to server: ${error.message}`, Colors.red);
+    logger.error(`Failed to copy files to server: ${error.message}`);
     throw error;
   }
 }
 
+async function transferSmallToServer(server, sourcePath, destinationPath) {
+  try {
+    validateServer(server);
+    if (!sourcePath || !destinationPath || typeof sourcePath !== 'string' || typeof destinationPath !== 'string') {
+      throw new Error('Please provide valid source and destination paths');
+    }
+
+    logger.warn('Creating directories on server...');
+    await runOnServer(`mkdir -p ${destinationPath}`, server);
+    await runOnServer(`rm -rf ${destinationPath}/${sourcePath.split('/').pop()}`, server);
+
+    logger.warn('Copying files to server...');
+    const { username, hostname, publicKeyPath } = server;
+    const scpOptions = publicKeyPath ? ['-i', publicKeyPath] : [];
+    await $`scp -q ${scpOptions} -r ${sourcePath} ${username}@${hostname}:${destinationPath}`;
+
+    logger.success('Files copied successfully');
+  } catch (error) {
+    logger.error(`Failed to copy files to server: ${error.message}`);
+    throw error;
+  }
+}
+
+async function transferToServer(server, sourcePath, destinationPath) {
+  const sizeOfFile = getDirectorySize(sourcePath);
+  if (isLargeTransfer(sizeOfFile)) {
+    logger.warn('Transferring large ');
+    await transferLargeToServer(server, sourcePath, destinationPath);
+  } else {
+    logger.info('Transferring Small');
+    await transferSmallToServer(server, sourcePath, destinationPath);
+  }
+}
+
 // Main Execution
-await copyToServer(server, 'node_modules', '/home/azureuser/smart-city');
+// await transferSmallToServer(server, 'dist', '/home/azureuser/smart-city');
+await transferToServer(server, 'dist', '/home/azureuser/smart-city');
