@@ -4,7 +4,7 @@ import fs from 'fs';
 const customCssPath = 'apps/clean-docs/src/css/custom.css';
 const customCss = fs.readFileSync(customCssPath, 'utf8');
 
-const sharedStyles = `
+const sharedStyles = /* css */ `
   :root {
     ${customCss.match(/:root\s*{([^}]*)}/)[1]}
 
@@ -135,7 +135,7 @@ const sharedStyles = `
   }
 `;
 
-const indexStyles = `
+const indexStyles = /* css */ `
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -240,7 +240,7 @@ const indexStyles = `
   }
 `;
 
-const detailStyles = `
+const detailStyles = /* css */ `
   .breadcrumb {
     display: flex;
     align-items: center;
@@ -348,7 +348,7 @@ function getCoverageClass(coverage) {
 }
 
 function generateOverviewHtml(projectCoverage, getPercentage, overallMetrics) {
-  return `
+  return /* html */ `
 <!DOCTYPE html>
 <html>
 <head>
@@ -450,7 +450,7 @@ function generateOverviewHtml(projectCoverage, getPercentage, overallMetrics) {
 }
 
 function generateDetailHtml(category, project, data, metrics, getPercentage) {
-  return `
+  return /* html */ `
 <!DOCTYPE html>
 <html>
 <head>
