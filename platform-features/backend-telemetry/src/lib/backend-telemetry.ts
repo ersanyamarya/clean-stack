@@ -11,7 +11,7 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { IncomingMessage } from 'http';
-
+import 'pino-pretty';
 export type TelemetryConfig = {
   serviceName: string;
   serviceVersion: string;

@@ -19,6 +19,6 @@ RUN chown -R user-service:user-service .
 
 # You can remove this install step if you build with `--bundle` option.
 # The bundled output will include external dependencies.
-RUN npm --prefix user-service --omit=dev -f install
+RUN npm install --only=production --prefix user-service
 
-CMD [ "node", "user-service" ]
+CMD [ "node", "user-service/main.js" ]
