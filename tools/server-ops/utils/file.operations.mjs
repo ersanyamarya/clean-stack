@@ -1,5 +1,5 @@
 import { $, fs } from 'zx';
-import logger from '../utils/color-level-logger.mjs';
+import logger from '../../utils/color-level-logger.mjs';
 
 export function getDirectorySize(path) {
   try {

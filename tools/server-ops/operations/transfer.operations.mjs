@@ -1,9 +1,9 @@
 import { $, fs } from 'zx';
-import logger from '../utils/color-level-logger.mjs';
-import { getDirectorySize, isLargeTransfer, monitorCompressionWithZip } from './file.operations.mjs';
-import { formatBytes, formatSpeed, formatTime } from './format.utils.mjs';
-import { createProgressBar, formatProgressStats } from './progress.utils.mjs';
-import { runOnServer, validateServer } from './server.operations.mjs';
+import logger from '../../utils/color-level-logger.mjs';
+import { runOnServer, validateServer } from '../operations/server.operations.mjs';
+import { getDirectorySize, isLargeTransfer, monitorCompressionWithZip } from '../utils/file.operations.mjs';
+import { formatBytes, formatSpeed, formatTime } from '../utils/format.utils.mjs';
+import { createProgressBar, formatProgressStats } from '../utils/progress.utils.mjs';
 // Configuration Constants
 const SPLIT_SIZE = '16m'; // 16 MB
 const MAX_CONCURRENT_TRANSFERS = 4;

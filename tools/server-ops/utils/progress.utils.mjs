@@ -1,5 +1,5 @@
 // Progress Bar and Formatting Functions
-import { formatBytes, formatSpeed, formatTime } from './format.utils.mjs';
+import { formatBytes, formatSpeed, formatTime } from '../utils/format.utils.mjs';
 
 export function createProgressBar(progress, length = 30) {
   const normalizedProgress = Math.max(0, Math.min(1, progress));

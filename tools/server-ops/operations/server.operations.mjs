@@ -1,6 +1,6 @@
 import { $ } from 'zx';
-import logger from '../utils/color-level-logger.mjs';
-import { ServerSchema } from './schema.mjs';
+import logger from '../../utils/color-level-logger.mjs';
+import { ServerSchema } from '../schema.mjs';
 
 export function validateServer(server) {
   try {
