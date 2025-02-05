@@ -25,7 +25,7 @@ if ! command -v docker &>/dev/null; then
   exit 1
 fi
 
-Validate if docker daemon is running
+# Validate if docker daemon is running
 if ! docker info &>/dev/null; then
   echo -e "${RED}Error: Docker daemon is not running${NC}"
   exit 1

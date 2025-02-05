@@ -36,7 +36,7 @@ schema_config:
 
 storage_config:
   filesystem:
-    directory: /loki/chunks
+    directory: /tmp/loki
 
 limits_config:
   # enforce_metric_name: false
