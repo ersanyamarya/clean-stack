@@ -6,6 +6,7 @@ distributor:
     otlp:
       protocols:
         grpc:
+          endpoint: '0.0.0.0:4317' # Add explicit endpoint configuration
 
 ingester:
   trace_idle_period: 10s
