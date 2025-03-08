@@ -1,65 +1,55 @@
+version: '3.8'
+
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib
+    image: otel/opentelemetry-collector-contrib:latest
     command: ['--config=/etc/otel-collector-config.yml']
     volumes:
       - ./config/otel-collector-config.yml:/etc/otel-collector-config.yml
     ports:
-      - '4317:4317' # OTLP gRPC receiver
-      - '4318:4318' # OTLP HTTP receiver
-      # - '8888:8888' # Prometheus metrics exposed by the collector
-      # - '8889:8889' # Prometheus exporter metrics
+      - '4317:4317' # OTLP gRPC (external exposure)
+      - '4318:4318' # OTLP HTTP (external exposure)
     networks:
       - otel-network
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./data/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    # ports:
-    #   - '9090:9090'
+      - '--web.enable-lifecycle'
     networks:
       - otel-network
 
   grafana:
     image: grafana/grafana
     volumes:
-      - ./config/grafana.ini:/etc/grafana/grafana.ini
       - ./config/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./data/grafana:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
     ports:
-      - '3000:3000'
+      - '3000:3000' # Grafana UI
     networks:
       - otel-network
 
   loki:
-    image: grafana/loki
+    image: grafana/loki:latest
     volumes:
       - ./config/loki-config.yml:/etc/loki/local-config.yml
-      - ./data/loki:/tmp/loki
-    # ports:
-    #   - '3100:3100'
+      - ./data/loki:/loki
     command: -config.file=/etc/loki/local-config.yml
     networks:
       - otel-network
 
   tempo:
-    image: grafana/tempo
-    command: ['-config.file=/etc/tempo.yml']
+    image: grafana/tempo:latest
     volumes:
-      - ./config/tempo-config.yml:/etc/tempo.yml
+      - ./config/tempo-config.yml:/etc/tempo-config.yml
       - ./data/tempo:/tmp/tempo
-    # ports:
-    #   - '3200:3200' # tempo
-    #   - '4317' # otlp grpc
-    #   - '4318' # otlp http
+    command: ['-config.file=/etc/tempo-config.yml']
     networks:
       - otel-network
 

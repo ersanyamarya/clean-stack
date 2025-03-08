@@ -2,23 +2,54 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: '0.0.0.0:4317'
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: '0.0.0.0:4318'
         cors:
           allowed_origins:
-            - http://localhost:4200
+            - '*'
           allowed_headers:
             - '*'
 
 processors:
   batch:
+    timeout: 1s
+    send_batch_size: 1024
+  resource:
+    attributes:
+      - key: environment
+        value: development
+        action: upsert
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 1024
+  attributes:
+    actions:
+      - key: http.target
+        action: delete
+      - key: http.route
+        action: delete
 
 exporters:
-  prometheus:
-    endpoint: '0.0.0.0:8889'
+  debug:
+    verbosity: detailed
+  prometheusremotewrite:
+    endpoint: 'http://prometheus:9090/api/v1/write'
+    tls:
+      insecure: true
   loki:
     endpoint: 'http://loki:3100/loki/api/v1/push'
+    tls:
+      insecure: true
+    sending_queue:
+      enabled: true
+      num_consumers: 1
+      queue_size: 100
+    retry_on_failure:
+      enabled: true
+      initial_interval: 1s
+      max_interval: 30s
+      max_elapsed_time: 120s
   otlp:
     endpoint: 'tempo:4317'
     tls:
@@ -34,13 +65,17 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
+      processors: [batch, attributes]
+      exporters: [otlp, debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [prometheusremotewrite, debug]
     logs:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [loki]
+      processors: [batch, attributes]
+      exporters: [loki, debug]
+
+  telemetry:
+    logs:
+      level: debug

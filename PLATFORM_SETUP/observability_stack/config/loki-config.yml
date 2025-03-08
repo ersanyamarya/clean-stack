@@ -11,18 +11,18 @@ common:
   replication_factor: 1
   path_prefix: /loki
 
-# ingester:
-#   wal:
-#     dir: '/tmp/wal'
-#   lifecycler:
-#     address: 127.0.0.1
-#     ring:
-#       kvstore:
-#         store: inmemory
-#       replication_factor: 1
-#     final_sleep: 0s
-#   chunk_idle_period: 5m
-#   chunk_retain_period: 30s
+ingester:
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    final_sleep: 0s
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+  wal:
+    dir: /tmp/wal
 
 schema_config:
   configs:
@@ -39,6 +39,20 @@ storage_config:
     directory: /tmp/loki
 
 limits_config:
-  # enforce_metric_name: false
+  retention_period: 744h # 31 days
+  max_query_length: 721h
+  max_query_parallelism: 32
   reject_old_samples: true
   reject_old_samples_max_age: 168h
+  allow_structured_metadata: true
+
+query_range:
+  parallelise_shardable_queries: true
+  cache_results: true
+  max_retries: 5
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 512
+        ttl: 24h

@@ -1,4 +1,4 @@
-import { diag, DiagConsoleLogger, DiagLogLevel, metrics } from '@opentelemetry/api';
+import { diag, DiagConsoleLogger, DiagLogLevel, metrics, trace } from '@opentelemetry/api';
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
 
 import { onCLS, onINP, onLCP, onTTFB } from 'web-vitals';
@@ -23,17 +23,17 @@ export type FETelemetryConfig = {
 
 const createExporters = (collectorUrl: string): { otlpExporter: OTLPTraceExporter; otlpMetricExporter: OTLPMetricExporter } => {
   const otlpExporter = new OTLPTraceExporter({
-    url: `${collectorUrl}/v1/traces`,
     headers: {
       'Content-Type': 'application/json',
     },
+    url: collectorUrl + '/v1/traces',
   });
 
   const otlpMetricExporter = new OTLPMetricExporter({
-    url: `${collectorUrl}/v1/metrics`,
     headers: {
       'Content-Type': 'application/json',
     },
+    url: collectorUrl + '/v1/metrics',
   });
 
   return { otlpExporter, otlpMetricExporter };
@@ -43,6 +43,39 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
   if (!initiateTelemetry) {
     return;
   }
+
+  // Enable debug logging for OpenTelemetry
+  diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+
+  // Override console methods to include trace context
+  const originalConsole = {
+    log: console.log,
+    debug: console.debug,
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  };
+
+  function addTraceContext(method: 'log' | 'debug' | 'info' | 'warn' | 'error', ...args: any[]) {
+    const span = trace.getActiveSpan();
+    if (span) {
+      const context = span.spanContext();
+      const traceInfo = {
+        trace_id: context.traceId,
+        span_id: context.spanId,
+      };
+      originalConsole[method](...args, traceInfo);
+    } else {
+      originalConsole[method](...args);
+    }
+  }
+
+  // Override console methods
+  console.log = (...args) => addTraceContext('log', ...args);
+  console.debug = (...args) => addTraceContext('debug', ...args);
+  console.info = (...args) => addTraceContext('info', ...args);
+  console.warn = (...args) => addTraceContext('warn', ...args);
+  console.error = (...args) => addTraceContext('error', ...args);
 
   // Create a custom resource
   const resource = new Resource({

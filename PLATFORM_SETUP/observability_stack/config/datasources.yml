@@ -3,15 +3,53 @@ apiVersion: 1
 datasources:
   - name: Prometheus
     type: prometheus
+    uid: prometheus
     access: proxy
     url: http://prometheus:9090
+    jsonData:
+      exemplarTraceIdDestinations:
+        - name: traceID
+          datasourceUid: tempo
 
   - name: Loki
     type: loki
+    uid: loki
     access: proxy
     url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: '(?:trace_id|traceID)=([a-f0-9]{32}|[a-f0-9]{16})'
+          name: TraceID
+          url: '$${__value.raw}'
 
   - name: Tempo
     type: tempo
+    uid: tempo
     access: proxy
     url: http://tempo:3200
+    basicAuth: false
+    jsonData:
+      serviceMap:
+        datasourceUid: 'prometheus' # Must match your Prometheus datasource UID
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        spanStartTimeShift: '-15m'
+        spanEndTimeShift: '15m'
+        tags: ['service.name', 'job']
+        filterBySpanID: false
+      tracesToMetrics:
+        datasourceUid: prometheus
+        queries:
+          - name: 'Request Rate'
+            query: 'sum(rate(otel_http_server_duration_count{service_name="$${serviceName}"}[5m])) by (service_name)'
+          - name: 'Request Duration'
+            query: 'histogram_quantile(0.9, sum(rate(otel_http_server_duration_bucket{service_name="$${serviceName}"}[5m])) by (le))'
+        tags:
+          - key: service.name
+            value: service_name
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
