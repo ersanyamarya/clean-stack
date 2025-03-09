@@ -9,334 +9,290 @@ const sharedStyles = /* css */ `
     ${customCss.match(/:root\s*{([^}]*)}/)[1]}
 
     /* Layout */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 0.75rem;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
     --spacing-2xl: 3rem;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
-    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+    /* Colors */
+    --surface-1: #ffffff;
+    --surface-2: #f3f4f6;
+    --surface-3: #e5e7eb;
 
-    /* Border Radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-
-    /* Coverage Colors - Updated for better accessibility */
-    --color-success: #15803d;
-    --color-warning: #854d0e;
-    --color-error: #991b1b;
+    /* Coverage Colors - Darker & More Accessible */
+    --color-success: #059669;
+    --color-warning: #d97706;
+    --color-error: #dc2626;
     --color-success-bg: #dcfce7;
-    --color-warning-bg: #fef9c3;
+    --color-warning-bg: #fef3c7;
     --color-error-bg: #fee2e2;
-    --color-success-border: #86efac;
-    --color-warning-border: #fde047;
-    --color-error-border: #fecaca;
+    --color-success-border: #6ee7b7;
+    --color-warning-border: #fcd34d;
+    --color-error-border: #fca5a5;
+
+    /* Typography */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   body {
-    font-family: system-ui, -apple-system, sans-serif;
-    margin: 0;
-    padding: var(--spacing-xl);
-    background: #f8fafc;
-    color: var(--ifm-color-emphasis-700);
+    font-family: var(--font-sans);
+    background: var(--surface-2);
+    color: var(--ifm-color-emphasis-800);
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
 
   .header {
     background: var(--ifm-color-primary);
-    margin: calc(-1 * var(--spacing-xl)) calc(-1 * var(--spacing-xl)) var(--spacing-xl) calc(-1 * var(--spacing-xl));
-    padding: var(--spacing-2xl) var(--spacing-xl);
+    padding: var(--spacing-xl) var(--spacing-lg);
     color: white;
-    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--spacing-2xl);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   }
 
-  .header .nav-links {
-    margin-top: var(--spacing-lg);
-    margin-bottom: 0;
-  }
-
-  .header .nav-link {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .header .nav-link:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    color: white;
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
   }
 
   .title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.025em;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.02em;
   }
 
   .subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
     opacity: 0.9;
   }
 
   .nav-links {
-    margin-bottom: var(--spacing-xl);
     display: flex;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
   }
 
   .nav-link {
-    color: var(--ifm-color-primary);
+    color: inherit;
     text-decoration: none;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var (--radius-sm);
-    background: white;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: 6px;
+    font-size: 0.875rem;
     font-weight: 500;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .nav-link:hover {
-    background: var(--ifm-color-primary);
-    color: white;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.25);
   }
 
   .metric {
     padding: var(--spacing-md);
-    border-radius: var(--radius-sm);
-    background: white;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid transparent;
+    border-radius: 8px;
+    background: var(--surface-1);
+    border: 1px solid var(--surface-3);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
 
   .coverage-high {
     background: var(--color-success-bg);
-    color: var(--color-success);
     border-color: var(--color-success-border);
+    color: var(--color-success);
+    font-weight: 600;
   }
 
   .coverage-medium {
     background: var(--color-warning-bg);
-    color: var(--color-warning);
     border-color: var(--color-warning-border);
+    color: var(--color-warning);
+    font-weight: 600;
   }
 
   .coverage-low {
-    background: var(--color-error-bg);
-    color: var(--color-error);
+    background: var (--color-error-bg);
     border-color: var(--color-error-border);
+    color: var(--color-error);
+    font-weight: 600;
   }
 `;
 
 const indexStyles = /* css */ `
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
   }
 
   .card {
-    border-radius: var(--radius-md);
-    padding: var(--spacing-xl);
-    background: var(--ifm-background-surface-color);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s;
-    border: 1px solid #e2e8f0;
+    background: var(--surface-1);
+    border-radius: 12px;
+    border: 1px solid var(--surface-3);
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .card-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--surface-3);
+    background: var(--surface-2);
   }
 
   .card-title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--ifm-color-primary);
-    margin-bottom: var(--spacing-lg);
-    padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid #f1f5f9;
+  }
+
+  .card-content {
+    padding: var(--spacing-lg);
   }
 
   .metric-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-md);
-    background: #f8fafc;
-    border-radius: var(--radius-sm);
+    gap: var(--spacing-md);
+  }
+
+  .metric {
+    text-align: center;
   }
 
   .metric-label {
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #64748b;
+    letter-spacing: 0.05em;
+    color: var(--ifm-color-emphasis-700);
     margin-bottom: var(--spacing-xs);
   }
 
   .metric-value {
     font-size: 1.75rem;
     font-weight: 700;
-    margin-top: var(--spacing-xs);
     line-height: 1;
   }
 
-  .metric {
-    padding: var(--spacing-md);
-    border-radius: var(--radius-sm);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: transform 0.2s ease;
+  .card-footer {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--surface-2);
+    border-top: 1px solid var(--surface-3);
   }
 
-  .metric:hover {
-    transform: translateY(-2px);
+  .overall-metrics {
+    background: var(--surface-1);
+    border-radius: 12px;
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+    border: 1px solid var(--surface-3);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+
+  .overall-metrics h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    color: var(--ifm-color-emphasis-900);
   }
 
   .category-section {
     margin-bottom: var(--spacing-2xl);
-    padding: var(--spacing-lg);
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+  }
+
+  .category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
   }
 
   .category-title {
-    font-size: 1.875rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: var(--spacing-xl);
-    color: var(--ifm-heading-color);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid #e2e8f0;
-  }
-
-  .category-summary {
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .overall-coverage {
-    margin-bottom: var(--spacing-xl);
-  }
-
-  .overall-coverage .metric-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--spacing-lg);
+    color: var(--ifm-color-emphasis-900);
   }
 `;
 
 const detailStyles = /* css */ `
   .breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    color: var(--ifm-color-emphasis-700);
-    margin-bottom: var(--spacing-xl);
-    font-size: 1.125rem;
+    background: var(--surface-1);
     padding: var(--spacing-md) var(--spacing-lg);
-    background: white;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-xl);
+    border: 1px solid var(--surface-3);
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
 
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-2xl);
   }
 
-  .summary-card {
-    background: white;
-    border-radius: var (--radius-md);
-    padding: var(--spacing-xl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s ease;
-  }
-
-  .summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .summary-card .metric-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #475569;
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .summary-card .metric-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .summary-card.coverage-high {
-    background: var(--color-success-bg);
-    border-color: var(--color-success-border);
-  }
-
-  .summary-card.coverage-medium {
-    background: var(--color-warning-bg);
-    border-color: var(--color-warning-border);
-  }
-
-  .summary-card.coverage-low {
-    background: var(--color-error-bg);
-    border-color: var(--color-error-border);
+  .table-container {
+    background: var(--surface-1);
+    border-radius: 12px;
+    border: 1px solid var(--surface-3);
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border: 1px solid #e2e8f0;
-  }
-
-  th, td {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border: 1px solid #e2e8f0;
-    text-align: left;
   }
 
   th {
-    background: var(--ifm-color-primary);
-    color: white;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 0.875rem;
+    color: var(--ifm-color-emphasis-800);
+    background: var(--surface-2);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    border-bottom: 1px solid var(--surface-3);
   }
 
-  tr:nth-child(even) {
-    background-color: #f8fafc;
+  td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--surface-3);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  tr:hover {
+    background: var(--surface-2);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 
   .file-path {
-    font-family: ui-monospace, monospace;
-    font-size: 0.875rem;
-    color: #475569;
+    font-family: var(--font-mono);
+    color: var(--ifm-color-emphasis-900);
   }
 `;
 
@@ -352,6 +308,8 @@ function generateOverviewHtml(projectCoverage, getPercentage, overallMetrics) {
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coverage Overview</title>
   <style>
     ${sharedStyles}
@@ -359,92 +317,100 @@ function generateOverviewHtml(projectCoverage, getPercentage, overallMetrics) {
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">Coverage Overview</div>
-    <div class="subtitle">Coverage report by category and project</div>
-    <div class="nav-links">
-      <a href="nyc/index.html" class="nav-link">Standard NYC Report</a>
+  <header class="header">
+    <div class="container">
+      <h1 class="title">Coverage Overview</h1>
+      <p class="subtitle">Test coverage report by category and project</p>
+      <nav class="nav-links">
+        <a href="nyc/index.html" class="nav-link">Standard NYC Report</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div class="overall-coverage">
-    <h2>Overall Coverage</h2>
-    <div class="metric-grid">
-      <div class="metric ${getCoverageClass(overallMetrics.statements)}">
-        <div class="metric-label">Statements</div>
-        <div class="metric-value">${overallMetrics.statements}%</div>
+  <main class="container">
+    <section class="overall-metrics">
+      <h2>Overall Coverage</h2>
+      <div class="metric-grid">
+        <div class="metric ${getCoverageClass(overallMetrics.statements)}">
+          <div class="metric-label">Statements</div>
+          <div class="metric-value">${overallMetrics.statements}%</div>
+        </div>
+        <div class="metric ${getCoverageClass(overallMetrics.branches)}">
+          <div class="metric-label">Branches</div>
+          <div class="metric-value">${overallMetrics.branches}%</div>
+        </div>
+        <div class="metric ${getCoverageClass(overallMetrics.functions)}">
+          <div class="metric-label">Functions</div>
+          <div class="metric-value">${overallMetrics.functions}%</div>
+        </div>
+        <div class="metric ${getCoverageClass(overallMetrics.lines)}">
+          <div class="metric-label">Lines</div>
+          <div class="metric-value">${overallMetrics.lines}%</div>
+        </div>
       </div>
-      <div class="metric ${getCoverageClass(overallMetrics.branches)}">
-        <div class="metric-label">Branches</div>
-        <div class="metric-value">${overallMetrics.branches}%</div>
-      </div>
-      <div class="metric ${getCoverageClass(overallMetrics.functions)}">
-        <div class="metric-label">Functions</div>
-        <div class="metric-value">${overallMetrics.functions}%</div>
-      </div>
-      <div class="metric ${getCoverageClass(overallMetrics.lines)}">
-        <div class="metric-label">Lines</div>
-        <div class="metric-value">${overallMetrics.lines}%</div>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  ${Object.entries(projectCoverage)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(
-      ([category, data]) => `
-      <div class="category-section">
-        <h2 class="category-title">${category}</h2>
-        <div class="category-summary">
-          <div class="metric ${getCoverageClass(getPercentage(data.summary.statements))}">
-            Overall: ${getPercentage(data.summary.statements)}% statements
+    ${Object.entries(projectCoverage)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(
+        ([category, data]) => `
+        <section class="category-section">
+          <div class="category-header">
+            <h2 class="category-title">${category}</h2>
+            <div class="metric ${getCoverageClass(getPercentage(data.summary.statements))}">
+              ${getPercentage(data.summary.statements)}% statements covered
+            </div>
           </div>
-        </div>
-        <div class="card-grid">
-          ${Object.entries(data.projects)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([project, projectData]) => {
-              const metrics = {
-                statements: getPercentage(projectData.summary.statements),
-                branches: getPercentage(projectData.summary.branches),
-                functions: getPercentage(projectData.summary.functions),
-                lines: getPercentage(projectData.summary.lines),
-              };
 
-              return `
-                <div class="card">
-                  <div class="card-title">${project}</div>
-                  <div class="metric-grid">
-                    <div class="metric ${getCoverageClass(metrics.statements)}">
-                      <div class="metric-label">Statements</div>
-                      <div class="metric-value">${metrics.statements}%</div>
-                    </div>
-                    <div class="metric ${getCoverageClass(metrics.branches)}">
-                      <div class="metric-label">Branches</div>
-                      <div class="metric-value">${metrics.branches}%</div>
-                    </div>
-                    <div class="metric ${getCoverageClass(metrics.functions)}">
-                      <div class="metric-label">Functions</div>
-                      <div class="metric-value">${metrics.functions}%</div>
-                    </div>
-                    <div class="metric ${getCoverageClass(metrics.lines)}">
-                      <div class="metric-label">Lines</div>
-                      <div class="metric-value">${metrics.lines}%</div>
-                    </div>
-                  </div>
-                  <div style="margin-top: 1rem; text-align: center;">
-                    <a href="${category}-${project}.html" class="nav-link">View Details (${projectData.fileCount} files)</a>
-                  </div>
-                </div>
-              `;
-            })
-            .join('')}
-        </div>
-      </div>
-    `
-    )
-    .join('')}
+          <div class="card-grid">
+            ${Object.entries(data.projects)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([project, projectData]) => {
+                const metrics = {
+                  statements: getPercentage(projectData.summary.statements),
+                  branches: getPercentage(projectData.summary.branches),
+                  functions: getPercentage(projectData.summary.functions),
+                  lines: getPercentage(projectData.summary.lines),
+                };
 
+                return /* html */ `
+                  <article class="card">
+                    <header class="card-header">
+                      <h3 class="card-title">${project}</h3>
+                    </header>
+                    <div class="card-content">
+                      <div class="metric-grid">
+                        <div class="metric ${getCoverageClass(metrics.statements)}">
+                          <div class="metric-label">Statements</div>
+                          <div class="metric-value">${metrics.statements}%</div>
+                        </div>
+                        <div class="metric ${getCoverageClass(metrics.branches)}">
+                          <div class="metric-label">Branches</div>
+                          <div class="metric-value">${metrics.branches}%</div>
+                        </div>
+                        <div class="metric ${getCoverageClass(metrics.functions)}">
+                          <div class="metric-label">Functions</div>
+                          <div class="metric-value">${metrics.functions}%</div>
+                        </div>
+                        <div class="metric ${getCoverageClass(metrics.lines)}">
+                          <div class="metric-label">Lines</div>
+                          <div class="metric-value">${metrics.lines}%</div>
+                        </div>
+                      </div>
+                    </div>
+                    <footer class="card-footer">
+                      <a href="${category}-${project}.html" class="nav-link">View Details (${projectData.fileCount} files)</a>
+                    </footer>
+                  </article>
+                `;
+              })
+              .join('')}
+          </div>
+        </section>
+      `
+      )
+      .join('')}
+  </main>
 </body>
 </html>`;
 }
@@ -454,6 +420,8 @@ function generateDetailHtml(category, project, data, metrics, getPercentage) {
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coverage: ${category}/${project}</title>
   <style>
     ${sharedStyles}
@@ -461,71 +429,79 @@ function generateDetailHtml(category, project, data, metrics, getPercentage) {
   </style>
 </head>
 <body>
-  <div class="nav-links">
-    <a href="index.html" class="nav-link">← Back to Overview</a>
-    <a href="nyc/index.html" class="nav-link">Standard NYC Report</a>
-  </div>
+  <header class="header">
+    <div class="container">
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">← Back to Overview</a>
+        <a href="nyc/index.html" class="nav-link">Standard NYC Report</a>
+      </nav>
 
-  <div class="breadcrumb">
-    <span>${category}</span>
-    <span>/</span>
-    <strong>${project}</strong>
-  </div>
+      <div class="breadcrumb">
+        <span>${category}</span>
+        <span>/</span>
+        <strong>${project}</strong>
+      </div>
+    </div>
+  </header>
 
-  <div class="summary-grid">
-    <div class="summary-card ${getCoverageClass(metrics.statements)}">
-      <div class="metric-label">Statements</div>
-      <div class="metric-value">${metrics.statements}%</div>
-    </div>
-    <div class="summary-card ${getCoverageClass(metrics.branches)}">
-      <div class="metric-label">Branches</div>
-      <div class="metric-value">${metrics.branches}%</div>
-    </div>
-    <div class="summary-card ${getCoverageClass(metrics.functions)}">
-      <div class="metric-label">Functions</div>
-      <div class="metric-value">${metrics.functions}%</div>
-    </div>
-    <div class="summary-card ${getCoverageClass(metrics.lines)}">
-      <div class="metric-label">Lines</div>
-      <div class="metric-value">${metrics.lines}%</div>
-    </div>
-  </div>
+  <main class="container">
+    <section class="summary-grid">
+      <div class="metric ${getCoverageClass(metrics.statements)}">
+        <div class="metric-label">Statements</div>
+        <div class="metric-value">${metrics.statements}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(metrics.branches)}">
+        <div class="metric-label">Branches</div>
+        <div class="metric-value">${metrics.branches}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(metrics.functions)}">
+        <div class="metric-label">Functions</div>
+        <div class="metric-value">${metrics.functions}%</div>
+      </div>
+      <div class="metric ${getCoverageClass(metrics.lines)}">
+        <div class="metric-label">Lines</div>
+        <div class="metric-value">${metrics.lines}%</div>
+      </div>
+    </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>File</th>
-        <th>Statements</th>
-        <th>Branches</th>
-        <th>Functions</th>
-        <th>Lines</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${Object.entries(data.files)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(
-          ([file, metrics]) => `
+    <section class="table-container">
+      <table>
+        <thead>
           <tr>
-            <td class="file-path">${file}</td>
-            <td class="${getCoverageClass(getPercentage(metrics.statements))}">
-              ${getPercentage(metrics.statements)}%
-            </td>
-            <td class="${getCoverageClass(getPercentage(metrics.branches))}">
-              ${getPercentage(metrics.branches)}%
-            </td>
-            <td class="${getCoverageClass(getPercentage(metrics.functions))}">
-              ${getPercentage(metrics.functions)}%
-            </td>
-            <td class="${getCoverageClass(getPercentage(metrics.lines))}">
-              ${getPercentage(metrics.lines)}%
-            </td>
+            <th>File</th>
+            <th>Statements</th>
+            <th>Branches</th>
+            <th>Functions</th>
+            <th>Lines</th>
           </tr>
-        `
-        )
-        .join('')}
-    </tbody>
-  </table>
+        </thead>
+        <tbody>
+          ${Object.entries(data.files)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(
+              ([file, metrics]) => `
+              <tr>
+                <td class="file-path">${file}</td>
+                <td class="${getCoverageClass(getPercentage(metrics.statements))}">
+                  ${getPercentage(metrics.statements)}%
+                </td>
+                <td class="${getCoverageClass(getPercentage(metrics.branches))}">
+                  ${getPercentage(metrics.branches)}%
+                </td>
+                <td class="${getCoverageClass(getPercentage(metrics.functions))}">
+                  ${getPercentage(metrics.functions)}%
+                </td>
+                <td class="${getCoverageClass(getPercentage(metrics.lines))}">
+                  ${getPercentage(metrics.lines)}%
+                </td>
+              </tr>
+            `
+            )
+            .join('')}
+        </tbody>
+      </table>
+    </section>
+  </main>
 </body>
 </html>`;
 }
