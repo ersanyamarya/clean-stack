@@ -64,9 +64,42 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         trace_id: context.traceId,
         span_id: context.spanId,
       };
-      originalConsole[method](...args, traceInfo);
+      switch (method) {
+        case 'log':
+          originalConsole.log(...args, traceInfo);
+          break;
+        case 'debug':
+          originalConsole.debug(...args, traceInfo);
+          break;
+        case 'info':
+          originalConsole.info(...args, traceInfo);
+          break;
+        case 'warn':
+          originalConsole.warn(...args, traceInfo);
+          break;
+        case 'error':
+        default:
+          originalConsole.error(...args, traceInfo);
+          break;
+      }
     } else {
-      originalConsole[method](...args);
+      switch (method) {
+        case 'log':
+          originalConsole.log(...args);
+          break;
+        case 'debug':
+          originalConsole.debug(...args);
+          break;
+        case 'info':
+          originalConsole.info(...args);
+          break;
+        case 'warn':
+          originalConsole.warn(...args);
+          break;
+        case 'error':
+          originalConsole.error(...args);
+          break;
+      }
     }
   }
 
