@@ -19,7 +19,7 @@ datasources:
     jsonData:
       derivedFields:
         - datasourceUid: tempo
-          matcherRegex: '(?:trace_id|traceID)=([a-f0-9]{32}|[a-f0-9]{16})'
+          matcherRegex: "traceID=(\\w+)"
           name: TraceID
           url: '$${__value.raw}'
 
@@ -34,11 +34,12 @@ datasources:
         datasourceUid: 'prometheus' # Must match your Prometheus datasource UID
       tracesToLogsV2:
         datasourceUid: loki
-        filterByTraceID: true
-        spanStartTimeShift: '-15m'
-        spanEndTimeShift: '15m'
-        tags: ['service.name', 'job']
-        filterBySpanID: false
+        queries:
+          - name: 'Request Logs'
+            query: '{traceID="$${traceID}"}'
+        tags:
+          - key: traceID
+            value: traceID
       tracesToMetrics:
         datasourceUid: prometheus
         queries:

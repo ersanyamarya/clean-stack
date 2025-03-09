@@ -1,5 +1,5 @@
 import { Logger } from '@clean-stack/framework/global-types';
-import { diag, DiagConsoleLogger, DiagLogLevel, trace } from '@opentelemetry/api';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
 
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
@@ -57,6 +57,13 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
           url: collectorUrl + '/v1/metrics',
         }),
       }),
+      // logRecordProcessors: [
+      //   new logs.SimpleLogRecordProcessor(
+      //     new OTLPLogExporter({
+      //       url: collectorUrl + '/v1/logs',
+      //     })
+      //   ),
+      // ],
       textMapPropagator: new B3Propagator(),
       instrumentations: [
         getNodeAutoInstrumentations({
@@ -80,37 +87,38 @@ export function initTelemetry({ serviceName, serviceVersion, collectorUrl, initi
 
   const mainLogger = require('pino')({
     messageKey: 'message',
-    base: {
-      serviceName,
-      serviceVersion,
-      environment: process.env['NODE_ENV'] || 'development',
-    },
-    mixin: () => {
-      try {
-        const span = trace.getActiveSpan();
-        if (span) {
-          const context = span.spanContext();
-          if (context.traceId && context.spanId) {
-            return {
-              trace_id: context.traceId,
-              span_id: context.spanId,
-              trace_flags: context.traceFlags.toString(16),
-            };
-          }
-        }
-      } catch (error) {
-        console.warn('Error extracting trace context:', error);
-      }
-      return {};
-    },
-    serializers: {
-      err: require('pino').stdSerializers.err,
-    },
+    // base: {
+    //   serviceName,
+    //   serviceVersion,
+    //   environment: process.env['NODE_ENV'] || 'development',
+    // },
+    // mixin: () => {
+    //   try {
+    //     const span = trace.getActiveSpan();
+    //     if (span) {
+    //       const context = span.spanContext();
+    //       if (context.traceId && context.spanId) {
+    //         return {
+    //           trace_id: context.traceId,
+    //           span_id: context.spanId,
+    //           trace_flags: context.traceFlags.toString(16),
+    //         };
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.warn('Error extracting trace context:', error);
+    //   }
+    //   return {};
+    // },
+    // serializers: {
+    //   err: require('pino').stdSerializers.err,
+    // },
     level: process.env['LOG_LEVEL'] || 'debug',
     transport: {
       target: 'pino-pretty',
       options: {
-        colorize: true,
+        // colorize: true,
+        levelFirst: true,
       },
     },
   });

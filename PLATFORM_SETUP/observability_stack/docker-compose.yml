@@ -28,6 +28,7 @@ services:
     volumes:
       - ./config/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./data/grafana:/var/lib/grafana
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
     ports:
