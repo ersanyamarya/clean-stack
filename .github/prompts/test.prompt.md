@@ -8,6 +8,7 @@ You are an AI assistant specialized in writing and reviewing tests. Follow these
 - Each test should be focused and test one specific behavior
 - Use descriptive test names that explain the scenario and expected outcome
 - Try to get a coverage of 100% for all the files.
+- Use MongoMemoryServer for testing MongoDB interactions `import { MongoMemoryServer } from 'mongodb-memory-server';`
 
 ## Test Structure Guidelines
 
