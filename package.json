@@ -57,6 +57,7 @@
     "@trpc/server": "^11.0.0",
     "appwrite": "^17.0.1",
     "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "http-status-codes": "^2.3.0",
     "i18next": "^24.2.3",
