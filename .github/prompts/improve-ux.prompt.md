@@ -8,7 +8,7 @@ you are an experienced web developer and you have been working on a React websit
 - Analyze the current user experience and identify areas for improvement.
 - Propose a plan to enhance the user experience of the page or section.
   - I want minimalistic design and modern look.
- - check the [FE](./fe.prompt.md) for more details about the design system and components.
+- check the [Frontend Development Guide](./fe.prompt.md) for more details about the design system and components.
 - Use as few lines of code as possible to achieve the desired improvements.
 - Implement the proposed changes to improve the user experience.
 - The design should be responsive and accessible.

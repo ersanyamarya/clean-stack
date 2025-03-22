@@ -54,15 +54,12 @@ The main Tailwind configuration is in `frontend-libs/components/tailwind.config.
 // frontend-libs/components/tailwind.config.js
 module.exports = {
   darkMode: ['class'],
-  content: [
-    join(__dirname, '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'),
-    ...createGlobPatternsForDependencies(__dirname)
-  ],
+  content: [join(__dirname, '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'), ...createGlobPatternsForDependencies(__dirname)],
   theme: {
     extend: {
       // Theme configuration (colors, spacing, etc.)
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -103,16 +100,19 @@ import '@clean-stack/styles/global.css';
 ## Best Practices
 
 1. **Component Organization**
+
    - Place reusable components in the shared library
    - Keep application-specific components in the app's components folder
    - Use atomic design principles (atoms, molecules, organisms)
 
 2. **State Management**
+
    - Use React Query for server state
    - Use Zustand for client state
    - Keep state close to where it's used
 
 3. **Code Style**
+
    - Follow TypeScript best practices
    - Use absolute imports
    - Maintain consistent component patterns
@@ -146,10 +146,12 @@ apps/your-app/
 
 1. **First, check if the component exists in the shared library**
 2. **If not, determine if it should be:**
+
    - Added to the shared library (if reusable)
    - Created as an app-specific component
 
 3. **For adding shadcn components:**
+
 ```bash
 bun run shadcn:add component-name  # For shadcn/ui components
 ```
@@ -163,16 +165,18 @@ bun run shadcn:add component-name  # For shadcn/ui components
 ### Common Issues
 
 1. **Styles not applying:**
+
    - Check tailwind.config.js content paths
    - Verify global.css import
    - Clear .nx cache: `nx clear-cache`
 
 2. **Component not found:**
+
    - Check import path
    - Verify component is exported
    - Run `nx build components`
 
 3. **Type errors:**
    - Update TypeScript version
-   - Check @clean-stack/* package versions
+   - Check @clean-stack/\* package versions
    - Rebuild the project: `nx build your-app`
