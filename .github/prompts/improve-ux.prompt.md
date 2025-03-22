@@ -15,4 +15,4 @@ you are an experienced web developer and you have been working on a React websit
 - The design should concider the dark mode and light mode.
 - Optimize the performance of the page or section where applicable.
 
-ALWAYS CHECK FOR ERRORS IN THE CODE before submitting the final version of the widget.
+ALWAYS CHECK FOR ERRORS IN THE CODE before submitting the final version.
