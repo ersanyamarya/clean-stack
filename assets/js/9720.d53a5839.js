@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_clean_stack_source=self.webpackChunk_clean_stack_source||[]).push([[9720],{9720:(e,c,s)=>{s.d(c,{createArchitectureServices:()=>a.S});var a=s(9936);s(9369)}}]);
