@@ -41,9 +41,20 @@ function RouteComponent() {
       title="Clean Stack"
       open={sidebarState.isOpen}>
       <AppSidebar />
-      <main className="flex flex-col w-full h-screen overflow-x-hidden">
-        <SidebarTrigger onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })} />
-        <Outlet />
+      <main className="flex flex-col w-full h-screen overflow-x-hidden bg-background">
+        <header className="sticky top-0 z-10 flex items-center h-14 px-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <SidebarTrigger
+            onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}
+            className="mr-4"
+          />
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-lg font-semibold">{sidebarState.selected === 'home' ? 'Home' : 'Better Prompt'}</h1>
+            <LanguageSwitcher />
+          </div>
+        </header>
+        <div className="flex-1 p-4 md:p-6 overflow-auto">
+          <Outlet />
+        </div>
       </main>
     </SidebarProvider>
   );
@@ -57,46 +68,43 @@ export function AppSidebar() {
   }
   return (
     <Sidebar>
-      <SidebarHeader>
-        <h1>Clean Stack</h1>
+      <SidebarHeader className="flex items-center p-4 h-14 border-b">
+        <h1 className="font-semibold text-xl">Clean Stack</h1>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent className="space-y-4">
+          <SidebarGroupContent className="space-y-1">
             <Link
               to="/"
-              className="flex items-center space-x-2 p-2"
+              className="flex items-center gap-3 rounded-md p-2 hover:bg-muted/80 transition-colors"
               activeProps={{
-                className: 'bg-primary-foreground text-primary',
+                className: 'bg-primary/10 text-primary font-medium',
               }}>
-              <HomeIcon size={24} />
-              <p>Home</p>
+              <HomeIcon size={18} />
+              <span>Home</span>
             </Link>
             <Link
               to="/make"
-              className="flex items-center space-x-2 p-2"
+              className="flex items-center gap-3 rounded-md p-2 hover:bg-muted/80 transition-colors"
               activeProps={{
-                className: 'bg-primary-foreground text-primary',
+                className: 'bg-primary/10 text-primary font-medium',
               }}>
-              <MagnetIcon size={24} />
-              <p>Better Prompt</p>
+              <MagnetIcon size={18} />
+              <span>Better Prompt</span>
             </Link>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="space-y-2 p-4 border-t mt-auto">
         <LanguageSwitcher />
-        <Button onClick={onLogoutClick}>Logout</Button>
+        <Button
+          onClick={onLogoutClick}
+          className="w-full justify-center"
+          variant="outline">
+          Logout
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );
 }
-// <div>
-//   <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
-//   <LanguageSwitcher />
-//   <Button onClick={onLogoutClick}>Logout</Button>
-//   <pre>{JSON.stringify(sidebarState, null, 2)}</pre>
-//   <Outlet />
-// </div>;

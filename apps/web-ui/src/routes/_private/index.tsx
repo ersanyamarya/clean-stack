@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@clean-stack/components/input';
 import { useToast } from '@clean-stack/react-hooks/use-toast';
 import { createFileRoute } from '@tanstack/react-router';
-import { Loader2, Wand } from 'lucide-react';
+import { ChevronRight, Loader2, Wand } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -37,64 +37,115 @@ function RouteComponent() {
   const utils = trpc.useUtils();
   const { t } = useTranslation('common');
   const [value, setValue] = useState('');
+
+  // Function to format JSON results for better readability
+  const formatResults = (data: any) => {
+    if (!data) return null;
+
+    try {
+      if (Array.isArray(data)) {
+        return (
+          <div className="space-y-4">
+            {data.map((item, index) => (
+              <div
+                key={index}
+                className="p-3 rounded-md bg-muted/30">
+                {Object.entries(item).map(([key, val]) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-[120px_1fr] gap-2 py-1 border-b border-muted last:border-0">
+                    <span className="font-medium text-muted-foreground">{key}:</span>
+                    <span>{String(val)}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return (
+          <div className="space-y-2">
+            {Object.entries(data).map(([key, val]) => (
+              <div
+                key={key}
+                className="grid grid-cols-[120px_1fr] gap-2 py-1 border-b border-muted last:border-0">
+                <span className="font-medium text-muted-foreground">{key}:</span>
+                <span>{typeof val === 'object' ? JSON.stringify(val) : String(val)}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+    } catch (e) {
+      return <pre className="text-sm overflow-auto p-2 bg-muted/20 rounded-md">{JSON.stringify(data, null, 2)}</pre>;
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center space-y-4 p-4">
-      {/* <h1 className="text-4xl font-bold">{t('HomePage.description')}</h1>
-      <Button onClick={() => navigate({ search: { isOpen: !sidebarState.isOpen } })}>{sidebarState.isOpen ? 'Close' : 'Open'} Sidebar</Button>
-      <code>
-        <pre>{JSON.stringify(userQuery.data, null, 2)}</pre>
-      </code> */}
-      <h1 className="text-4xl font-bold"> Pedestrian Data for Würzburg, Germany</h1>
-      <div className="flex space-x-4 w-full">
-        <Input
-          placeholder="query"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-          // {...debounceFieldProps}
-        />
-        <Button
-          disabled={mongooseAggregationQuery.isPending || !value}
-          onClick={async () => {
-            mongooseAggregationQuery.mutate(value);
-          }}>
-          {mongooseAggregationQuery.isPending ? <Loader2 className="animate-spin" /> : <Wand size={24} />}
-          Get Results !
-        </Button>
-      </div>
-      <br />
-      <br />
-      <div className="flex space-x-4  w-full gap-2 justify-center flex-col">
-        {SUGGESTIONS.map((suggestion, index) => (
+    <div className="container max-w-4xl mx-auto py-8 px-4 sm:px-6">
+      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Pedestrian Data for Würzburg, Germany</h1>
+
+      {/* Search section */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Input
+            placeholder="Enter your query about pedestrian data..."
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            className="flex-1"
+          />
           <Button
-            variant="secondary"
-            key={index}
-            onClick={async () => {
-              setValue(suggestion);
-              toast({ title: 'Suggestion', description: suggestion });
-            }}>
-            {suggestion}
+            disabled={mongooseAggregationQuery.isPending || !value}
+            onClick={() => mongooseAggregationQuery.mutate(value)}
+            className="min-w-[140px]">
+            {mongooseAggregationQuery.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand className="mr-2 h-4 w-4" />}
+            Get Results
           </Button>
-        ))}
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Results from the query</CardTitle>
-          <CardDescription>{value}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <pre>{JSON.stringify(mongooseAggregationQuery.data, null, 2)}</pre>
-        </CardContent>
-        <CardFooter>Pedestrian Würzburg, Germany</CardFooter>
-      </Card>
-      {/* <HoverCard>
-        <HoverCardTrigger>Hover</HoverCardTrigger>
-        <HoverCardContent>The React Framework – created and maintained by @vercel.</HoverCardContent>
-      </HoverCard>
-      <Alert>
-        <AlertTitle>Heads up!</AlertTitle>
-        <AlertDescription>You can add components to your app using the cli.</AlertDescription>
-      </Alert> */}
+      {/* Suggestions section */}
+      <div className="mb-8">
+        <h2 className="text-lg font-medium mb-3">Suggested Queries</h2>
+        <div className="flex flex-wrap gap-3">
+          {SUGGESTIONS.map((suggestion, index) => (
+            <Button
+              variant="outline"
+              size="sm"
+              key={index}
+              className="flex items-center text-left justify-between group transition-all"
+              onClick={() => {
+                setValue(suggestion);
+                toast({ title: 'Suggestion applied', description: 'Query updated' });
+              }}>
+              <span className="line-clamp-1">{suggestion}</span>
+              <ChevronRight className="h-4 w-4 ml-2 opacity-50 group-hover:opacity-100 transition-opacity" />
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Results section */}
+      {(mongooseAggregationQuery.data || mongooseAggregationQuery.isPending) && (
+        <Card className="w-full shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle>Results</CardTitle>
+            <CardDescription className="line-clamp-2">{value}</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            {mongooseAggregationQuery.isPending ? (
+              <div className="flex justify-center items-center py-10">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              formatResults(mongooseAggregationQuery.data)
+            )}
+          </CardContent>
+
+          <CardFooter className="text-sm text-muted-foreground pt-3 border-t">Pedestrian data for Würzburg, Germany</CardFooter>
+        </Card>
+      )}
     </div>
   );
 }
