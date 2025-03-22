@@ -60,8 +60,34 @@ You should see:
 }
 ```
 
+## Additional Verification Steps
+
+After starting the development environment, you can perform the following checks:
+
+1. **Verify Redis Connection**:
+   ```bash
+   redis-cli ping
+   ```
+   You should see:
+   ```
+   PONG
+   ```
+
+2. **Check OpenTelemetry Metrics**:
+   Visit `http://localhost:8889/metrics` to ensure metrics are being collected.
+
+3. **Access Grafana Dashboards**:
+   Open `http://localhost:3000` in your browser and log in with the default credentials (if configured).
+
 ## Next Steps
 
 - Learn about the [Project Structure](./project-structure)
 <!-- - Explore [Platform Features](../platform-features/overview) -->
 - Read about our [Architecture Philosophy](../architecture/philosophy)
+
+## Related Resources
+
+- [Installation Guide](./installation)
+- [Project Structure](./project-structure)
+- [Observability Stack](../platform-features/observability/otel-clean-stack)
+- [Architecture Philosophy](../architecture/philosophy)

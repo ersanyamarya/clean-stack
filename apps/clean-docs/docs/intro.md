@@ -115,9 +115,17 @@ graph LR
 - [Core Concepts](./architecture/philosophy)
 - [Platform Features](./category/platform-features)
 
-## Community and Support
+## Advanced Topics
+- [Scalability Considerations](./architecture/philosophy#scalability-considerations)
+- [Security Best Practices](./architecture/philosophy#best-practices)
+- [Performance Optimization](./platform-features/observability/otel-clean-stack#key-features)
 
-- [GitHub Repository](https://github.com/your-org/clean-stack)
+## Troubleshooting
+For common issues and their resolutions, refer to the [Troubleshooting Guide](./getting-started/installation#troubleshooting).
+
+## Community and Support
+Join our community to stay updated and get support:
+- [GitHub Discussions](https://github.com/your-org/clean-stack/discussions)
 - [Discord Community](https://discord.gg/your-community)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/clean-stack)
 

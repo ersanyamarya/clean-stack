@@ -248,3 +248,57 @@ services:
 These volume mounts ensure that configuration files and data are preserved even if containers are stopped or removed.
 
 By understanding these configurations, you can customize the observability stack to fit your specific needs in Clean Stack. This setup provides a flexible and powerful foundation for monitoring and troubleshooting your applications.
+
+### Troubleshooting
+
+#### Issue: "Grafana is not accessible at http://localhost:3000"
+**Cause**: Grafana service might not be running or is misconfigured.
+**Solution**:
+1. Check the status of the Grafana container:
+   ```bash
+   docker ps | grep grafana
+   ```
+2. Restart the Grafana service:
+   ```bash
+   docker-compose restart grafana
+   ```
+3. Verify the logs for errors:
+   ```bash
+   docker logs grafana
+   ```
+
+#### Issue: "No metrics visible in Grafana dashboards"
+**Cause**: Prometheus might not be scraping metrics correctly.
+**Solution**:
+1. Verify Prometheus is running:
+   ```bash
+   docker ps | grep prometheus
+   ```
+2. Check the Prometheus configuration file (`prometheus.yml`) for correct scrape targets.
+3. Access Prometheus at `http://localhost:9090` and verify the targets are up.
+
+#### Issue: "Logs are not appearing in Loki"
+**Cause**: Loki might not be receiving logs from the OpenTelemetry Collector.
+**Solution**:
+1. Check the Loki service status:
+   ```bash
+   docker ps | grep loki
+   ```
+2. Verify the OpenTelemetry Collector configuration (`otel-collector-config.yml`) for the Loki exporter settings.
+3. Inspect Loki logs for errors:
+   ```bash
+   docker logs loki
+   ```
+
+#### Issue: "Traces are missing in Tempo"
+**Cause**: Tempo might not be receiving traces from the OpenTelemetry Collector.
+**Solution**:
+1. Check the Tempo service status:
+   ```bash
+   docker ps | grep tempo
+   ```
+2. Verify the OpenTelemetry Collector configuration (`otel-collector-config.yml`) for the Tempo exporter settings.
+3. Inspect Tempo logs for errors:
+   ```bash
+   docker logs tempo
+   ```
