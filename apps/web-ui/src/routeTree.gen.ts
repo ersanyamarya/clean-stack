@@ -8,225 +8,201 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicImport } from './routes/_public'
-import { Route as PrivateImport } from './routes/_private'
-import { Route as PrivateIndexImport } from './routes/_private/index'
-import { Route as PrivateMakeImport } from './routes/_private/make'
+import { Route as rootRoute } from './routes/__root';
+import { Route as PrivateImport } from './routes/_private';
+import { Route as PrivateIndexImport } from './routes/_private/index';
+import { Route as PrivateMakeImport } from './routes/_private/make';
+import { Route as PublicImport } from './routes/_public';
 
 // Create Virtual Routes
 
-const PublicRegisterLazyImport = createFileRoute('/_public/register')()
-const PublicLoginLazyImport = createFileRoute('/_public/login')()
-const PublicForgetPasswordLazyImport = createFileRoute(
-  '/_public/forget-password',
-)()
-const PrivateAboutLazyImport = createFileRoute('/_private/about')()
+const PublicRegisterLazyImport = createFileRoute('/_public/register')();
+const PublicLoginLazyImport = createFileRoute('/_public/login')();
+const PublicForgetPasswordLazyImport = createFileRoute('/_public/forget-password')();
+const PrivateAboutLazyImport = createFileRoute('/_private/about')();
 
 // Create/Update Routes
 
 const PublicRoute = PublicImport.update({
   id: '/_public',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PrivateRoute = PrivateImport.update({
   id: '/_private',
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PrivateIndexRoute = PrivateIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PrivateRoute,
-} as any)
+} as any);
 
 const PublicRegisterLazyRoute = PublicRegisterLazyImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => PublicRoute,
-} as any).lazy(() =>
-  import('./routes/_public/register.lazy').then((d) => d.Route),
-)
+} as any).lazy(() => import('./routes/_public/register.lazy').then(d => d.Route));
 
 const PublicLoginLazyRoute = PublicLoginLazyImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
-} as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/_public/login.lazy').then(d => d.Route));
 
 const PublicForgetPasswordLazyRoute = PublicForgetPasswordLazyImport.update({
   id: '/forget-password',
   path: '/forget-password',
   getParentRoute: () => PublicRoute,
-} as any).lazy(() =>
-  import('./routes/_public/forget-password.lazy').then((d) => d.Route),
-)
+} as any).lazy(() => import('./routes/_public/forget-password.lazy').then(d => d.Route));
 
 const PrivateAboutLazyRoute = PrivateAboutLazyImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() =>
-  import('./routes/_private/about.lazy').then((d) => d.Route),
-)
+} as any).lazy(() => import('./routes/_private/about.lazy').then(d => d.Route));
 
 const PrivateMakeRoute = PrivateMakeImport.update({
   id: '/make',
   path: '/make',
   getParentRoute: () => PrivateRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_private': {
-      id: '/_private'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PrivateImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_private';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PrivateImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_public': {
-      id: '/_public'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PublicImport
-      parentRoute: typeof rootRoute
-    }
+      id: '/_public';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PublicImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_private/make': {
-      id: '/_private/make'
-      path: '/make'
-      fullPath: '/make'
-      preLoaderRoute: typeof PrivateMakeImport
-      parentRoute: typeof PrivateImport
-    }
+      id: '/_private/make';
+      path: '/make';
+      fullPath: '/make';
+      preLoaderRoute: typeof PrivateMakeImport;
+      parentRoute: typeof PrivateImport;
+    };
     '/_private/about': {
-      id: '/_private/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof PrivateAboutLazyImport
-      parentRoute: typeof PrivateImport
-    }
+      id: '/_private/about';
+      path: '/about';
+      fullPath: '/about';
+      preLoaderRoute: typeof PrivateAboutLazyImport;
+      parentRoute: typeof PrivateImport;
+    };
     '/_public/forget-password': {
-      id: '/_public/forget-password'
-      path: '/forget-password'
-      fullPath: '/forget-password'
-      preLoaderRoute: typeof PublicForgetPasswordLazyImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/forget-password';
+      path: '/forget-password';
+      fullPath: '/forget-password';
+      preLoaderRoute: typeof PublicForgetPasswordLazyImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginLazyImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginLazyImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_public/register': {
-      id: '/_public/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof PublicRegisterLazyImport
-      parentRoute: typeof PublicImport
-    }
+      id: '/_public/register';
+      path: '/register';
+      fullPath: '/register';
+      preLoaderRoute: typeof PublicRegisterLazyImport;
+      parentRoute: typeof PublicImport;
+    };
     '/_private/': {
-      id: '/_private/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof PrivateIndexImport
-      parentRoute: typeof PrivateImport
-    }
+      id: '/_private/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof PrivateIndexImport;
+      parentRoute: typeof PrivateImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 interface PrivateRouteChildren {
-  PrivateMakeRoute: typeof PrivateMakeRoute
-  PrivateAboutLazyRoute: typeof PrivateAboutLazyRoute
-  PrivateIndexRoute: typeof PrivateIndexRoute
+  PrivateMakeRoute: typeof PrivateMakeRoute;
+  PrivateAboutLazyRoute: typeof PrivateAboutLazyRoute;
+  PrivateIndexRoute: typeof PrivateIndexRoute;
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateMakeRoute: PrivateMakeRoute,
   PrivateAboutLazyRoute: PrivateAboutLazyRoute,
   PrivateIndexRoute: PrivateIndexRoute,
-}
+};
 
-const PrivateRouteWithChildren =
-  PrivateRoute._addFileChildren(PrivateRouteChildren)
+const PrivateRouteWithChildren = PrivateRoute._addFileChildren(PrivateRouteChildren);
 
 interface PublicRouteChildren {
-  PublicForgetPasswordLazyRoute: typeof PublicForgetPasswordLazyRoute
-  PublicLoginLazyRoute: typeof PublicLoginLazyRoute
-  PublicRegisterLazyRoute: typeof PublicRegisterLazyRoute
+  PublicForgetPasswordLazyRoute: typeof PublicForgetPasswordLazyRoute;
+  PublicLoginLazyRoute: typeof PublicLoginLazyRoute;
+  PublicRegisterLazyRoute: typeof PublicRegisterLazyRoute;
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicForgetPasswordLazyRoute: PublicForgetPasswordLazyRoute,
   PublicLoginLazyRoute: PublicLoginLazyRoute,
   PublicRegisterLazyRoute: PublicRegisterLazyRoute,
-}
+};
 
-const PublicRouteWithChildren =
-  PublicRoute._addFileChildren(PublicRouteChildren)
+const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren);
 
 export interface FileRoutesByFullPath {
-  '': typeof PublicRouteWithChildren
-  '/make': typeof PrivateMakeRoute
-  '/about': typeof PrivateAboutLazyRoute
-  '/forget-password': typeof PublicForgetPasswordLazyRoute
-  '/login': typeof PublicLoginLazyRoute
-  '/register': typeof PublicRegisterLazyRoute
-  '/': typeof PrivateIndexRoute
+  '': typeof PublicRouteWithChildren;
+  '/make': typeof PrivateMakeRoute;
+  '/about': typeof PrivateAboutLazyRoute;
+  '/forget-password': typeof PublicForgetPasswordLazyRoute;
+  '/login': typeof PublicLoginLazyRoute;
+  '/register': typeof PublicRegisterLazyRoute;
+  '/': typeof PrivateIndexRoute;
 }
 
 export interface FileRoutesByTo {
-  '': typeof PublicRouteWithChildren
-  '/make': typeof PrivateMakeRoute
-  '/about': typeof PrivateAboutLazyRoute
-  '/forget-password': typeof PublicForgetPasswordLazyRoute
-  '/login': typeof PublicLoginLazyRoute
-  '/register': typeof PublicRegisterLazyRoute
-  '/': typeof PrivateIndexRoute
+  '': typeof PublicRouteWithChildren;
+  '/make': typeof PrivateMakeRoute;
+  '/about': typeof PrivateAboutLazyRoute;
+  '/forget-password': typeof PublicForgetPasswordLazyRoute;
+  '/login': typeof PublicLoginLazyRoute;
+  '/register': typeof PublicRegisterLazyRoute;
+  '/': typeof PrivateIndexRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_private': typeof PrivateRouteWithChildren
-  '/_public': typeof PublicRouteWithChildren
-  '/_private/make': typeof PrivateMakeRoute
-  '/_private/about': typeof PrivateAboutLazyRoute
-  '/_public/forget-password': typeof PublicForgetPasswordLazyRoute
-  '/_public/login': typeof PublicLoginLazyRoute
-  '/_public/register': typeof PublicRegisterLazyRoute
-  '/_private/': typeof PrivateIndexRoute
+  __root__: typeof rootRoute;
+  '/_private': typeof PrivateRouteWithChildren;
+  '/_public': typeof PublicRouteWithChildren;
+  '/_private/make': typeof PrivateMakeRoute;
+  '/_private/about': typeof PrivateAboutLazyRoute;
+  '/_public/forget-password': typeof PublicForgetPasswordLazyRoute;
+  '/_public/login': typeof PublicLoginLazyRoute;
+  '/_public/register': typeof PublicRegisterLazyRoute;
+  '/_private/': typeof PrivateIndexRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/make'
-    | '/about'
-    | '/forget-password'
-    | '/login'
-    | '/register'
-    | '/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | ''
-    | '/make'
-    | '/about'
-    | '/forget-password'
-    | '/login'
-    | '/register'
-    | '/'
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '' | '/make' | '/about' | '/forget-password' | '/login' | '/register' | '/';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '' | '/make' | '/about' | '/forget-password' | '/login' | '/register' | '/';
   id:
     | '__root__'
     | '/_private'
@@ -236,23 +212,21 @@ export interface FileRouteTypes {
     | '/_public/forget-password'
     | '/_public/login'
     | '/_public/register'
-    | '/_private/'
-  fileRoutesById: FileRoutesById
+    | '/_private/';
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  PrivateRoute: typeof PrivateRouteWithChildren
-  PublicRoute: typeof PublicRouteWithChildren
+  PrivateRoute: typeof PrivateRouteWithChildren;
+  PublicRoute: typeof PublicRouteWithChildren;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   PrivateRoute: PrivateRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
-}
+};
 
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {

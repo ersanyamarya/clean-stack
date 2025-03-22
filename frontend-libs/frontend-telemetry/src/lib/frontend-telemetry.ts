@@ -9,7 +9,7 @@ import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { B3Propagator } from '@opentelemetry/propagator-b3';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
@@ -111,7 +111,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
   console.error = (...args) => addTraceContext('error', ...args);
 
   // Create a custom resource
-  const resource = new Resource({
+  const resource = resourceFromAttributes({
     [ATTR_SERVICE_NAME]: appName,
     [ATTR_SERVICE_VERSION]: appVersion,
     [ATTR_CLIENT_ADDRESS]: window.location.origin,
@@ -136,7 +136,7 @@ export const initFETelemetry = ({ appName, appVersion, collectorUrl, initiateTel
         exportIntervalMillis: 30 * 1000, // 30 seconds
       }),
     ],
-    mergeResourceWithDefaults: true,
+    // mergeResourceWithDefaults: true,
   });
 
   metrics.setGlobalMeterProvider(meterProvider);
