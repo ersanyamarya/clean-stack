@@ -170,7 +170,7 @@ function CtaSection() {
             Explore Docs
           </Link>
           <Link
-            to="/docs/examples"
+            href="https://github.com/ersanyamarya/clean-stack"
             className={styles.outlinedButton}>
             View Examples
           </Link>
