@@ -14,7 +14,7 @@ export const copyToServer = async (source: string, destination: string, options:
   logger.info(`Source size: ${sourceSizeInMB}`);
 
   if (isLargeTransfer(sourceSize)) {
-    logger.info(`The source is too large (${sourceSize} bytes). Splitting the transfer into smaller chunks.`);
+    logger.warning(`The source is too large (${sourceSizeInMB}). Compress -> Split -> Transfer`);
 
     const numberOfFiles = await fileCount(absoluteSourcePath);
     const compressResult = await compressDirectory(absoluteSourcePath, numberOfFiles);
