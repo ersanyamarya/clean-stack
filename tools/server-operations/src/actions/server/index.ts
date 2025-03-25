@@ -1,2 +1,2 @@
-export * from './runOnServer';
-export * from './updateServer';
+export * from './run-on-server';
+export * from './update-server';
