@@ -1,6 +1,6 @@
 import { Option, program } from 'commander';
 import { addAction, defaultAction, listConfigAction, removeAction } from './actions/config';
-import { runCommandOnServer, updateServer } from './actions/server';
+import { copyToServer, runCommandOnServer, updateServer } from './actions/server';
 import { logError, logger } from './utils/logger';
 import { logoLarge } from './utils/logo';
 
@@ -33,6 +33,15 @@ serverCommand
   .addOption(new Option('-s, --server <server>', 'Server to update').conflicts('default'))
   .addOption(new Option('-r, --raspberry-pi', 'Update firmware on Raspberry Pi').default(false))
   .action(actionWithTryCatch(updateServer));
+
+serverCommand
+  .command('copy')
+  .description('Copy files to a server')
+  .addOption(new Option('-d, --default', 'Copy files to default server').conflicts('server').default(false))
+  .addOption(new Option('-s, --server <server>', 'Server to copy files to').conflicts('default'))
+  .argument('<source>', 'Source file or directory to copy')
+  .argument('<destination>', 'Destination path on the server')
+  .action(actionWithTryCatch(copyToServer));
 
 program.parse(process.argv);
 
