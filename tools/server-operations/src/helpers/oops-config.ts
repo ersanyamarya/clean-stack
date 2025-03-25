@@ -1,4 +1,4 @@
-import { getDefaultServer, listServers } from '../sources/config';
+import { getDefaultServer, listServers, removeServers, setDefaultServer } from '../sources/config';
 
 export const listServersFromConfig = () => {
   const serverList = listServers();
@@ -12,4 +12,17 @@ export const listServersAsChoices = () => {
     value: server.name,
     name: `${server.name} (${server.host}) ${server.name === defaultServer ? '(DEFAULT)' : ''}`,
   }));
+};
+
+
+export const removeServersFromConfig = (serverNames: string[]) => {
+  removeServers(serverNames);
+};
+
+export const setDefaultServerInConfig = (serverName: string) => {
+  setDefaultServer(serverName);
+};
+
+export const getDefaultServerFromConfig = () => {
+  return getDefaultServer();
 };
