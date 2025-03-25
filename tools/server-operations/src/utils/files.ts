@@ -4,7 +4,8 @@ export const sizeUnits = {
   M: 1024 ** 2,
   G: 1024 ** 3,
   T: 1024 ** 4,
-};
+} as const;
+export type SizeUnit = keyof typeof sizeUnits;
 
 export const getDirectorySize = async (dir: string): Promise<number> => {
   const { stdout } = await $`du -sh ${dir}`;
@@ -36,4 +37,8 @@ export const getAboslutePath = (relativePath: string) => {
 export const fileCount = async (dir: string): Promise<number> => {
   const { stdout: fileCount } = await $`find ${dir} -type f ! -path "*/\.*" | wc -l`;
   return parseInt(fileCount.trim());
+};
+
+export const bytesToOthers = (bytes: number, unit: SizeUnit = 'M'): number => {
+  return parseInt((bytes / sizeUnits[unit]).toFixed(2));
 };

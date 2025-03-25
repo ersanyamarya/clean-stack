@@ -1,30 +1,48 @@
-// tar -cf temp/data.tar
-
-import { $ } from 'zx';
+import ProgressBar from 'progress';
+import { $, fs } from 'zx';
 import { logger } from './logger';
 
-/**
- * Compress a directory into a tar file.
- * @param {string} dir - The directory to compress.
- * @param {string} output - The output tar file.
- */
-export const compressDirectory = async (dir: string, output: string): Promise<string> => {
-  logger.info(`Compressing directory ${dir} into ${output}`);
+const OUTPUT_FILE = 'temp/archive.tar.gz';
+
+export const compressDirectory = async (dir: string, numberOfFiles: number): Promise<string> => {
+  logger.info(`Compressing directory ${dir} into ${OUTPUT_FILE}`);
+
+  await $`mkdir -p temp`;
+  await $`rm -rf ${OUTPUT_FILE}`;
+
+  const progressBar = new ProgressBar('Progress: [:bar] :percent :etas', {
+    complete: '█',
+    incomplete: '░',
+    width: 50,
+    total: numberOfFiles,
+    clear: true,
+  });
   return new Promise((resolve, reject) => {
-    const shellProcess = $`tar -cf ${output} ${dir}`;
-    shellProcess.stdout.on('data', data => {
-      logger.info(data.toString());
-    });
+    $.quiet = true;
+
+    const shellProcess = $`tar -czvf ${OUTPUT_FILE} ${dir}`;
+    const handleOutput = (data: unknown) => {
+      const lines: Array<string> = data.toString().split('\n');
+      lines.forEach(line => {
+        if (line) {
+          progressBar.tick(1);
+        }
+      });
+    };
+
+    shellProcess.stdout.on('data', handleOutput);
     shellProcess.stderr.on('data', data => {
-      logger.error(data.toString());
+      handleOutput(data);
+      // logger.error(data.toString());
     });
 
     shellProcess.exitCode.then(code => {
       if (code !== 0) {
         reject(`Command failed with exit code ${code}`);
       } else {
-        resolve('Directory compressed successfully');
+        resolve(fs.statSync(OUTPUT_FILE).size);
       }
+      $.quiet = false;
       shellProcess.kill();
     });
   });
