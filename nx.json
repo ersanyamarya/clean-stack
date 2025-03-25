@@ -71,7 +71,6 @@
   },
   "useLegacyCache": true,
   "useDaemonProcess": true,
-
   "cli": {
     "packageManager": "bun"
   }

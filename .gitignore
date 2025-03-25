@@ -1,4 +1,5 @@
 .env
+.serverops.config.json
 /docs
 # compiled output
 dist
