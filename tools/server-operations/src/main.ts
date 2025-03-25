@@ -21,7 +21,6 @@ const serverCommand = program.command('server').description('Manage servers');
 serverCommand
   .command('run')
   .description('Run a command on a server')
-
   .addOption(new Option('-d, --default', 'Run command on default server').conflicts('server').default(false))
   .addOption(new Option('-s, --server <server>', 'Server to run command on').conflicts('default'))
   .argument('<command>', 'Command to run on server')
