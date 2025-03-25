@@ -1,4 +1,4 @@
-import { Server } from '../sources/config';
+import { getDefaultServer, getServerByName, Server } from '../sources/config';
 export const generateSSHOptionsString = (server: Server, isPortP = false) => {
   const sshOptions = [];
   if (server.port) {
@@ -24,4 +24,17 @@ export const generateSCPCommand = (server: Server, sourcePath: string, destinati
   const sshOptions = generateSSHOptionsString(server, true);
   const scpCommand = ['scp', ...sshOptions, '-r', sourcePath, `${server.user}@${server.host}:${destinationPath}`];
   return scpCommand;
+};
+
+export interface RunOnServerOptions {
+  default?: boolean;
+  server?: string;
+}
+
+export const getServerToRunOn = (options: RunOnServerOptions) => {
+  if (!options.default && !options.server) {
+    throw new Error('You must provide a server name or set the default flag to true');
+  }
+
+  return getServerByName(options.server || getDefaultServer());
 };

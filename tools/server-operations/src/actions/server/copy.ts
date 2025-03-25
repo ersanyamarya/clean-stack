@@ -1,16 +1,6 @@
-import ProgressBar from 'progress';
-import { executeBash, generateSCPCommand } from '../../helpers';
+import { executeBash, generateSCPCommand, getServerToRunOn, RunOnServerOptions } from '../../helpers';
 import { getAboslutePath, getDirectorySize, sizeUnits } from '../../utils/files';
 import { logger } from '../../utils/logger';
-import { getServerToRunOn, RunOnServerOptions } from './utils';
-
-const progressBar = new ProgressBar('Progress: [:bar] :percent :etas', {
-  complete: '█',
-  incomplete: '░',
-  width: 50,
-  total: 100,
-  clear: true,
-});
 
 const SPLIT_SIZE = '16m'; // 16 MB
 

@@ -1,7 +1,6 @@
-import { executeBash, generateSSHCommand } from '../../helpers';
+import { executeBash, generateSSHCommand, getServerToRunOn, RunOnServerOptions } from '../../helpers';
 import { Server } from '../../sources/config';
 import { logger } from '../../utils/logger';
-import { getServerToRunOn, RunOnServerOptions } from './utils';
 
 interface UpdateServerOptions extends RunOnServerOptions {
   isRaspberryPi: boolean;
