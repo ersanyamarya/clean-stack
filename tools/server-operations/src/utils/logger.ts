@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 export const logger = {
   info: (message: string) => console.log(chalk.blue(message)),
@@ -13,7 +14,7 @@ export const logger = {
 };
 export const logError = (error: Error) => {
   console.error(chalk.red(error.message));
-  if (error.stack) {
+  if (NODE_ENV === 'development' && error.stack) {
     console.error(chalk.gray(error.stack));
   }
 };
