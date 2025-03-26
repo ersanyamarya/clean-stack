@@ -10,7 +10,8 @@ import { generateSCPCommand, generateSSHCommand } from './ssh-helper';
 
 const SPLIT_SIZE = '16m'; // 16 MB
 const TEMP_DIR = 'tmp/archives/';
-const TAR_FILE_OUTPUT = `${TEMP_DIR}archive.tar.gz`;
+const ARCHIVE_FILE_NAME = 'archive.tar.gz';
+const TAR_FILE_OUTPUT = `${TEMP_DIR}${ARCHIVE_FILE_NAME}`;
 
 export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string, destination: string, serverToRunOn: Server): Promise<void> => {
   await cleanTempDir();
@@ -21,12 +22,12 @@ export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string
   const { numberOfParts, totalSplittingTime, splitFiles } = await splitFile(compressedOutputFile, SPLIT_SIZE);
   logger.success(`Split ${compressedOutputFile} into ${numberOfParts} parts in ${totalSplittingTime} seconds`);
 
-  logger.info(`Transferring ${numberOfParts} files to server ${serverToRunOn.name}`);
+  logger.info(`Transferring ${numberOfParts} parts to server ${serverToRunOn.name}`);
 
   const tempDestinationPath = `${destination}/${TEMP_DIR}`;
   await cleanServerDestination(serverToRunOn, tempDestinationPath);
 
-  const progressBar = new ProgressBar('Progress: [:bar] :percent :etas', {
+  const progressBar = new ProgressBar('Copying... : [:bar] :percent :etas', {
     complete: '█',
     incomplete: '░',
     width: 50,
@@ -36,12 +37,24 @@ export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string
 
   await batchProcessArray(splitFiles, async file => {
     const sshCommand = generateSCPCommand(serverToRunOn, TEMP_DIR + file, `${tempDestinationPath}${file}`);
-    await executeBash(sshCommand, true);
+    await executeBash(sshCommand, false);
     progressBar.tick(1);
   });
 
-  logger.success(`Successfully transferred ${numberOfParts} splited files to server ${serverToRunOn.name}`);
+  logger.success(`Successfully transferred ${numberOfParts} parts to server ${serverToRunOn.name}`);
   await cleanTempDir();
+
+  logger.info(`Merging files on server ${serverToRunOn.name}`);
+  const sshCommandForServerToMerge = generateSSHCommand(serverToRunOn, `cd ${tempDestinationPath} && cat ${ARCHIVE_FILE_NAME}.part* > ${ARCHIVE_FILE_NAME}`);
+  await executeBash(sshCommandForServerToMerge);
+  logger.success(`Successfully merged files on server ${serverToRunOn.name}`);
+
+  logger.info(`Unzipping files on server ${serverToRunOn.name}`);
+  const sshCommandForServerToUnzip = generateSSHCommand(serverToRunOn, `cd ${destination} && tar -xzf ${TAR_FILE_OUTPUT}`);
+  await executeBash(sshCommandForServerToUnzip);
+  logger.success(`Successfully unzipped files on server ${serverToRunOn.name}`);
+
+  await cleanServerDestination(serverToRunOn, tempDestinationPath);
 };
 
 export const isLargeTransfer = (bytes: number): boolean => {

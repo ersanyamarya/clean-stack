@@ -14,7 +14,6 @@ export const listServersAsChoices = () => {
   }));
 };
 
-
 export const removeServersFromConfig = (serverNames: string[]) => {
   removeServers(serverNames);
 };

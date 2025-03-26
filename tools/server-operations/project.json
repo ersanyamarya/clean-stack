@@ -18,6 +18,7 @@
         "tsConfig": "tools/server-operations/tsconfig.app.json",
         "assets": ["tools/server-operations/src/assets"],
         "generatePackageJson": true,
+
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
@@ -28,6 +29,9 @@
       "configurations": {
         "development": {},
         "production": {
+          "external": ["zx"],
+          "bundle": true,
+          "generateLockfile": true,
           "esbuildOptions": {
             "sourcemap": false,
             "outExtension": {

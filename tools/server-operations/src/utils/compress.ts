@@ -10,7 +10,7 @@ interface CompressResult {
   compressedOutputFile: string;
 }
 
-export const compressDirectory = async (dir: string, outputfile: string): Promise<CompressResult> => {
+export const compressDirectory = async (dir: string, outputfile: string, verbose = false): Promise<CompressResult> => {
   const startTime = Date.now();
   logger.info(`Compressing directory ${dir} into ${outputfile}`);
   const numberOfFiles = await fileCount(dir);
@@ -25,7 +25,7 @@ export const compressDirectory = async (dir: string, outputfile: string): Promis
   return new Promise((resolve, reject) => {
     $.quiet = true;
 
-    const shellProcess = $`tar -czvf ${outputfile} ${dir}`;
+    const shellProcess = $`COPYFILE_DISABLE=1 tar --exclude-vcs --exclude=".DS_Store" --no-xattrs -czvf ${outputfile} -C ${dir} .`;
     const handleOutput = (data: unknown) => {
       const lines: Array<string> = data.toString().split('\n');
       lines.forEach(line => {
@@ -36,7 +36,10 @@ export const compressDirectory = async (dir: string, outputfile: string): Promis
     };
 
     shellProcess.stdout.on('data', handleOutput);
-    shellProcess.stderr.on('data', handleOutput);
+    shellProcess.stderr.on('data', data => {
+      handleOutput(data);
+      if (verbose) logger.error(`Error: ${data}`);
+    });
 
     shellProcess.exitCode.then(code => {
       if (code !== 0) {
