@@ -9,11 +9,11 @@ import { splitFile } from '../utils/split';
 import { generateSCPCommand, generateSSHCommand } from './ssh-helper';
 
 const SPLIT_SIZE = '16m'; // 16 MB
-const TEMP_DIR = 'temp/';
+const TEMP_DIR = 'tmp/archives/';
 const TAR_FILE_OUTPUT = `${TEMP_DIR}archive.tar.gz`;
 
 export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string, destination: string, serverToRunOn: Server): Promise<void> => {
-  await prepareTempDirectory();
+  await cleanTempDir();
 
   const { numberOfFiles, compressedSize, totalCompressionTime, compressedOutputFile } = await compressDirectory(filePath, TAR_FILE_OUTPUT);
   logger.success(`Compressed ${sourceSizeInMB} or ${numberOfFiles} files into ${bytesToOthers(compressedSize)} MB in ${totalCompressionTime} seconds`);
@@ -24,7 +24,7 @@ export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string
   logger.info(`Transferring ${numberOfParts} files to server ${serverToRunOn.name}`);
 
   const tempDestinationPath = `${destination}/${TEMP_DIR}`;
-  await prepareServerDestination(serverToRunOn, tempDestinationPath);
+  await cleanServerDestination(serverToRunOn, tempDestinationPath);
 
   const progressBar = new ProgressBar('Progress: [:bar] :percent :etas', {
     complete: '█',
@@ -40,10 +40,8 @@ export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string
     progressBar.tick(1);
   });
 
-  logger.success(`Successfully transferred ${numberOfParts} files to server ${serverToRunOn.name}`);
-
-  logger.info(`Deleting ${compressedOutputFile}`);
-  await executeBash(['rm', '-rf', compressedOutputFile]);
+  logger.success(`Successfully transferred ${numberOfParts} splited files to server ${serverToRunOn.name}`);
+  await cleanTempDir();
 };
 
 export const isLargeTransfer = (bytes: number): boolean => {
@@ -52,18 +50,19 @@ export const isLargeTransfer = (bytes: number): boolean => {
   return bytes > splitSize * 2;
 };
 
-const prepareTempDirectory = async () => {
-  logger.info(`Preparing local temporary directory: ${TEMP_DIR}`);
+const cleanTempDir = async () => {
+  logger.info(`Cleaning and preparing local temporary directory: ${TEMP_DIR}`);
   await executeBash(['rm', '-rf', TEMP_DIR]);
   await executeBash(['mkdir', '-p', TEMP_DIR]);
-  logger.success(`Temporary directory ${TEMP_DIR} is ready`);
+  logger.success(`Local temporary directory cleaned and prepared: ${TEMP_DIR}`);
 };
-async function prepareServerDestination(serverToRunOn: Server, tempDestinationPath: string) {
+
+async function cleanServerDestination(serverToRunOn: Server, tempDestinationPath: string) {
   const sshCommandForServerToDeleteDestination = generateSSHCommand(serverToRunOn, `rm -rf ${tempDestinationPath}`);
   const deleteDestinationOutput = await executeBash(sshCommandForServerToDeleteDestination);
   logger.success(`Removing destination temporary directory: ${deleteDestinationOutput}`);
 
   const sshCommandForServerToCreateDestination = generateSSHCommand(serverToRunOn, `mkdir -p ${tempDestinationPath}`);
   const createDestinationOutput = await executeBash(sshCommandForServerToCreateDestination);
-  logger.success(`Creating destination temporary directory: ${createDestinationOutput}`);
+  logger.success(`Destination temporary directory cleaned and created: ${createDestinationOutput}`);
 }
