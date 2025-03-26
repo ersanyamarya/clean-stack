@@ -1,7 +1,7 @@
 import { generateSCPCommand, getServerToRunOn, RunOnServerOptions } from '../../helpers';
 import { compressDirectory } from '../../utils/compress';
 import { executeBash } from '../../utils/execute-bash';
-import { bytesToOthers, fileCount, getAboslutePath, getDirectorySize, sizeUnits } from '../../utils/files';
+import { bytesToOthers, getAboslutePath, getDirectorySize, sizeUnits } from '../../utils/files';
 import { logger } from '../../utils/logger';
 
 const SPLIT_SIZE = '16m'; // 16 MB
@@ -16,10 +16,9 @@ export const copyToServer = async (source: string, destination: string, options:
   if (isLargeTransfer(sourceSize)) {
     logger.warning(`The source is too large (${sourceSizeInMB}). Compress -> Split -> Transfer`);
 
-    const numberOfFiles = await fileCount(absoluteSourcePath);
-    const compressResult = await compressDirectory(absoluteSourcePath, numberOfFiles);
+    const { numberOfFiles, compressedSize, timeInS } = await compressDirectory(absoluteSourcePath);
 
-    logger.success(`Compressed ${sourceSizeInMB} or ${numberOfFiles} files into ${bytesToOthers(parseInt(compressResult))} MB`);
+    logger.success(`Compressed ${sourceSizeInMB} or ${numberOfFiles} files into ${bytesToOthers(compressedSize)} MB in ${timeInS} seconds`);
   } else {
     const sshCommand = generateSCPCommand(serverToRunOn, absoluteSourcePath, destination);
     logger.info(`Executing : ${sshCommand.join(' ')}`);

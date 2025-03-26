@@ -40,5 +40,5 @@ export const fileCount = async (dir: string): Promise<number> => {
 };
 
 export const bytesToOthers = (bytes: number, unit: SizeUnit = 'M'): number => {
-  return parseInt((bytes / sizeUnits[unit]).toFixed(2));
+  return parseFloat((bytes / sizeUnits[unit]).toFixed(2));
 };
