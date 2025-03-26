@@ -252,8 +252,9 @@ By understanding these configurations, you can customize the observability stack
 ### Troubleshooting
 
 #### Issue: "Grafana is not accessible at http://localhost:3000"
-**Cause**: Grafana service might not be running or is misconfigured.
-**Solution**:
+
+**Cause**: Grafana service might not be running or is misconfigured. **Solution**:
+
 1. Check the status of the Grafana container:
    ```bash
    docker ps | grep grafana
@@ -268,8 +269,9 @@ By understanding these configurations, you can customize the observability stack
    ```
 
 #### Issue: "No metrics visible in Grafana dashboards"
-**Cause**: Prometheus might not be scraping metrics correctly.
-**Solution**:
+
+**Cause**: Prometheus might not be scraping metrics correctly. **Solution**:
+
 1. Verify Prometheus is running:
    ```bash
    docker ps | grep prometheus
@@ -278,8 +280,9 @@ By understanding these configurations, you can customize the observability stack
 3. Access Prometheus at `http://localhost:9090` and verify the targets are up.
 
 #### Issue: "Logs are not appearing in Loki"
-**Cause**: Loki might not be receiving logs from the OpenTelemetry Collector.
-**Solution**:
+
+**Cause**: Loki might not be receiving logs from the OpenTelemetry Collector. **Solution**:
+
 1. Check the Loki service status:
    ```bash
    docker ps | grep loki
@@ -291,8 +294,9 @@ By understanding these configurations, you can customize the observability stack
    ```
 
 #### Issue: "Traces are missing in Tempo"
-**Cause**: Tempo might not be receiving traces from the OpenTelemetry Collector.
-**Solution**:
+
+**Cause**: Tempo might not be receiving traces from the OpenTelemetry Collector. **Solution**:
+
 1. Check the Tempo service status:
    ```bash
    docker ps | grep tempo

@@ -65,19 +65,20 @@ You should see:
 After starting the development environment, you can perform the following checks:
 
 1. **Verify Redis Connection**:
+
    ```bash
    redis-cli ping
    ```
+
    You should see:
+
    ```
    PONG
    ```
 
-2. **Check OpenTelemetry Metrics**:
-   Visit `http://localhost:8889/metrics` to ensure metrics are being collected.
+2. **Check OpenTelemetry Metrics**: Visit `http://localhost:8889/metrics` to ensure metrics are being collected.
 
-3. **Access Grafana Dashboards**:
-   Open `http://localhost:3000` in your browser and log in with the default credentials (if configured).
+3. **Access Grafana Dashboards**: Open `http://localhost:3000` in your browser and log in with the default credentials (if configured).
 
 ## Next Steps
 

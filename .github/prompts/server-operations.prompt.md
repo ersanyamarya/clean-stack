@@ -4,7 +4,6 @@ Collecting workspace information# Server Operations Developer Guide
 
 The server-operations tool is a powerful CLI utility designed to simplify server management tasks within the Clean Stack ecosystem. It provides a streamlined interface for configuring server connections, executing remote commands, and performing system updates.
 
-
 ## Usage Examples
 
 ```bash
