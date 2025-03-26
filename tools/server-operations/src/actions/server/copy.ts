@@ -23,7 +23,7 @@ export const copyToServer = async (source: string, destination: string, options:
 
     const { numberOfFiles, compressedSize, timeInS, outputFile } = await compressDirectory(absoluteSourcePath, TAR_FILE_OUTPUT);
     logger.success(`Compressed ${sourceSizeInMB} or ${numberOfFiles} files into ${bytesToOthers(compressedSize)} MB in ${timeInS} seconds`);
-    const { numberOfParts, timeInS: splitTime } = await splitFile(outputFile, SPLIT_SIZE);
+    const { numberOfParts, timeInS: splitTime, splitFiles } = await splitFile(outputFile, SPLIT_SIZE);
     logger.success(`Split ${outputFile} into ${numberOfParts} parts in ${splitTime} seconds`);
 
     logger.info(`Deleting ${outputFile}`);
