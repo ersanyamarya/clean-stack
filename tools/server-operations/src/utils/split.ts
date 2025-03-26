@@ -4,7 +4,7 @@ import { logger } from './logger';
 
 interface SplitResult {
   numberOfParts: number;
-  timeInS: number;
+  totalSplittingTime: number;
   splitFiles: string[];
 }
 
@@ -29,7 +29,7 @@ export const splitFile = async (inputFile: string, splitSize: string): Promise<S
 
   return {
     numberOfParts,
-    timeInS: (Date.now() - startTime) / 1000,
+    totalSplittingTime: (Date.now() - startTime) / 1000,
     splitFiles,
   };
 };

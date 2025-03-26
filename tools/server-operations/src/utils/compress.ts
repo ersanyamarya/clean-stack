@@ -6,8 +6,8 @@ import { logger } from './logger';
 interface CompressResult {
   numberOfFiles: number;
   compressedSize: number;
-  timeInS: number;
-  outputFile: string;
+  totalCompressionTime: number;
+  compressedOutputFile: string;
 }
 
 export const compressDirectory = async (dir: string, outputfile: string): Promise<CompressResult> => {
@@ -46,8 +46,8 @@ export const compressDirectory = async (dir: string, outputfile: string): Promis
         resolve({
           numberOfFiles: numberOfFiles,
           compressedSize: stats.size,
-          timeInS: parseFloat(((Date.now() - startTime) / 1000).toFixed(2)),
-          outputFile: outputfile,
+          totalCompressionTime: parseFloat(((Date.now() - startTime) / 1000).toFixed(2)),
+          compressedOutputFile: outputfile,
         });
       }
       $.quiet = false;
