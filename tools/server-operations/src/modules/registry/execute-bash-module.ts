@@ -1,4 +1,4 @@
-import { $ } from 'zx';
+import { executeBash } from '../../utils/execute-bash';
 import { ModuleError, ModuleFactory } from '../module-framework';
 
 export type ExecuteBashModuleOptions = {
@@ -16,24 +16,14 @@ export const createExecuteBashModule: ModuleFactory<ExecuteBashModuleOptions, st
     async run(options: ExecuteBashModuleOptions) {
       await this.validate(options);
       const { command, verbose = true } = options;
-      $.shell = '/bin/bash';
-      $.verbose = verbose;
-      return new Promise((resolve, reject) => {
-        const shellProcess = $`${command}`;
-        shellProcess.stderr.on('data', data => {
-          if (verbose) logger.error(data.toString());
+      try {
+        return await executeBash(command, verbose);
+      } catch (error) {
+        throw new ModuleError(NAME, 'Command execution failed', {
+          command,
+          error: (error as Error).message,
         });
-
-        shellProcess.exitCode.then(code => {
-          if (code !== 0) {
-            reject(new ModuleError(NAME, `Command failed with exit code ${code}`, { command }));
-          } else {
-            resolve('Command executed successfully');
-          }
-          $.verbose = false;
-          shellProcess.kill();
-        });
-      });
+      }
     },
     async validate({ command }: ExecuteBashModuleOptions) {
       if (!command || command.length === 0) {
