@@ -1,6 +1,16 @@
 import chalk from 'chalk';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
+export type Logger = {
+  info: (message: string) => void;
+  success: (message: string) => void;
+  error: (message: string) => void;
+  warning: (message: string) => void;
+  debug: (message: string) => void;
+  log: (message: string) => void;
+  table: (data: any) => void;
+};
+
 export const logger = {
   info: (message: string) => console.log(chalk.blue(message)),
   success: (message: string) => console.log(chalk.green(message)),
