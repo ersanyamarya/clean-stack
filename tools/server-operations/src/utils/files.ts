@@ -7,10 +7,6 @@ export const sizeUnits = {
 } as const;
 export type SizeUnit = keyof typeof sizeUnits;
 
-const isFileOrDirectory = (path: string): 'file' | 'directory' => {
-  return fs.lstatSync(path).isDirectory() ? 'directory' : 'file';
-};
-
 export const getDirectorySize = async (dir: string): Promise<number> => {
   const { stdout } = await $`du -sh ${dir}`;
   const size = stdout.split('\t')[0];

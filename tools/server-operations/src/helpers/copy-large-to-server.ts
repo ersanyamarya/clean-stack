@@ -1,7 +1,7 @@
 import ProgressBar from 'progress';
 import { Server } from '../sources/config';
 import { batchProcessArray } from '../utils/batch-processing';
-import { compressDirectory } from '../utils/compress';
+import { compressFiles } from '../utils/compress';
 import { executeBash } from '../utils/execute-bash';
 import { bytesToOthers, sizeUnits } from '../utils/files';
 import { logger } from '../utils/logger';
@@ -16,7 +16,7 @@ const TAR_FILE_OUTPUT = `${TEMP_DIR}${ARCHIVE_FILE_NAME}`;
 export const copyLargeToServer = async (filePath: string, sourceSizeInMB: string, destination: string, serverToRunOn: Server): Promise<void> => {
   await cleanTempDir();
 
-  const { numberOfFiles, compressedSize, totalCompressionTime, compressedOutputFile } = await compressDirectory(filePath, TAR_FILE_OUTPUT);
+  const { numberOfFiles, compressedSize, totalCompressionTime, compressedOutputFile } = await compressFiles(filePath, TAR_FILE_OUTPUT);
   logger.success(`Compressed ${sourceSizeInMB} or ${numberOfFiles} files into ${bytesToOthers(compressedSize)} MB in ${totalCompressionTime} seconds`);
 
   const { numberOfParts, totalSplittingTime, splitFiles } = await splitFile(compressedOutputFile, SPLIT_SIZE);
