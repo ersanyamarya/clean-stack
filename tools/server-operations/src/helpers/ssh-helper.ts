@@ -29,6 +29,7 @@ export const generateSCPCommand = (server: Server, sourcePath: string, destinati
 export interface RunOnServerOptions {
   default?: boolean;
   server?: string;
+  verbose?: boolean;
 }
 
 export const getServerToRunOn = (options: RunOnServerOptions) => {

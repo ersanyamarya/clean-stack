@@ -65,6 +65,10 @@ const calculateCompressionMetrics = (startTime: number, stats: Stats, numberOfFi
  */
 export const compressFiles = async (dir: string, outputfile: string, verbose = false): Promise<CompressResult> => {
   const startTime = Date.now();
+
+  logger.info(`Create the temporary directory if it doesn't exist`);
+  await fs.ensureDir(outputfile.split('/').slice(0, -1).join('/'));
+
   logger.info(`Compressing directory ${dir} into ${outputfile}`);
 
   const numberOfFiles = await fileCount(dir);

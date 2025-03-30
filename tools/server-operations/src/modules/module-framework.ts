@@ -37,6 +37,10 @@ export class ModuleError extends Error {
     };
   }
 
+  toJSONString(): string {
+    return JSON.stringify(this.toJSON(), null, 2);
+  }
+
   toError(): Error {
     return new Error(this.toString());
   }

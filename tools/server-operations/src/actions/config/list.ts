@@ -6,7 +6,7 @@ interface ConfigOptions {
   table?: boolean;
 }
 
-export const listConfigAction = (options: ConfigOptions) => {
+export const listConfigAction = async (options: ConfigOptions): Promise<void> => {
   const serverList = listServersFromConfig();
   if (serverList.length === 0) {
     logger.warning('No servers available. Use the command "server-operations add" to add a new server.');
