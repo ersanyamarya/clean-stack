@@ -1,4 +1,4 @@
-import { executeBash } from '../../utils/execute-bash';
+import { executeBash } from '../../executions/execute-bash';
 import { ModuleError, ModuleFactory } from '../module-framework';
 
 export type ExecuteBashModuleOptions = {

@@ -1,5 +1,5 @@
 import { $ } from 'zx';
-import { Server } from '../sources/config';
+import { Server } from '../server';
 import { generateSSHCommand } from './ssh-utils';
 export const executeOnServer = async (command: string, server: Server, verbose = false): Promise<string> => {
   const sshCommand = generateSSHCommand(server, command);

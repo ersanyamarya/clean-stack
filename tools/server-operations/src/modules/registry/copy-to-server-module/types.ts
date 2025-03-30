@@ -1,4 +1,4 @@
-import { Server } from '../../../sources/config';
+import { Server } from '../../../server';
 
 /** Configuration options for the CopyToServer module */
 export type CopyToServerModuleOptions = {

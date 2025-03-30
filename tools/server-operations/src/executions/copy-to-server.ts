@@ -1,5 +1,6 @@
 import { $ } from 'zx';
-import { Server } from '../sources/config';
+
+import { Server } from '../server';
 import { generateSCPCommand } from './ssh-utils';
 
 export const copyToServer = async (source: string, destination: string, server: Server, verbose = false): Promise<string> => {

@@ -1,4 +1,4 @@
-import { Server } from '../sources/config';
+import { Server } from '../server';
 
 export enum SSHPortFlag {
   P = '-P',

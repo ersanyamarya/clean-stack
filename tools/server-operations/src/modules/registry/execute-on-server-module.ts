@@ -1,5 +1,5 @@
-import { Server } from '../../sources/config';
-import { executeOnServer } from '../../utils/execute-on-server';
+import { executeOnServer } from '../../executions/execute-on-server';
+import { Server } from '../../server';
 import { ModuleError, ModuleFactory } from '../module-framework';
 
 export type ExecuteOnServerModuleOptions = {

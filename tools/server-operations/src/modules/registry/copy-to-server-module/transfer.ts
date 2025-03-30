@@ -1,12 +1,6 @@
-import { Server } from '../../../sources/config';
-import { batchProcessArray } from '../../../utils/batch-processing';
-import { compressFiles } from '../../../utils/compress';
-import { copyToServer } from '../../../utils/copy-to-server';
-import { executeBash, executeBashWithProgress } from '../../../utils/execute-bash';
-import { fileCount, sizeUnits } from '../../../utils/files';
-import { Logger } from '../../../utils/logger';
-import { splitFile } from '../../../utils/split';
-import { generateSSHCommand } from '../../../utils/ssh-utils';
+import { copyToServer, executeBash, executeBashWithProgress, generateSSHCommand } from '../../../executions';
+import { Server } from '../../../server';
+import { batchProcessArray, compressFiles, fileCount, Logger, sizeUnits, splitFile } from '../../../utils';
 import { createProgressBar } from './progress';
 import { TransferOptions } from './types';
 

@@ -1,4 +1,4 @@
-import { copyToServer } from '../../../utils/copy-to-server';
+import { copyToServer } from '../../../executions';
 import { getDirectorySize } from '../../../utils/files';
 import { ModuleError, ModuleFactory } from '../../module-framework';
 import { cleanup } from './cleanup';
