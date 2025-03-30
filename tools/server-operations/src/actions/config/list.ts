@@ -1,5 +1,5 @@
-import { listServersFromConfig } from '../../helpers';
 import { logger } from '../../utils/logger';
+import { listServersFromConfig } from './helpers';
 
 interface ConfigOptions {
   list?: boolean;

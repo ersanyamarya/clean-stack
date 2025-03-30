@@ -1,6 +1,6 @@
 import { checkbox } from '@inquirer/prompts';
-import { listServersAsChoices, removeServersFromConfig } from '../../helpers';
 import { logger } from '../../utils/logger';
+import { listServersAsChoices, removeServersFromConfig } from './helpers';
 
 export const removeAction = async () => {
   const choices = listServersAsChoices();
@@ -10,7 +10,7 @@ export const removeAction = async () => {
     return;
   }
 
-  const serverNames = await checkbox({
+  const serverNames: string[] = await checkbox({
     message: 'Select a server to remove',
     choices,
   });
