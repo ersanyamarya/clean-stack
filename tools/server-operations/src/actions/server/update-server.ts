@@ -1,27 +1,51 @@
-import { generateSSHCommand, getServerToRunOn, RunOnServerOptions } from '../../helpers';
+import { moduleRegistry } from '../../modules/registry';
 import { Server } from '../../sources/config';
-import { executeBash } from '../../utils/execute-bash';
 import { logger } from '../../utils/logger';
-interface UpdateServerOptions extends RunOnServerOptions {
+import { ServerSelectionOptions, getServerToRunOn } from '../types';
+
+interface UpdateServerOptions extends ServerSelectionOptions {
   isRaspberryPi: boolean;
 }
 
 export const updateServer = async (options: UpdateServerOptions) => {
   const serverToRunOn: Server = getServerToRunOn(options);
+  const executeOnServer = moduleRegistry['EXECUTE_ON_SERVER'];
+
   logger.info(`Updating packages on ${serverToRunOn.name}`);
-  await executeBash(generateSSHCommand(serverToRunOn, `sudo apt update -y`));
+  await executeOnServer.run({
+    command: 'sudo apt update -y',
+    server: serverToRunOn,
+    verbose: options.verbose,
+  });
 
   logger.info(`Upgrading packages on ${serverToRunOn.name}`);
-  await executeBash(generateSSHCommand(serverToRunOn, `sudo apt upgrade -y`));
+  await executeOnServer.run({
+    command: 'sudo apt upgrade -y',
+    server: serverToRunOn,
+    verbose: options.verbose,
+  });
+
   if (options.isRaspberryPi) {
-    logger.info(`Upgrading firmware on ${serverToRunOn.name}`);
-    await executeBash(generateSSHCommand(serverToRunOn, `sudo rpi-update`));
+    logger.info(`Dist upgrading packages on ${serverToRunOn.name}`);
+    await executeOnServer.run({
+      command: 'sudo apt dist-upgrade -y',
+      server: serverToRunOn,
+      verbose: options.verbose,
+    });
   }
   logger.info(`Auto removing packages on ${serverToRunOn.name}`);
-  await executeBash(generateSSHCommand(serverToRunOn, `sudo apt autoremove -y`));
+  await executeOnServer.run({
+    command: 'sudo apt autoremove -y',
+    server: serverToRunOn,
+    verbose: options.verbose,
+  });
 
   logger.info(`Cleaning up packages on ${serverToRunOn.name}`);
-  await executeBash(generateSSHCommand(serverToRunOn, `sudo apt clean`));
+  await executeOnServer.run({
+    command: 'sudo apt autoclean -y',
+    server: serverToRunOn,
+    verbose: options.verbose,
+  });
 
   logger.info(`Done updating ${serverToRunOn.name}`);
 };
