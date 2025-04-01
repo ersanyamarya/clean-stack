@@ -1,7 +1,7 @@
 import { checkbox } from '@inquirer/prompts';
-import { addServersFromSShConfig } from '../../helpers';
 import { addServers } from '../../sources/config';
 import { logger } from '../../utils/logger';
+import { addServersFromSShConfig } from './helpers';
 
 export const addAction = async () => {
   logger.info('Adding a new server from the ssh config');

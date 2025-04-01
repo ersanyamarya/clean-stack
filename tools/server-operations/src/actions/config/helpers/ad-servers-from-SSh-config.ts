@@ -1,5 +1,5 @@
-import { listServers } from '../sources/config';
-import { parseSSHConfig } from '../sources/parse-ssh-config';
+import { listServers } from '../../../sources/config';
+import { parseSSHConfig } from '../../../sources/parse-ssh-config';
 
 export const addServersFromSShConfig = () => {
   const parsedSSHConfig = parseSSHConfig();

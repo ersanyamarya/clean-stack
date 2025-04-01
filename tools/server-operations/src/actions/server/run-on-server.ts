@@ -1,5 +1,5 @@
 import { moduleRegistry } from '../../modules/registry';
-import { Server } from '../../sources/config';
+import { Server } from '../../server';
 import { logger } from '../../utils/logger';
 import { ServerSelectionOptions, getServerToRunOn } from '../types';
 export const runCommandOnServer = async (commandToRun: string, options: ServerSelectionOptions) => {

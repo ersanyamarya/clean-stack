@@ -1,6 +1,6 @@
 import { select } from '@inquirer/prompts';
-import { listServersAsChoices, setDefaultServerInConfig } from '../../helpers';
 import { logger } from '../../utils/logger';
+import { listServersAsChoices, setDefaultServerInConfig } from './helpers';
 
 export const defaultAction = async () => {
   const choices = listServersAsChoices();
