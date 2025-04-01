@@ -1,4 +1,4 @@
-import { copyToServer, executeBash, executeBashWithProgress, generateSSHCommand } from '../../../executions';
+import { copyToServer, executeBash, executeOnServer, executeOnServerWithProgress, generateSSHCommand } from '../../../executions';
 import { Server } from '../../../server';
 import { batchProcessArray, compressFiles, fileCount, Logger, sizeUnits, splitFile } from '../../../utils';
 import { createProgressBar } from './progress';
@@ -22,12 +22,18 @@ export const processSplitFilesOnServer = async (
   verbose: boolean
 ): Promise<void> => {
   logger.info(`Merging parts on server ${server.name}`);
-  const mergeCommand = generateSSHCommand(server, `cd ${destination}/${tempDir} && cat ${archiveFileName}.part* > ${archiveFileName}`);
-  await executeBash(mergeCommand, verbose);
+  await executeOnServer(`cd ${destination}/${tempDir} && cat ${archiveFileName}.part* > ${archiveFileName}`, server, verbose);
 
   logger.info(`Extracting ${sourceFileCount} files on server ${server.name}`);
-  const extractCommand = generateSSHCommand(server, `cd ${destination} && tar -xzvf ${tempDir}${archiveFileName} | while read line; do echo "PROGRESS"; done`);
-  const output = await executeBashWithProgress(extractCommand, sourceFileCount, 'Extracting files', 'PROGRESS');
+  const output = await executeOnServerWithProgress(
+    `cd ${destination} && tar -xzvf ${tempDir}${archiveFileName} | while read line; do echo "PROGRESS"; done`,
+    server,
+    sourceFileCount,
+    'Extracting files',
+    'PROGRESS'
+  );
+  // const extractCommand = generateSSHCommand(server, `cd ${destination} && tar -xzvf ${tempDir}${archiveFileName} | while read line; do echo "PROGRESS"; done`);
+  // const output = await executeBashWithProgress(extractCommand, sourceFileCount, 'Extracting files', 'PROGRESS');
   logger.success(output);
 };
 
