@@ -2,173 +2,107 @@
 sidebar_position: 1
 ---
 
-# Philosophy of Clean Stack
+# Architecture Philosophy
 
-Clean Stack emerges from real-world challenges in modern software development. It's designed to eliminate repetitive tasks while maintaining high standards for production-grade applications.
+## Vision
+
+Clean Stack emerges from real-world challenges in modern software development. Our vision is to provide a robust foundation that eliminates common technical hurdles while maintaining flexibility for diverse business needs.
 
 ## Core Principles
 
-1. **Developer Experience First** - Every tool and pattern chosen prioritizes developer productivity
-2. **Convention over Configuration** - Standardized practices reduce decision fatigue
-3. **Scalability by Default** - Architecture decisions that support growth from day one
-4. **Observable Systems** - Built-in telemetry and monitoring capabilities
-5. **Type Safety Throughout** - End-to-end TypeScript implementation
+### 1. Developer Experience First
+- **Productivity Focus**: Tools and patterns chosen to maximize developer efficiency
+- **Type Safety**: End-to-end TypeScript for better code reliability
+- **Clear Conventions**: Standardized practices to reduce decision fatigue
+- **Great Documentation**: Comprehensive guides and API documentation
 
-## Architecture Overview
+### 2. Domain-Driven Design
+- **Clear Boundaries**: Business logic isolated in domain layer
+- **Pure Core**: Domain logic free from technical concerns
+- **Shared Understanding**: Common language between technical and business teams
+- **Flexible Evolution**: Easy adaptation to changing business needs
 
+### 3. Clean Architecture
 ```mermaid
- graph LR
-      A[Client Applications]
-      B[API Gateway]
-      C[gRPC Services]
-      D[Domain Layer]
-      E[Shared Infrastructure]
-      F[Platform Features]
-
-      A --> B
-      B --> C
-      C --> D
-      D --> E
-      E --> F
-
-      classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px;
-      classDef highlight fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-      class B,C highlight
+graph TD
+    A[UI Layer] --> B[Use Cases]
+    B --> C[Domain Layer]
+    B --> D[Infrastructure]
+    D --> E[External Systems]
+    
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-## Monorepo Structure Explained
+- **Independent Core**: Business logic independent of frameworks
+- **Dependency Inversion**: External concerns depend on core, not vice versa
+- **Clear Interfaces**: Well-defined boundaries between layers
+- **Testable Design**: Easy to test each layer in isolation
 
-The monorepo approach using NX offers several key advantages:
-
-| Aspect                | Benefit                                                |
-| --------------------- | ------------------------------------------------------ |
-| Code Sharing          | Seamless sharing of types, utilities, and domain logic |
-| Dependency Management | Centralized versioning and updates                     |
-| Build Optimization    | Intelligent caching and selective rebuilds             |
-| Testing               | Unified test coverage and integration testing          |
-
-Our directory structure follows a domain-driven design:
-
-- **apps**: User-facing applications and documentation
-- **domain**: Core business logic and shared types
-- **framework**: Reusable technical components
-- **platform-features**: Cross-cutting concerns
-- **services**: Microservice implementations
-- **tools**: Development and deployment utilities
-
-## Technology Choices
-
-### Bun as Package Manager
-
-Bun brings significant improvements to the development workflow:
-
-- **Performance**: Up to 30x faster than npm
-- **Built-in Tools**: Testing, bundling, and TypeScript support
-- **Compatibility**: Drop-in replacement for node
-- **Resource Efficiency**: Lower memory footprint
-
-### Koa Over Express
-
-Koa represents a modern approach to middleware:
-
-- **Async/Await**: Native support for modern JavaScript patterns
-- **Middleware Composition**: Cleaner error handling through async functions
-- **Lightweight Core**: Minimal base with powerful extensibility
-- **Modern Architecture**: Built for current JavaScript ecosystem
-
-### gRPC for Service Communication
-
-```mermaid
-sequenceDiagram
-    Service A->>Service B: Proto-defined Request
-    Service B->>Service A: Strongly Typed Response
-```
-
-gRPC provides:
-
-| Feature         | Impact                                           |
-| --------------- | ------------------------------------------------ |
-| Performance     | Binary protocol with high throughput             |
-| Type Safety     | Contract-first development with protocol buffers |
-| Bi-directional  | Streaming capabilities for real-time features    |
-| Code Generation | Automatic client/server code generation          |
-
-## Infrastructure Components
-
-### Observability Stack
-
-Built on OpenTelemetry:
-
-- Distributed tracing
-- Metrics collection
-- Log correlation
-- Performance monitoring
-
-### Caching Strategy
-
-Multi-level caching implementation:
-
-- In-memory caching for hot data
-- Distributed caching with Redis
-- Cache invalidation patterns
-
-### Rate Limiting
-
-Intelligent rate limiting:
-
-- Service-level protection
-- User-based quotas
-- Distributed rate limiting
-
-## Development Workflow
-
+### 4. Microservices Done Right
 ```mermaid
 graph LR
-    A[Local Development] --> B[Automated Tests]
-    B --> C[CI/CD Pipeline]
-    C --> D[Deployment]
-    D --> E[Monitoring]
+    A[API Gateway] --> B[gRPC Services]
+    B --> C[Domain Logic]
+    B --> D[Shared Infrastructure]
+    
+    style B fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-### Testing Philosophy
+- **Smart Endpoints**: Services contain business logic
+- **Dumb Pipes**: Simple, reliable communication via gRPC
+- **Independent Deployment**: Services can be deployed independently
+- **Resilient Design**: Fault isolation and graceful degradation
 
-- Unit tests with Vitest
-- Integration tests across services
-- End-to-end testing
-- Performance benchmarking
+### 5. Observable by Default
+- **Distributed Tracing**: Track requests across services
+- **Metrics Collection**: Monitor system health and performance
+- **Structured Logging**: Consistent logging across services
+- **Performance Insights**: Built-in tools for performance analysis
 
-## Best Practices
+### 6. Production Ready
+- **Security First**: Built-in security best practices
+- **Scalable Architecture**: Designed for horizontal scaling
+- **Performance Optimized**: Efficient resource usage
+- **Maintainable Code**: Clear structure and conventions
 
-1. **Service Boundaries**: Clear separation based on business domains
-2. **Error Handling**: Standardized error types and handling
-3. **Documentation**: Automated API documentation
-4. **Code Style**: Consistent formatting and linting
-5. **Security**: Built-in security practices
+## Implementation Philosophy
 
-## Scalability Considerations
+### Technology Choices
+Each technology is chosen with clear purpose:
 
-- Horizontal scaling of services
-- Message queue integration
-- Database sharding strategies
-- Caching optimization
+| Choice           | Rationale                                        |
+|-----------------|--------------------------------------------------|
+| Bun             | Modern, fast, compatible package management      |
+| Koa             | Lightweight, modern HTTP server framework        |
+| gRPC            | Efficient, type-safe service communication      |
+| OpenTelemetry   | Industry standard observability                 |
+| NX              | Powerful monorepo management                    |
 
-## Maintenance and Evolution
+### Error Handling
+- **Custom Error Types**: Domain-specific error handling
+- **Consistent Patterns**: Standard error handling across services
+- **Clear Communication**: User-friendly error messages
+- **Proper Logging**: Error tracking and debugging support
 
+### Testing Strategy
+- **Unit Testing**: Core business logic
+- **Integration Testing**: Service interactions
+- **E2E Testing**: Critical user paths
+- **Performance Testing**: Load and stress tests
+
+## Evolution and Maintenance
+
+### Continuous Improvement
 - Regular dependency updates
-- Performance monitoring
-- Security audits
-- Feature deprecation strategy
+- Performance monitoring and optimization
+- Security audits and updates
+- Community feedback integration
 
-## Future Directions
+### Future Focus Areas
+1. **AI Integration**: Tools for AI-driven applications
+2. **Edge Computing**: Support for edge deployment
+3. **Developer Tooling**: Enhanced development experience
+4. **Security Features**: Advanced security capabilities
 
-Clean Stack is committed to continuous improvement and innovation. Here are some areas we aim to explore in the future:
-
-1. **AI and Machine Learning Integration**: Incorporating tools and frameworks to support AI-driven applications.
-2. **Serverless Architectures**: Expanding support for serverless deployments to enhance scalability and cost-efficiency.
-3. **Enhanced Security Features**: Introducing advanced security measures, such as automated vulnerability scanning and zero-trust architecture.
-4. **Developer Tooling**: Building more intuitive tools to streamline the development process further.
-5. **Community Contributions**: Encouraging open-source contributions to foster a collaborative ecosystem.
-
-These directions align with our philosophy of building maintainable, scalable, and developer-friendly systems.
-
-This philosophy document serves as a living guide, evolving with the project and community feedback. It represents our commitment to building maintainable, scalable, and developer-friendly systems.
+This philosophy guide serves as our north star, ensuring all development aligns with our core principles and vision.

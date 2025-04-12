@@ -4,55 +4,53 @@ sidebar_position: 1
 
 # Quick Start Guide
 
-Get up and running with Clean Stack in minutes. This guide will help you create your first Clean Stack project and understand its basic structure.
+Get up and running with Clean Stack in minutes.
 
 ## Prerequisites
 
+Before you begin, ensure you have installed:
 - Node.js 18 or higher
 - Bun 1.0 or higher
 - Docker and Docker Compose
-- Git
 
-## Create Your First Project
+Need help installing? Check our detailed [Installation Guide](./installation).
+
+## Create Your Project
 
 ```bash
 # Create a new Clean Stack project
-bun create clean-stack-app my-first-app
+bun create clean-stack-app my-app
 
-# Navigate to project directory
-cd my-first-app
-
-# Install dependencies
+cd my-app
 bun install
 ```
 
 ## Start Development Environment
 
+1. Start platform services:
 ```bash
-# Start platform services (Redis, OpenTelemetry, etc.)
 bun run platform:all
+```
 
-# Start development server
+2. Start development server:
+```bash
 bun run dev
 ```
 
-Your development environment is now running:
-
+Your environment is now running with:
 - Main service: http://localhost:3000
 - User service: http://localhost:3001
 - Grafana (Observability): http://localhost:3000
 - Redis Commander: http://localhost:13333
 
-## Project Verification
+## Verify Setup
 
-Let's verify your setup by making a test request:
-
+Test the health endpoint:
 ```bash
 curl http://localhost:3000/health
 ```
 
-You should see:
-
+Expected response:
 ```json
 {
   "status": "ok",
@@ -60,35 +58,12 @@ You should see:
 }
 ```
 
-## Additional Verification Steps
-
-After starting the development environment, you can perform the following checks:
-
-1. **Verify Redis Connection**:
-
-   ```bash
-   redis-cli ping
-   ```
-
-   You should see:
-
-   ```
-   PONG
-   ```
-
-2. **Check OpenTelemetry Metrics**: Visit `http://localhost:8889/metrics` to ensure metrics are being collected.
-
-3. **Access Grafana Dashboards**: Open `http://localhost:3000` in your browser and log in with the default credentials (if configured).
-
 ## Next Steps
 
-- Learn about the [Project Structure](./project-structure)
-<!-- - Explore [Platform Features](../platform-features/overview) -->
-- Read about our [Architecture Philosophy](../architecture/philosophy)
+1. **Explore Your Project**: Review the [Project Structure](./project-structure) to understand the codebase organization.
 
-## Related Resources
+2. **Platform Features**: Learn about built-in capabilities:
+   - [Caching](../platform-features/caching)
+   - [Observability](../platform-features/observability/otel-clean-stack)
 
-- [Installation Guide](./installation)
-- [Project Structure](./project-structure)
-- [Observability Stack](../platform-features/observability/otel-clean-stack)
-- [Architecture Philosophy](../architecture/philosophy)
+3. **Architecture**: Understand our [Architecture Philosophy](../architecture/philosophy)

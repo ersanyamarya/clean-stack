@@ -1,145 +1,95 @@
----
-sidebar_position: 1
-slug: /
----
-
 # Introduction to Clean Stack
 
-Clean Stack is a comprehensive, production-ready TypeScript development stack built for modern microservices architecture. It combines battle-tested tools and patterns with developer-friendly conventions to help you build scalable applications faster. 🚀
+Clean Stack is a TypeScript-first development platform designed to help teams build production-ready microservices with confidence. By combining battle-tested patterns with developer-friendly conventions, it eliminates common technical hurdles while maintaining flexibility for diverse business needs.
 
-## What is Clean Stack?
+## Our Vision
 
-Clean Stack is more than just a boilerplate - it's a complete development ecosystem that provides:
+We believe that modern software development shouldn't be bogged down by:
+- Complex infrastructure setup
+- Inconsistent architectural patterns
+- Poor observability and debugging
+- Repetitive boilerplate code
 
-- **Type-safe Development** - End-to-end TypeScript implementation
-- **Microservices Architecture** - Built-in gRPC communication
-- **Developer Experience** - Streamlined workflows and tooling
-- **Production Ready** - Built-in observability, caching, and rate limiting
-- **Scalable by Design** - Cloud-native architecture patterns
+Clean Stack solves these challenges through a carefully curated set of tools and practices.
 
-## Key Features
+## Key Benefits
 
-| Feature       | Description                                       |
-| ------------- | ------------------------------------------------- |
-| NX Monorepo   | Unified codebase management with powerful tooling |
-| gRPC Services | High-performance, type-safe service communication |
-| OpenTelemetry | Built-in observability and monitoring             |
-| Caching       | Multi-level caching with Redis integration        |
-| Rate Limiting | Distributed rate limiting out of the box          |
-| Koa Framework | Modern, middleware-based HTTP server              |
+### 1. Developer Productivity
+- Zero-config defaults that just work
+- Comprehensive type safety
+- Built-in best practices
+- Rich development tooling
+
+### 2. Production Ready
+- Built-in observability
+- Robust error handling
+- Performance optimization
+- Security best practices
+
+### 3. Scalable Architecture
+- Microservices-first design
+- Event-driven capabilities
+- Horizontal scaling
+- Cloud-native patterns
+
+### 4. Maintainable Codebase
+- Clean architecture principles
+- Domain-driven design
+- Consistent patterns
+- Comprehensive documentation
+
+## Core Features
+
+| Feature       | Description                                       | Learn More |
+|--------------|--------------------------------------------------|------------|
+| Monorepo     | Unified codebase management with NX              | [Project Structure](./getting-started/project-structure) |
+| TypeScript   | End-to-end type safety                           | [Architecture](./architecture/philosophy) |
+| gRPC         | High-performance service communication           | [Architecture](./architecture/philosophy) |
+| OpenTelemetry| Complete observability stack                     | [Platform Features](./platform-features) |
+| Caching      | Multi-level caching with Redis                   | [Caching Guide](./platform-features/caching) |
+| Rate Limiting | Distributed rate limiting                        | [Rate Limiting](./platform-features/rate-limiter) |
+
+## Who Should Use Clean Stack?
+
+### Perfect For
+- Startups building scalable applications
+- Teams adopting microservices
+- Projects requiring high reliability
+- Performance-critical applications
+
+### Use Cases
+- API Services
+- Web Applications
+- Data Processing
+- Real-time Systems
 
 ## Quick Example
 
-Here's a glimpse of how Clean Stack simplifies service creation:
-
 ```typescript
 import { createKoaServer } from '@clean-stack/koa-server-essentials';
-import { initTelemetry } from '@clean-stack/backend-telemetry';
-import { createCache } from '@clean-stack/cache';
 
-// Initialize core features
-await initTelemetry('user-service');
-const cache = await createCache();
-
-// Create server with middleware
+// Create a production-ready server with sensible defaults
 const server = await createKoaServer({
   name: 'user-service',
   port: 3000,
-  cache,
-  // Additional features configured automatically
+  // Features auto-configured:
+  // - Observability
+  // - Caching
+  // - Rate Limiting
+  // - Error Handling
 });
 
 server.start();
 ```
 
-## Why Clean Stack?
-
-Clean Stack addresses common challenges in modern application development:
-
-- **Boilerplate Reduction** - Stop writing the same setup code repeatedly
-- **Consistent Architecture** - Follow established patterns across services
-- **Production Readiness** - Essential features built-in and ready to use
-- **Developer Productivity** - Focus on business logic, not infrastructure
-- **Maintainability** - Clear structure and conventions
-
-## Core Principles
-
-1. **Convention over Configuration**
-
-   - Sensible defaults
-   - Minimal setup required
-   - Flexible when needed
-
-2. **Developer Experience First**
-
-   - Comprehensive documentation
-   - Type safety throughout
-   - Intuitive APIs
-
-3. **Production Ready**
-   - Built-in observability
-   - Error handling
-   - Performance optimized
-
-## Getting Started
-
-Ready to build your first Clean Stack application?
-
-```bash
-# Create a new Clean Stack project
-bun create clean-stack-app my-app
-
-# Start the development environment
-cd my-app
-bun run platform:all
-bun run dev
-```
-
-Check out our [Quick Start Guide](./getting-started/quick-start) to begin your journey with Clean Stack.
-
-## Architecture Overview
-
-```mermaid
-graph LR
-    A[Client Applications] --> B[API Gateway]
-    B --> C[gRPC Services]
-    C --> D[Domain Layer]
-    D --> E[Shared Infrastructure]
-    E --> F[Platform Features]
-```
-
 ## Next Steps
 
+📚 **Learn**
 - [Quick Start Guide](./getting-started/quick-start)
+- [Installation Guide](./getting-started/installation)
+- [Architecture Philosophy](./architecture/philosophy)
+
+🛠️ **Build**
 - [Project Structure](./getting-started/project-structure)
-- [Core Concepts](./architecture/philosophy)
-- [Platform Features](./category/platform-features)
-
-## Advanced Topics
-
-- [Scalability Considerations](./architecture/philosophy#scalability-considerations)
-- [Security Best Practices](./architecture/philosophy#best-practices)
-- [Performance Optimization](./platform-features/observability/otel-clean-stack#key-features)
-
-## Troubleshooting
-
-For common issues and their resolutions, refer to the [Troubleshooting Guide](./getting-started/installation#troubleshooting).
-
-## Community and Support
-
-Join our community to stay updated and get support:
-
-- [GitHub Discussions](https://github.com/your-org/clean-stack/discussions)
-- [Discord Community](https://discord.gg/your-community)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/clean-stack)
-
-## Contributing
-
-We welcome contributions! Whether it's:
-
-- Reporting bugs
-- Improving documentation
-- Submitting feature requests
-- Contributing code
-
-Check our [Contributing Guide](./) to get started.
+- [Platform Features](./platform-features)
+- [API Reference](/api)

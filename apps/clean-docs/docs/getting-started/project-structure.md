@@ -4,117 +4,112 @@ sidebar_position: 3
 
 # Project Structure
 
-Understanding Clean Stack's monorepo structure and organization.
+A detailed guide to Clean Stack's monorepo structure and organization.
 
-## Directory Overview
+## Main Structure
 
 ```
 clean-stack/
-├── PLATFORM_SETUP/        # Infrastructure configuration
-├── apps/                  # Client applications
-├── domain/               # Business logic and types
-├── framework/            # Core framework components
+├── apps/                  # Frontend applications
+│   ├── clean-docs/       # Documentation site
+│   ├── web-ui/          # Web application
+│   └── web-ui-e2e/      # E2E tests
+├── domain/               # Core business domain
+│   ├── custom-errors/    # Error definitions
+│   ├── domain_user/     # User domain
+│   └── grpc-proto/      # Protocol definitions
+├── framework/            # Technical foundation
+│   ├── global-types/    # Shared types
+│   ├── grpc-essentials/ # gRPC utilities
+│   └── utilities/       # Common utilities
 ├── platform-features/    # Cross-cutting concerns
-├── services/            # Microservices
-└── tools/               # Development utilities
+│   ├── backend-telemetry/
+│   ├── cache/
+│   └── rate-limiter/
+├── services/            # Backend services
+│   ├── main-service/
+│   ├── user-service/
+│   └── llm-service/
+└── tools/               # Development tools
 ```
 
-## Key Directories Explained
+## Key Components Explained
 
-### PLATFORM_SETUP
+### Apps (`apps/`)
+Each application is an NX project with its own:
+- Configuration (`project.json`, `tsconfig.json`)
+- Build setup (Vite/other bundler config)
+- Unit and E2E tests
+- Environment files
 
-Contains Docker Compose configurations for:
-
-- Observability stack (OpenTelemetry, Grafana)
-- Cache stack (Redis)
-- Development tools
-
-### Apps
-
-User-facing applications:
-
-- Documentation site
-- Web applications
-- Mobile apps
-
-### Domain
-
-Core business logic:
-
-- Custom errors
-- Domain entities
-- gRPC protocol definitions
-- Shared types
-
-### Framework
-
-Reusable technical components:
-
-- Koa server essentials
-- gRPC communication
-- Global types
-- Utility functions
-
-### Platform Features
-
-Cross-cutting concerns:
-
-- Telemetry implementation
-- Caching mechanisms
-- Rate limiting
-
-### Services
-
-Microservice implementations:
-
-- Main service
-- User service
-- Additional services
-
-### Tools
-
-Development utilities:
-
-- Code coverage tools
-- Shell scripts
-- Build utilities
-
-## File Organization
-
-Each module follows a consistent structure:
-
+### Domain (`domain/`)
+Contains pure business logic:
 ```
-module-name/
+domain/domain_user/
 ├── src/
-│   ├── lib/           # Core implementation
-│   ├── tests/         # Test files
-│   └── index.ts       # Public API
-├── package.json
-└── tsconfig.json
+│   ├── lib/              # Core implementation
+│   │   ├── entities/     # Domain entities
+│   │   ├── usecases/    # Business logic
+│   │   └── repositories/ # Data contracts
+│   ├── tests/           # Unit tests
+│   └── index.ts         # Public API
+├── project.json         # NX configuration
+└── tsconfig.json       # TypeScript setup
 ```
 
-## Best Practices
+### Framework (`framework/`)
+Technical components that support the domain:
+- **global-types**: Shared TypeScript definitions
+- **grpc-essentials**: Base gRPC configuration
+- **koa-server-essentials**: HTTP server setup
+- **utilities**: Shared helper functions
 
-1. **Module Organization**
+### Platform Features (`platform-features/`)
+Cross-cutting functionality:
+- **backend-telemetry**: OpenTelemetry integration
+- **cache**: Redis-based caching
+- **rate-limiter**: Request throttling
 
-   - Keep related code together
-   - Follow single responsibility principle
-   - Maintain clear boundaries
+### Services (`services/`)
+Each service follows:
+```
+services/user-service/
+├── src/
+│   ├── controllers/     # Request handlers
+│   ├── middleware/     # Custom middleware
+│   ├── routes/         # API routes
+│   └── index.ts       # Service entry
+├── Dockerfile         # Container config
+└── project.json      # NX configuration
+```
 
-2. **File Naming**
+## Configuration Files
 
-   - Use kebab-case for files
-   - Append `.spec.ts` for tests
-   - Use meaningful names
+### Root Level
+- `nx.json`: NX workspace configuration
+- `package.json`: Monorepo dependencies
+- `tsconfig.base.json`: Base TypeScript config
+- `eslint.config.js`: Linting rules
+- `.prettierrc.js`: Code formatting
 
-3. **Code Structure**
-   - Export public API through index.ts
-   - Keep implementation details private
-   - Document public interfaces
+### Project Level
+Each project has:
+- `project.json`: NX project settings
+- `tsconfig.json`: Project-specific TS config
+- `vite.config.ts`: Build configuration (if applicable)
 
-## Next Steps
+## Development Guidelines
 
-<!--
-- Explore [Framework Components](../framework/overview)
-- Learn about [Platform Features](../platform-features/overview)
-- Understand [Clean Architecture](../architecture/clean-architecture) -->
+### Adding New Code
+1. **Libraries**: Add to appropriate `domain/` or `framework/` directory
+2. **Features**: Add to `platform-features/` if cross-cutting
+3. **Services**: Create new service in `services/`
+4. **UI**: Add to `apps/web-ui/` or create new app
+
+### File Organization
+- Keep related code together
+- One feature per directory
+- Consistent naming:
+  - `*.spec.ts` for tests
+  - `index.ts` for public API
+  - kebab-case for files
