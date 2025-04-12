@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_clean_stack_source=self.webpackChunk_clean_stack_source||[]).push([[8947],{8437:a=>{a.exports=JSON.parse('{"authors":[{"name":"Sanyam Arya","title":"Creator of Clean Stack","url":"https://github.com/ersanyamarya","imageURL":"https://github.com/ersanyamarya.png","key":"sanyam","page":null,"count":1}]}')}}]);
