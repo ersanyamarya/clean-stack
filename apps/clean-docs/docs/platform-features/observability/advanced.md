@@ -72,11 +72,7 @@ Configure custom context propagation:
 
 ```typescript
 const propagator = new CompositePropagator({
-  propagators: [
-    new W3CTraceContextPropagator(),
-    new B3Propagator(),
-    new JaegerPropagator(),
-  ],
+  propagators: [new W3CTraceContextPropagator(), new B3Propagator(), new JaegerPropagator()],
 });
 
 propagation.setGlobalPropagator(propagator);
@@ -104,7 +100,7 @@ const requestDuration = meter.createHistogram('request_duration', {
 Configure error handling for exporters:
 
 ```typescript
-exporter.on('error', (error) => {
+exporter.on('error', error => {
   console.error('Exporter error:', error);
   // Custom error handling logic
 });

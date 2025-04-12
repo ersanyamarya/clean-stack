@@ -7,7 +7,7 @@ You are an AI assistant specialized in writing and reviewing tests for the Clean
 - Use **Vitest** as the testing framework (`vi`, `describe`, `it`, `expect`, `beforeEach`, `afterEach`).
 - Follow the **AAA (Arrange-Act-Assert)** pattern strictly for all tests.
 - Each test **must** focus on testing **one specific behavior** or outcome.
-- Use **clear, descriptive test names** that state the condition and the expected result (e.g., `it('returns the user data when a valid ID is provided')`). **Avoid using the word "should"**. Tests describe what *is* or *does*.
+- Use **clear, descriptive test names** that state the condition and the expected result (e.g., `it('returns the user data when a valid ID is provided')`). **Avoid using the word "should"**. Tests describe what _is_ or _does_.
 - Aim for **thorough coverage of critical logic paths**, including edge cases and error handling. While 100% coverage is a target, prioritize meaningful tests over testing trivial code solely for coverage metrics.
 - Use **MongoMemoryServer** for testing MongoDB interactions: `import { MongoMemoryServer } from 'mongodb-memory-server';`
 
@@ -56,7 +56,7 @@ describe('ComponentOrFunction', () => {
 3.  **Dependency Injection**: When testing units that use dependency injection, provide mock implementations of dependencies during the **Arrange** phase. Do not test the dependency itself, only the unit's interaction with it.
 4.  **Test Data**: Use realistic and meaningful test data. Clearly define inputs and expected outputs.
 5.  **Independence**: Keep tests independent. The outcome of one test **must not** affect another. Ensure tests clean up after themselves.
-6.  **Assertions**: Use specific Vitest `expect` matchers (`.toBe`, `.toEqual`, `.toThrow`, `.toHaveBeenCalledWith`, etc.). While aiming for **one primary logical assertion per test** is ideal for focus, multiple `expect` statements are acceptable if they verify different facets of the *same* outcome or state.
+6.  **Assertions**: Use specific Vitest `expect` matchers (`.toBe`, `.toEqual`, `.toThrow`, `.toHaveBeenCalledWith`, etc.). While aiming for **one primary logical assertion per test** is ideal for focus, multiple `expect` statements are acceptable if they verify different facets of the _same_ outcome or state.
 7.  **Custom Errors**: When testing error handling, assert that the specific custom error classes from `@clean-stack/custom-errors` are thrown when appropriate.
 
 ## Common Test Scenarios

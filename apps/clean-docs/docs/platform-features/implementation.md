@@ -9,6 +9,7 @@ sidebar_position: 2
 Located in `platform-features/cache`, the cache store provides a flexible caching solution:
 
 ### Core Features
+
 - Provider-agnostic design
 - Redis integration out of the box
 - Group-based cache invalidation
@@ -41,7 +42,7 @@ const cacheStore = createCacheStore(redisProvider);
 // Cache with groups
 await cacheStore.addOrReplace('user:1', userData, {
   ttl: 3600,
-  groups: ['users', 'active-users']
+  groups: ['users', 'active-users'],
 });
 
 // Invalidate group
@@ -53,6 +54,7 @@ await cacheStore.invalidateGroup('users');
 Located in `platform-features/rate-limiter`, the rate limiter provides traffic control:
 
 ### Core Features
+
 - Flexible rate limiting windows
 - Redis-based distributed limiting
 - Customizable limits per endpoint/user
@@ -76,7 +78,7 @@ import { createRateLimiter } from '@clean-stack/rate-limiter';
 
 const rateLimiter = createRateLimiter(redisProvider, {
   maxRequests: 100,
-  duration: 3600 // 1 hour window
+  duration: 3600, // 1 hour window
 });
 
 // Check rate limit
@@ -91,6 +93,7 @@ if (!isAllowed) {
 Located in `domain/custom-errors`, provides standardized error handling:
 
 ### Core Features
+
 - Base AppError with metadata support
 - Request validation errors
 - i18n error messages
@@ -104,7 +107,7 @@ import { AppError } from '@clean-stack/custom-errors';
 
 throw new AppError('RESOURCE_NOT_FOUND', {
   context: { userId: 123 },
-  metadata: { resource: 'user' }
+  metadata: { resource: 'user' },
 });
 ```
 
@@ -113,16 +116,19 @@ throw new AppError('RESOURCE_NOT_FOUND', {
 All platform features follow these principles:
 
 1. **Provider Abstraction**
+
    - Clean interfaces for providers
    - Easy to swap implementations
    - Testable design
 
 2. **Type Safety**
+
    - Full TypeScript support
    - Zod validation where needed
    - Strong typing for configurations
 
 3. **Performance**
+
    - Efficient data structures
    - Proper resource cleanup
    - Optimized algorithms

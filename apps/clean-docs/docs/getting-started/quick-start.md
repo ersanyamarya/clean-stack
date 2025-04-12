@@ -9,6 +9,7 @@ Get up and running with Clean Stack in minutes.
 ## Prerequisites
 
 Before you begin, ensure you have installed:
+
 - Node.js 18 or higher
 - Bun 1.0 or higher
 - Docker and Docker Compose
@@ -28,16 +29,19 @@ bun install
 ## Start Development Environment
 
 1. Start platform services:
+
 ```bash
 bun run platform:all
 ```
 
 2. Start development server:
+
 ```bash
 bun run dev
 ```
 
 Your environment is now running with:
+
 - Main service: http://localhost:3000
 - User service: http://localhost:3001
 - Grafana (Observability): http://localhost:3000
@@ -46,11 +50,13 @@ Your environment is now running with:
 ## Verify Setup
 
 Test the health endpoint:
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -63,6 +69,7 @@ Expected response:
 1. **Explore Your Project**: Review the [Project Structure](./project-structure) to understand the codebase organization.
 
 2. **Platform Features**: Learn about built-in capabilities:
+
    - [Caching](../platform-features/caching)
    - [Observability](../platform-features/observability/otel-clean-stack)
 

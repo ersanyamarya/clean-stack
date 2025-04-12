@@ -23,11 +23,13 @@ graph TD
 ## Quick Start
 
 1. Start the observability stack:
+
 ```bash
 bun run platform:observability
 ```
 
 2. Access Grafana:
+
 - URL: http://localhost:3000
 - Default credentials:
   - Username: admin
@@ -36,18 +38,21 @@ bun run platform:observability
 ## Pre-configured Dashboards
 
 ### 1. Service Overview
+
 - Request rates and latencies
 - Error rates
 - Resource usage
 - Cache performance
 
 ### 2. Distributed Tracing
+
 - End-to-end request flows
 - Service dependencies
 - Performance bottlenecks
 - Error analysis
 
 ### 3. Log Analytics
+
 - Structured log search
 - Log correlation
 - Pattern analysis
@@ -62,7 +67,7 @@ bun run platform:observability
 const requestDuration = metrics.createHistogram('http_request_duration', {
   description: 'HTTP request duration',
   unit: 'ms',
-  boundaries: [10, 50, 100, 200, 500, 1000]
+  boundaries: [10, 50, 100, 200, 500, 1000],
 });
 
 // Use in your code
@@ -75,13 +80,14 @@ app.use(async (ctx, next) => {
     requestDuration.record(duration, {
       path: ctx.path,
       method: ctx.method,
-      status: ctx.status
+      status: ctx.status,
     });
   }
 });
 ```
 
 Then in Grafana:
+
 1. Add new panel
 2. Query: `rate(http_request_duration_bucket[5m])`
 3. Visualization: Heatmap
@@ -97,6 +103,7 @@ span.setAttribute('order.value', orderValue);
 ```
 
 In Grafana Tempo:
+
 1. Search by attribute
 2. Create Service Graph
 3. Analyze Flame Graph
@@ -108,13 +115,14 @@ In Grafana Tempo:
 logger.info('Order processed', {
   orderId: 'order-123',
   processingTime: 150,
-  customerTier: 'premium'
+  customerTier: 'premium',
 });
 ```
 
 In Grafana Loki:
+
 ```logql
-{service="order-service"} 
+{service="order-service"}
   | json
   | processingTime > 100
   | customerTier="premium"
@@ -153,11 +161,13 @@ alert:
 ## Data Retention
 
 Default retention periods:
+
 - Metrics (Prometheus): 15 days
 - Logs (Loki): 7 days
 - Traces (Tempo): 3 days
 
 Configure in docker-compose:
+
 ```yaml
 prometheus:
   command:
@@ -175,11 +185,13 @@ tempo:
 ## Best Practices
 
 1. **Dashboard Organization**
+
    - Use folders for different teams/services
    - Standardize naming conventions
    - Include documentation panels
 
 2. **Query Optimization**
+
    - Use recording rules for complex queries
    - Limit high-cardinality labels
    - Set appropriate time ranges
@@ -194,11 +206,13 @@ tempo:
 ### Common Issues
 
 1. **Missing Data**
+
    - Check collector connectivity
    - Verify port configurations
    - Ensure correct label matching
 
 2. **Dashboard Performance**
+
    - Optimize time ranges
    - Use appropriate refresh intervals
    - Minimize panel count
@@ -211,14 +225,16 @@ tempo:
 ## Security Considerations
 
 1. **Access Control**
+
    ```yaml
    grafana:
      env:
-       GF_AUTH_DISABLE_LOGIN_FORM: "false"
-       GF_AUTH_ANONYMOUS_ENABLED: "false"
+       GF_AUTH_DISABLE_LOGIN_FORM: 'false'
+       GF_AUTH_ANONYMOUS_ENABLED: 'false'
    ```
 
 2. **Network Security**
+
    - Use TLS for data transmission
    - Implement proper authentication
    - Restrict network access

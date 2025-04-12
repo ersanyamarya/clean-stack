@@ -15,11 +15,13 @@ Observability is at the heart of Clean Stack, providing deep insights into your 
 #### Key Pillars
 
 1. **Logs**: Timestamped records of discrete events
+
    - Structured logging
    - Centralized log aggregation
    - Log correlation with traces
 
 2. **Metrics**: Quantitative measurements
+
    - System metrics (CPU, Memory, etc.)
    - Business metrics
    - Custom metrics support
@@ -30,6 +32,7 @@ Observability is at the heart of Clean Stack, providing deep insights into your 
    - Performance bottleneck identification
 
 #### Benefits
+
 - Proactive issue detection
 - Faster troubleshooting
 - Performance optimization
@@ -38,6 +41,7 @@ Observability is at the heart of Clean Stack, providing deep insights into your 
 ### 2. Caching
 
 Multi-level caching system with:
+
 - Redis integration
 - Cache invalidation groups
 - Automatic cache management
@@ -46,6 +50,7 @@ Multi-level caching system with:
 ### 3. Rate Limiting
 
 Distributed rate limiting for:
+
 - API protection
 - Resource optimization
 - Fair usage enforcement
@@ -54,6 +59,7 @@ Distributed rate limiting for:
 ### 4. Error Handling
 
 Comprehensive error management with:
+
 - Custom error types
 - Consistent error patterns
 - Error tracking
@@ -78,6 +84,7 @@ graph TD
 Each feature is designed to work seamlessly with minimal configuration while allowing deep customization when needed:
 
 1. **Default Configuration**
+
    ```typescript
    import { initTelemetry } from '@clean-stack/backend-telemetry';
    await initTelemetry('my-service');
@@ -89,7 +96,7 @@ Each feature is designed to work seamlessly with minimal configuration while all
    const cache = await createCache({
      provider: 'redis',
      ttl: 3600,
-     prefix: 'my-app:'
+     prefix: 'my-app:',
    });
    ```
 

@@ -10,6 +10,7 @@ Welcome to the Clean Stack blog! This is where we'll share updates about the pro
 ## What to Expect
 
 Our blog will cover topics like:
+
 - New feature announcements and releases
 - Technical deep dives into Clean Stack's architecture
 - Best practices for building with Clean Stack

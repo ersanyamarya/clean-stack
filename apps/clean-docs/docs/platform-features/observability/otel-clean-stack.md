@@ -14,13 +14,14 @@ import { initTelemetry } from '@clean-stack/backend-telemetry';
 await initTelemetry('user-service', {
   tracing: true,
   metrics: true,
-  logging: true
+  logging: true,
 });
 ```
 
 ## Configuration Options
 
 ### Basic Configuration
+
 ```typescript
 interface TelemetryConfig {
   serviceName: string;
@@ -33,6 +34,7 @@ interface TelemetryConfig {
 ```
 
 ### Advanced Options
+
 ```typescript
 interface AdvancedConfig extends TelemetryConfig {
   exporters?: {
@@ -50,6 +52,7 @@ interface AdvancedConfig extends TelemetryConfig {
 ## Tracing
 
 ### Request Tracing
+
 ```typescript
 import { trace } from '@clean-stack/backend-telemetry';
 
@@ -59,10 +62,10 @@ const span = trace.getTracer('my-service').startSpan('operation-name');
 try {
   // Add attributes
   span.setAttribute('user.id', userId);
-  
+
   // Add events
   span.addEvent('cache.miss');
-  
+
   // Your business logic
   await doSomething();
 } catch (error) {
@@ -77,6 +80,7 @@ try {
 ### Automatic Instrumentation
 
 Clean Stack automatically instruments:
+
 - HTTP/HTTPS requests
 - gRPC calls
 - Database operations
@@ -86,6 +90,7 @@ Clean Stack automatically instruments:
 ## Metrics
 
 ### Custom Metrics
+
 ```typescript
 import { metrics } from '@clean-stack/backend-telemetry';
 
@@ -93,19 +98,20 @@ import { metrics } from '@clean-stack/backend-telemetry';
 const requestCounter = metrics.getMetric('requests_total', {
   description: 'Total number of requests',
   unit: '1',
-  valueType: ValueType.INT64
+  valueType: ValueType.INT64,
 });
 
 // Increment counter
 requestCounter.add(1, {
   endpoint: '/users',
-  method: 'GET'
+  method: 'GET',
 });
 ```
 
 ### Default Metrics
 
 Automatically collected metrics include:
+
 - CPU usage
 - Memory usage
 - Event loop lag
@@ -116,37 +122,43 @@ Automatically collected metrics include:
 ## Structured Logging
 
 ### Basic Logging
+
 ```typescript
 import { logger } from '@clean-stack/backend-telemetry';
 
 logger.info('User action completed', {
   userId: '123',
   action: 'login',
-  duration: 150
+  duration: 150,
 });
 ```
 
 ### Context Enrichment
+
 ```typescript
 import { enrichContext } from '@clean-stack/backend-telemetry';
 
 // Add context to all logs in this scope
-enrichContext({
-  requestId: '456',
-  tenant: 'acme-corp'
-}, async () => {
-  logger.info('Processing request');
-  await processRequest();
-  logger.info('Request completed');
-});
+enrichContext(
+  {
+    requestId: '456',
+    tenant: 'acme-corp',
+  },
+  async () => {
+    logger.info('Processing request');
+    await processRequest();
+    logger.info('Request completed');
+  }
+);
 ```
 
 ## Best Practices
 
 1. **Span Management**
+
    ```typescript
    // DO: Use the withSpan helper
-   await withSpan('operation-name', async (span) => {
+   await withSpan('operation-name', async span => {
      // Your code here
    });
 
@@ -156,6 +168,7 @@ enrichContext({
    ```
 
 2. **Error Handling**
+
    ```typescript
    // DO: Record exceptions with context
    try {
@@ -164,8 +177,8 @@ enrichContext({
      span.recordException(error, {
        attributes: {
          'error.type': error.name,
-         'error.message': error.message
-       }
+         'error.message': error.message,
+       },
      });
      throw error;
    }
@@ -176,7 +189,7 @@ enrichContext({
    // DO: Use sampling for high-throughput operations
    const config: TracingSamplerConfig = {
      type: 'probabilistic',
-     ratio: 0.1 // Sample 10% of traces
+     ratio: 0.1, // Sample 10% of traces
    };
    ```
 
@@ -185,11 +198,13 @@ enrichContext({
 ### Common Issues
 
 1. **Missing Traces**
+
    - Check exporter configuration
    - Verify sampling settings
    - Ensure spans are being ended
 
 2. **High Cardinality**
+
    - Limit number of unique tag values
    - Use enumerated values where possible
    - Configure appropriate sampling

@@ -36,14 +36,18 @@ clean-stack/
 ## Key Components Explained
 
 ### Apps (`apps/`)
+
 Each application is an NX project with its own:
+
 - Configuration (`project.json`, `tsconfig.json`)
 - Build setup (Vite/other bundler config)
 - Unit and E2E tests
 - Environment files
 
 ### Domain (`domain/`)
+
 Contains pure business logic:
+
 ```
 domain/domain_user/
 ├── src/
@@ -58,20 +62,26 @@ domain/domain_user/
 ```
 
 ### Framework (`framework/`)
+
 Technical components that support the domain:
+
 - **global-types**: Shared TypeScript definitions
 - **grpc-essentials**: Base gRPC configuration
 - **koa-server-essentials**: HTTP server setup
 - **utilities**: Shared helper functions
 
 ### Platform Features (`platform-features/`)
+
 Cross-cutting functionality:
+
 - **backend-telemetry**: OpenTelemetry integration
 - **cache**: Redis-based caching
 - **rate-limiter**: Request throttling
 
 ### Services (`services/`)
+
 Each service follows:
+
 ```
 services/user-service/
 ├── src/
@@ -86,6 +96,7 @@ services/user-service/
 ## Configuration Files
 
 ### Root Level
+
 - `nx.json`: NX workspace configuration
 - `package.json`: Monorepo dependencies
 - `tsconfig.base.json`: Base TypeScript config
@@ -93,7 +104,9 @@ services/user-service/
 - `.prettierrc.js`: Code formatting
 
 ### Project Level
+
 Each project has:
+
 - `project.json`: NX project settings
 - `tsconfig.json`: Project-specific TS config
 - `vite.config.ts`: Build configuration (if applicable)
@@ -101,12 +114,14 @@ Each project has:
 ## Development Guidelines
 
 ### Adding New Code
+
 1. **Libraries**: Add to appropriate `domain/` or `framework/` directory
 2. **Features**: Add to `platform-features/` if cross-cutting
 3. **Services**: Create new service in `services/`
 4. **UI**: Add to `apps/web-ui/` or create new app
 
 ### File Organization
+
 - Keep related code together
 - One feature per directory
 - Consistent naming:

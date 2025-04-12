@@ -34,7 +34,7 @@ import { createRedisProvider } from '@clean-stack/redis';
 
 // Initialize provider
 const redisProvider = await createRedisProvider({
-  url: 'redis://localhost:6379'
+  url: 'redis://localhost:6379',
 });
 
 // Create cache store
@@ -66,11 +66,11 @@ Groups allow efficient invalidation of related cache entries:
 ```typescript
 // Store with groups
 await cacheStore.set('user:1', userData, {
-  groups: ['users', 'active-users']
+  groups: ['users', 'active-users'],
 });
 
 await cacheStore.set('user:2', userData2, {
-  groups: ['users', 'inactive-users']
+  groups: ['users', 'inactive-users'],
 });
 
 // Invalidate by group
@@ -90,20 +90,22 @@ const cacheMiddleware = createCacheMiddleware(cacheStore, {
   keyPrefix: 'api:',
 });
 
-router.get('/users/:id', 
+router.get(
+  '/users/:id',
   cacheMiddleware(), // Cache with default options
-  async (ctx) => {
+  async ctx => {
     // Handler logic
   }
 );
 
-router.get('/products',
+router.get(
+  '/products',
   cacheMiddleware({
     ttl: 1800,
-    keyGenerator: (ctx) => `products:${ctx.query.category}`,
-    groups: ['products']
+    keyGenerator: ctx => `products:${ctx.query.category}`,
+    groups: ['products'],
   }),
-  async (ctx) => {
+  async ctx => {
     // Handler logic
   }
 );
@@ -112,11 +114,13 @@ router.get('/products',
 ## Performance Considerations
 
 1. **Key Design**
+
    - Use consistent naming patterns
    - Include version in keys if data format changes
    - Keep keys reasonably short
 
 2. **TTL Strategy**
+
    - Set appropriate TTLs based on data volatility
    - Use shorter TTLs for frequently changing data
    - Consider using infinite TTL for static data
@@ -161,6 +165,7 @@ try {
 ## Best Practices
 
 1. **Data Serialization**
+
    ```typescript
    // Do serialize complex data
    await cache.set('user', JSON.stringify(user));
@@ -168,6 +173,7 @@ try {
    ```
 
 2. **Error Handling**
+
    ```typescript
    // Handle cache failures gracefully
    const getUserData = async (id: string) => {
@@ -185,68 +191,66 @@ try {
    ```typescript
    // Group related data
    await cache.set(`user:${id}`, userData, {
-     groups: ['users', `user:${id}:*`]
+     groups: ['users', `user:${id}:*`],
    });
    await cache.set(`user:${id}:preferences`, prefs, {
-     groups: [`user:${id}:*`]
+     groups: [`user:${id}:*`],
    });
    ```
 
 ## Common Patterns
 
 ### Cache-Aside Pattern
+
 ```typescript
 async function getUser(id: string) {
   const cacheKey = `user:${id}`;
-  
+
   // Try cache first
   const cached = await cacheStore.get(cacheKey);
   if (cached) return JSON.parse(cached);
-  
+
   // Cache miss - get from database
   const user = await database.users.findById(id);
-  
+
   // Store in cache
   await cacheStore.set(cacheKey, JSON.stringify(user), {
     ttl: 3600,
-    groups: ['users']
+    groups: ['users'],
   });
-  
+
   return user;
 }
 ```
 
 ### Bulk Operations
+
 ```typescript
 async function bulkGetUsers(ids: string[]) {
   const cacheKeys = ids.map(id => `user:${id}`);
-  
+
   // Get all cached users
-  const cachedUsers = await Promise.all(
-    cacheKeys.map(key => cacheStore.get(key))
-  );
-  
+  const cachedUsers = await Promise.all(cacheKeys.map(key => cacheStore.get(key)));
+
   // Find missing users
   const missingIds = ids.filter((_, i) => !cachedUsers[i]);
-  
+
   if (missingIds.length > 0) {
     const dbUsers = await database.users.findByIds(missingIds);
-    
+
     // Cache missing users
     await Promise.all(
-      dbUsers.map(user => 
+      dbUsers.map(user =>
         cacheStore.set(`user:${user.id}`, JSON.stringify(user), {
-          groups: ['users']
+          groups: ['users'],
         })
       )
     );
-    
+
     // Merge results
-    return ids.map((id, i) => 
-      cachedUsers[i] ? JSON.parse(cachedUsers[i]) : 
-      dbUsers.find(u => u.id === id)
-    );
+    return ids.map((id, i) => (cachedUsers[i] ? JSON.parse(cachedUsers[i]) : dbUsers.find(u => u.id === id)));
   }
-  
+
   return cachedUsers.map(u => JSON.parse(u));
 }
+```
