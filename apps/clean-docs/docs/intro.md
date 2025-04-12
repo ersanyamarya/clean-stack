@@ -92,4 +92,4 @@ server.start();
 🛠️ **Build**
 - [Project Structure](./getting-started/project-structure)
 - [Platform Features](./platform-features)
-- [API Reference](/api)
+- [Framework Components](./framework/components)

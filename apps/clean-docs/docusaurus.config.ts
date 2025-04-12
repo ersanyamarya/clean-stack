@@ -34,15 +34,11 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/ersanyamarya/clean-stack/tree/main/apps/clean-docs/',
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/ersanyamarya/clean-stack/tree/main/apps/clean-docs/',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -91,8 +87,12 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Docs',
-              to: '/docs',
+              label: 'Getting Started',
+              to: '/docs/getting-started/quick-start',
+            },
+            {
+              label: 'Platform Features',
+              to: '/docs/platform-features',
             },
           ],
         },
@@ -101,15 +101,11 @@ const config: Config = {
           items: [
             {
               label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              href: 'https://stackoverflow.com/questions/tagged/clean-stack',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'GitHub Discussions',
+              href: 'https://github.com/ersanyamarya/clean-stack/discussions',
             },
           ],
         },
@@ -122,12 +118,12 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/ersanyamarya/clean-stack',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Clean Stack. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

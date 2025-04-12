@@ -30,7 +30,7 @@ function HomepageHeader() {
           <div className={styles.buttonContainer}>
             <Link
               className={styles.getStarted}
-              to="/docs">
+              to="/docs/getting-started/quick-start">
               Get Started →
             </Link>
             <Link
@@ -165,8 +165,8 @@ function CtaSection() {
         <p>Clean Stack provides everything you need to build robust, scalable applications</p>
         <div className={styles.ctaButtons}>
           <Link
-            to="/docs"
-            className={styles.getStarted}>
+            to="/docs/getting-started/quick-start"
+            className={styles.outlinedButton}>
             Explore Docs
           </Link>
           <Link

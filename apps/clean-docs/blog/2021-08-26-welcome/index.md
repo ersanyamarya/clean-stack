@@ -1,25 +1,27 @@
 ---
 slug: welcome
-title: Welcome
-authors: [slorber, yangshun]
-tags: [facebook, hello, docusaurus]
+title: Welcome to Clean Stack
+authors: [sanyam]
+tags: [typescript, architecture, features]
 ---
 
-[Docusaurus blogging features](https://docusaurus.io/docs/blog) are powered by the [blog plugin](https://docusaurus.io/docs/api/plugins/@docusaurus/plugin-content-blog).
+Welcome to the Clean Stack blog! This is where we'll share updates about the project, tutorials, best practices, and deep dives into various features of the platform.
 
-Simply add Markdown files (or folders) to the `blog` directory.
+## What to Expect
 
-Regular blog authors can be added to `authors.yml`.
+Our blog will cover topics like:
+- New feature announcements and releases
+- Technical deep dives into Clean Stack's architecture
+- Best practices for building with Clean Stack
+- Community highlights and success stories
+- Tutorials and guides
 
-The blog post date can be extracted from filenames, such as:
+## Contributing
 
-- `2019-05-30-welcome.md`
-- `2019-05-30-welcome/index.md`
+We welcome guest posts from the community! If you've built something interesting with Clean Stack or want to share your experience, check out our [contribution guidelines](https://github.com/ersanyamarya/clean-stack/blob/main/CONTRIBUTING.md).
 
-A blog post folder can be convenient to co-locate blog post images:
+## Stay Connected
 
-![Docusaurus Plushie](./docusaurus-plushie-banner.jpeg)
-
-The blog supports tags as well!
-
-**And if you don't want a blog**: just delete this directory, and use `blog: false` in your Docusaurus config.
+- Star us on [GitHub](https://github.com/ersanyamarya/clean-stack)
+- Join our [GitHub Discussions](https://github.com/ersanyamarya/clean-stack/discussions)
+- Follow our updates on [Stack Overflow](https://stackoverflow.com/questions/tagged/clean-stack)

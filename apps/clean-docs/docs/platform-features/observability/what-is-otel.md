@@ -29,4 +29,4 @@ OpenTelemetry is an open-source observability framework designed to standardize 
 
 7. **Community Support**: Backed by major tech companies and an active open-source community.
 
-Implementing OpenTelemetry in Clean Stack provides powerful observability capabilities, helping maintain high performance, quickly resolve issues, and make data-driven decisions about your application's development and operation.
+For implementation details in Clean Stack, see [OpenTelemetry in Clean Stack](./otel-clean-stack).
