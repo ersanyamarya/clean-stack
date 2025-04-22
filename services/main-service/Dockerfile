@@ -4,21 +4,21 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t main-service`.
-FROM docker.io/node:lts-alpine
+FROM docker.io/oven/bun:distroless
 
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
 WORKDIR /app
 
-RUN addgroup --system main-service && \
-          adduser --system -G main-service main-service
+# RUN addgroup --system main-service && \
+#   adduser --system -G main-service main-service
 
 COPY dist/services/main-service main-service/
-RUN chown -R main-service:main-service .
+# RUN chown -R main-service:main-service .
 
 # You can remove this install step if you build with `--bundle` option.
 # The bundled output will include external dependencies.
-RUN npm --prefix main-service --omit=dev -f install
+# RUN npm --prefix main-service --omit=dev -f install
 
-CMD [ "node", "main-service" ]
+CMD [ "bun", "main-service" ]
