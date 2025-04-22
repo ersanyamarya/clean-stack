@@ -93,5 +93,4 @@ bun run format
 - **Version Control**: (Guidance for human developers) Commit small, focused changes with clear messages.
 - **Dependencies**: **Do not add new dependencies unless explicitly instructed.**
 
-
 Make use of the NX MCP server when needed.
