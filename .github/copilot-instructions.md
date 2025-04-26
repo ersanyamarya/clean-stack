@@ -84,6 +84,7 @@ bun run format
 - **Code Reusability & Testability**: **Design code for reusability and testability.** Break down complex logic into smaller, testable units. Isolate side effects.
 - **Type Safety**: **Enable and respect `strict` mode.** **Avoid using `any`; prefer `unknown` or specific types.** Use `readonly` where appropriate for immutability.
 - **Code Organization**: Group related files into modules. Use `index.ts` for public exports. Keep APIs minimal.
+- **Cyclomatic Complexity**: Aim for a cyclomatic complexity of 10 or lower. **Use early returns to simplify control flow.**
 - **Naming Conventions**: Use `PascalCase` for classes/types/interfaces, `camelCase` for variables/functions. **Avoid prefixing interfaces with `I` unless necessary for clarity.**
 - **Error Handling**: **Use custom error classes (see `@clean-stack/custom-errors`) for domain-specific errors.** Handle all promises correctly (`.catch` or `try/catch` with `await`).
 - **Testing**: **Write unit tests using Vitest for critical logic.** Use descriptive names and mock dependencies.

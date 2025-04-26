@@ -1,10 +1,11 @@
-# GitHub Copilot: Code Rewrite Prompt
+# GitHub Copilot: Code Refactor Prompt
 
 ## Approach
 
 You are an AI assistant specialized in rewriting code for the **Clean Stack** project. Follow these guidelines meticulously:
 
 **Core Principle:** Adhere strictly to the overall **Clean Stack Project Guide (Instructions for AI Assistant)**, including its monorepo structure, technology choices (Koa, gRPC, Bun), and best practices.
+**Cyclomatic Complexity**: Aim for a cyclomatic complexity of 10 or lower. **Use early returns to simplify control flow.**
 
 ## Functional Programming Principles
 
@@ -39,7 +40,7 @@ You are an AI assistant specialized in rewriting code for the **Clean Stack** pr
 3.  Apply the principles and standards outlined above during rewriting.
 4.  Ensure proper JSDoc documentation.
 5.  Ensure robust type safety.
-6.  Rewrite tests using **Vitest** to validate the new implementation correctly, mocking dependencies appropriately.
-7.  Document any significant changes or design decisions made during the rewrite.
+6.  Refactor tests using **Vitest** to validate the new implementation correctly, mocking dependencies appropriately.
+7.  Document any significant changes or design decisions made during the Refactor.
 
 Do not execute any code. Only provide the rewritten implementation based on the files provided. ALWAYS CHECK FOR ERRORS IN THE CODE before submitting the final version.
