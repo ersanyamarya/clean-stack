@@ -25,26 +25,45 @@ describe('RateLimiter', () => {
     rateLimiter = createRateLimiter(mockProvider, { maxRequests: 2, duration: 60 });
   });
 
-  it('should allow requests under the limit', async () => {
-    const key = 'user-1';
-    expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
-    expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
+  describe('when under the request limit', () => {
+    it('allows requests under the limit', async () => {
+      // Arrange
+      const key = 'user-1';
+
+      // Act & Assert
+      expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
+      expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
+    });
   });
 
-  it('should block requests over the limit', async () => {
-    const key = 'user-2';
-    await rateLimiter.isAllowedRateLimit(key);
-    await rateLimiter.isAllowedRateLimit(key);
-    expect(await rateLimiter.isAllowedRateLimit(key)).toBe(false);
+  describe('when request count exceeds the limit', () => {
+    it('blocks requests over the limit', async () => {
+      // Arrange
+      const key = 'user-2';
+
+      // Act
+      await rateLimiter.isAllowedRateLimit(key);
+      await rateLimiter.isAllowedRateLimit(key);
+
+      // Assert
+      expect(await rateLimiter.isAllowedRateLimit(key)).toBe(false);
+    });
   });
 
-  it('should reset the limit after the duration', async () => {
-    vi.useFakeTimers();
-    const key = 'user-3';
-    await rateLimiter.isAllowedRateLimit(key);
-    await rateLimiter.isAllowedRateLimit(key);
-    vi.advanceTimersByTime(60000); // Advance time by 60 seconds
-    expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
-    vi.useRealTimers();
+  describe('when duration has passed', () => {
+    it('resets limit after duration', async () => {
+      // Arrange
+      vi.useFakeTimers();
+      const key = 'user-3';
+
+      // Act
+      await rateLimiter.isAllowedRateLimit(key);
+      await rateLimiter.isAllowedRateLimit(key);
+      vi.advanceTimersByTime(60000);
+
+      // Assert
+      expect(await rateLimiter.isAllowedRateLimit(key)).toBe(true);
+      vi.useRealTimers();
+    });
   });
 });
