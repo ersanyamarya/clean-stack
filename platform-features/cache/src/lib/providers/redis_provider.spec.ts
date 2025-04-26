@@ -1,9 +1,9 @@
 import { RedisClientType } from 'redis';
-import { describe, expect, it, Mocked, vi } from 'vitest';
+import { describe, Mocked, vi } from 'vitest';
 import { CacheProvider } from '../cache';
-import { gerRedisCacheProvider } from './redis';
+import { getRedisCacheProvider } from './redis';
 
-describe('gerRedisCacheProvider', () => {
+describe('getRedisCacheProvider', () => {
   let mockClient: Mocked<RedisClientType>;
   let cacheProvider: CacheProvider;
 
@@ -16,40 +16,67 @@ describe('gerRedisCacheProvider', () => {
       keys: vi.fn(),
     } as unknown as Mocked<RedisClientType>;
 
-    cacheProvider = gerRedisCacheProvider(mockClient);
+    cacheProvider = getRedisCacheProvider(mockClient);
   });
 
-  it('should set a value with TTL', async () => {
-    await cacheProvider.set('key', 'value', 3600);
-    expect(mockClient.set).toHaveBeenCalledWith('key', 'value', { EX: 3600 });
+  // Happy Path: set without TTL
+  describe('when setting a key without TTL', () => {
+    it('calls client.set with key and value', async () => {
+      await cacheProvider.set('key1', 'value1');
+      expect(mockClient.set).toHaveBeenCalledWith('key1', 'value1');
+    });
   });
 
-  it('should get a value', async () => {
-    mockClient.get.mockResolvedValue('value');
-    const result = await cacheProvider.get('key');
-    expect(result).toBe('value');
-    expect(mockClient.get).toHaveBeenCalledWith('key');
+  // Happy Path: set with TTL
+  describe('when setting a key with TTL', () => {
+    it('calls client.set with EX option', async () => {
+      await cacheProvider.set('key2', 'value2', 60);
+      expect(mockClient.set).toHaveBeenCalledWith('key2', 'value2', { EX: 60 });
+    });
   });
 
-  it('should delete a key', async () => {
-    await cacheProvider.delete('key');
-    expect(mockClient.del).toHaveBeenCalledWith('key');
+  // Happy Path: get
+  describe('when getting a key', () => {
+    it('returns the value from client.get', async () => {
+      vi.mocked(mockClient.get).mockResolvedValue('value3');
+      const result = await cacheProvider.get('key3');
+      expect(mockClient.get).toHaveBeenCalledWith('key3');
+      expect(result).toBe('value3');
+    });
   });
 
-  it('should delete multiple keys', async () => {
-    await cacheProvider.deleteManyKeys(['key1', 'key2']);
-    expect(mockClient.del).toHaveBeenCalledWith(['key1', 'key2']);
+  // Happy Path: delete single key
+  describe('when deleting a key', () => {
+    it('calls client.del with key', async () => {
+      await cacheProvider.delete('key4');
+      expect(mockClient.del).toHaveBeenCalledWith('key4');
+    });
   });
 
-  it('should clear all keys', async () => {
-    await cacheProvider.clear();
-    expect(mockClient.flushAll).toHaveBeenCalled();
+  // Happy Path: delete multiple keys
+  describe('when deleting multiple keys', () => {
+    it('calls client.del with array of keys', async () => {
+      const keys = ['a', 'b', 'c'];
+      await cacheProvider.deleteManyKeys(keys);
+      expect(mockClient.del).toHaveBeenCalledWith(keys);
+    });
   });
 
-  it('should get all keys', async () => {
-    mockClient.keys.mockResolvedValue(['key1', 'key2']);
-    const result = await cacheProvider.getAllKeys();
-    expect(result).toEqual(['key1', 'key2']);
-    expect(mockClient.keys).toHaveBeenCalledWith('*');
+  // Happy Path: clear cache
+  describe('when clearing the cache', () => {
+    it('calls client.flushAll', async () => {
+      await cacheProvider.clear();
+      expect(mockClient.flushAll).toHaveBeenCalled();
+    });
+  });
+
+  // Happy Path: getAllKeys
+  describe('when retrieving all keys', () => {
+    it('returns all keys using client.keys', async () => {
+      vi.mocked(mockClient.keys).mockResolvedValue(['x', 'y']);
+      const result = await cacheProvider.getAllKeys();
+      expect(mockClient.keys).toHaveBeenCalledWith('*');
+      expect(result).toEqual(['x', 'y']);
+    });
   });
 });
