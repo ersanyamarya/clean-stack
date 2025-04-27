@@ -1,5 +1,5 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
-import { AppError, ERROR_CODE_KEYS } from '../app-error';
+import { APP_ERROR_CODE_KEYS, AppError } from '../app-error';
 import { errorHandler, ErrorHandlerReturnType } from './index';
 
 describe('errorHandler', () => {
@@ -35,7 +35,7 @@ describe('errorHandler', () => {
   });
 
   it('should handle AppError correctly', () => {
-    const appError = new AppError<ERROR_CODE_KEYS>('RESOURCE_NOT_FOUND', { context: { resource: 'User' } });
+    const appError = new AppError<APP_ERROR_CODE_KEYS>('RESOURCE_NOT_FOUND', { context: { resource: 'User' } });
     const result: ErrorHandlerReturnType = errorHandler(appError, mockOnUnhandledError);
     expect(mockOnUnhandledError).not.toHaveBeenCalled();
     expect(result).toEqual({
