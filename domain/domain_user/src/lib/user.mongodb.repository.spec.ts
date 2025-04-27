@@ -1,13 +1,29 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { createUserMongoRepository } from './user.mongodb.repository';
+import { UserCreateInput, UserEntity } from './user.types';
 
 describe('UserMongoRepository', () => {
   let mongoServer: MongoMemoryServer;
   let repository: ReturnType<typeof createUserMongoRepository>;
   let connection: mongoose.Connection;
 
+  const mockUser: UserCreateInput = {
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    password: 'password123',
+  };
+
+  // Helper function to pick only relevant fields for comparison
+  const pickUserFields = (user: UserEntity | UserCreateInput | null) => {
+    if (!user) return null;
+    const { email, firstName, lastName } = user;
+    return { email, firstName, lastName };
+  };
+
   beforeAll(async () => {
+    // Arrange
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
     await mongoose.connect(mongoUri);
@@ -24,162 +40,225 @@ describe('UserMongoRepository', () => {
     await connection.collection('users').deleteMany({});
   });
 
-  const mockUser = {
-    email: 'test@example.com',
-    firstName: 'Test',
-    lastName: 'User',
-    password: 'password123',
-  };
-
-  // Helper function to pick only relevant fields for comparison
-  const pickUserFields = (user: any) => {
-    const { email, firstName, lastName } = user;
-    return { email, firstName, lastName };
-  };
-
-  describe('createUser', () => {
-    it('should create a new user', async () => {
+  describe('when creating a user', () => {
+    it('creates and returns a new user with all fields', async () => {
+      // Act
       const user = await repository.createUser(mockUser);
+
+      // Assert
       expect(pickUserFields(user)).toEqual(pickUserFields(mockUser));
       expect(user._id).toBeDefined();
-    });
-
-    it('should remove password when converting to JSON', async () => {
-      const user = await repository.createUser(mockUser);
-      const userJSON = JSON.parse(JSON.stringify(user));
-      expect(userJSON.password).toBeUndefined();
-    });
-
-    it('should fail when required fields are missing', async () => {
-      const invalidUser = { email: 'test@example.com' };
-      await expect(repository.createUser(invalidUser as any)).rejects.toThrow();
-    });
-
-    it('should fail when email is duplicate', async () => {
-      await repository.createUser(mockUser);
-      await expect(repository.createUser(mockUser)).rejects.toThrow();
-    });
-
-    it('should set timestamps on creation', async () => {
-      const user = await repository.createUser(mockUser);
       expect(user.createdAt).toBeDefined();
       expect(user.updatedAt).toBeDefined();
     });
-  });
 
-  describe('getUser', () => {
-    it('should return user by id', async () => {
-      const created = await repository.createUser(mockUser);
-      const user = await repository.getUser(created._id.toString());
-      expect(pickUserFields(user)).toEqual(pickUserFields(mockUser));
+    it('excludes password when converting to JSON', async () => {
+      // Act
+      const user = await repository.createUser(mockUser);
+      const userJSON = JSON.parse(JSON.stringify(user));
+
+      // Assert
+      expect(userJSON.password).toBeUndefined();
     });
 
-    it('should return null for non-existent id', async () => {
-      const user = await repository.getUser(new mongoose.Types.ObjectId().toString());
-      expect(user).toBeNull();
-    });
-  });
-
-  describe('getUserByEmail', () => {
-    it('should return user by email', async () => {
+    it('throws ResourceAlreadyExists when email is duplicate', async () => {
+      // Arrange
       await repository.createUser(mockUser);
-      const user = await repository.getUserByEmail(mockUser.email);
-      expect(pickUserFields(user)).toEqual(pickUserFields(mockUser));
+
+      // Act & Assert
+      await expect(repository.createUser(mockUser)).rejects.toThrow(mongoose.mongo.MongoError);
+      await expect(repository.createUser(mockUser)).rejects.toThrow(/duplicate key error/i);
     });
 
-    it('should return null for non-existent email', async () => {
-      const user = await repository.getUserByEmail('nonexistent@example.com');
-      expect(user).toBeNull();
+    it('throws ValidationError when required fields are missing', async () => {
+      // Arrange
+      const invalidUser = { email: 'test@example.com' } as UserCreateInput;
+
+      // Act & Assert
+      await expect(repository.createUser(invalidUser)).rejects.toThrow();
     });
   });
 
-  describe('listUsers', () => {
-    it('should list all users', async () => {
+  describe('when retrieving a user', () => {
+    describe('by ID', () => {
+      it('returns the user when found', async () => {
+        // Arrange
+        const created = await repository.createUser(mockUser);
+
+        // Act
+        const user = await repository.getUser(created._id.toString());
+
+        // Assert
+        expect(pickUserFields(user)).toEqual(pickUserFields(mockUser));
+      });
+
+      it('returns null when user does not exist', async () => {
+        // Arrange
+        const nonExistentId = new mongoose.Types.ObjectId().toString();
+
+        // Act
+        const user = await repository.getUser(nonExistentId);
+
+        // Assert
+        expect(user).toBeNull();
+      });
+    });
+
+    describe('by email', () => {
+      it('returns the user when found', async () => {
+        // Arrange
+        await repository.createUser(mockUser);
+
+        // Act
+        const user = await repository.getUserByEmail(mockUser.email);
+
+        // Assert
+        expect(pickUserFields(user)).toEqual(pickUserFields(mockUser));
+      });
+
+      it('returns null when email does not exist', async () => {
+        // Act
+        const user = await repository.getUserByEmail('nonexistent@example.com');
+
+        // Assert
+        expect(user).toBeNull();
+      });
+    });
+  });
+
+  describe('when listing users', () => {
+    it('returns all users when no filter is provided', async () => {
+      // Arrange
       await repository.createUser(mockUser);
       await repository.createUser({ ...mockUser, email: 'test2@example.com' });
 
+      // Act
       const users = await repository.listUsers({});
+
+      // Assert
       expect(users).toHaveLength(2);
     });
 
-    it('should filter users', async () => {
+    it('returns filtered users when filter is provided', async () => {
+      // Arrange
       await repository.createUser(mockUser);
       await repository.createUser({ ...mockUser, email: 'test2@example.com' });
 
+      // Act
       const users = await repository.listUsers({ email: mockUser.email });
+
+      // Assert
       expect(users).toHaveLength(1);
       expect(pickUserFields(users[0])).toEqual(pickUserFields(mockUser));
     });
   });
 
-  describe('paginateUsers', () => {
-    it('should paginate users', async () => {
-      const users = await Promise.all([
+  describe('when paginating users', () => {
+    beforeEach(async () => {
+      // Arrange: Create test users
+      await Promise.all([
         repository.createUser(mockUser),
         repository.createUser({ ...mockUser, email: 'test2@example.com' }),
         repository.createUser({ ...mockUser, email: 'test3@example.com' }),
       ]);
+    });
 
+    it('returns correct page of users with total counts', async () => {
+      // Act
       const result = await repository.paginateUsers({}, { page: 1, limit: 2 });
+
+      // Assert
       expect(result.data).toHaveLength(2);
       expect(result.total).toBe(3);
       expect(result.totalPages).toBe(2);
     });
 
-    it('should handle empty result set', async () => {
-      const result = await repository.paginateUsers({}, { page: 1, limit: 10 });
+    it('handles empty result sets correctly', async () => {
+      // Act
+      const result = await repository.paginateUsers({ email: 'nonexistent@example.com' }, { page: 1, limit: 10 });
+
+      // Assert
       expect(result.data).toHaveLength(0);
       expect(result.total).toBe(0);
       expect(result.totalPages).toBe(0);
     });
 
-    it('should handle page number greater than total pages', async () => {
-      await repository.createUser(mockUser);
+    it('returns empty array for page numbers beyond total pages', async () => {
+      // Act
       const result = await repository.paginateUsers({}, { page: 999, limit: 10 });
+
+      // Assert
       expect(result.data).toHaveLength(0);
-      expect(result.total).toBe(1);
+      expect(result.total).toBe(3);
       expect(result.totalPages).toBe(1);
     });
 
-    it('should handle special characters in filter', async () => {
+    it('handles special characters in filter criteria', async () => {
+      // Arrange
       await repository.createUser({
         ...mockUser,
         firstName: 'Test$Special',
+        email: 'special@example.com',
       });
+
+      // Act
       const result = await repository.paginateUsers({ firstName: 'Test$Special' }, { page: 1, limit: 10 });
+
+      // Assert
       expect(result.data).toHaveLength(1);
       expect(result.data[0].firstName).toBe('Test$Special');
     });
   });
 
-  describe('updateUser', () => {
-    it('should update user', async () => {
+  describe('when updating a user', () => {
+    it('updates and returns the modified user', async () => {
+      // Arrange
       const created = await repository.createUser(mockUser);
+
+      // Act
       const updated = await repository.updateUser(created._id.toString(), {
         firstName: 'Updated',
       });
+
+      // Assert
       expect(updated?.firstName).toBe('Updated');
       expect(updated?.email).toBe(mockUser.email);
     });
 
-    it('should return null for non-existent id', async () => {
-      const updated = await repository.updateUser(new mongoose.Types.ObjectId().toString(), { firstName: 'Updated' });
+    it('returns null when user does not exist', async () => {
+      // Arrange
+      const nonExistentId = new mongoose.Types.ObjectId().toString();
+
+      // Act
+      const updated = await repository.updateUser(nonExistentId, { firstName: 'Updated' });
+
+      // Assert
       expect(updated).toBeNull();
     });
   });
 
-  describe('deleteUser', () => {
-    it('should delete user', async () => {
+  describe('when deleting a user', () => {
+    it('removes the user and returns true', async () => {
+      // Arrange
       const created = await repository.createUser(mockUser);
-      const result = await repository.deleteUser(created._id.toString());
-      expect(result).toBe(true);
 
+      // Act
+      const result = await repository.deleteUser(created._id.toString());
+
+      // Assert
+      expect(result).toBe(true);
       const user = await repository.getUser(created._id.toString());
       expect(user).toBeNull();
     });
 
-    it('should return false for non-existent id', async () => {
-      const result = await repository.deleteUser(new mongoose.Types.ObjectId().toString());
+    it('returns false when user does not exist', async () => {
+      // Arrange
+      const nonExistentId = new mongoose.Types.ObjectId().toString();
+
+      // Act
+      const result = await repository.deleteUser(nonExistentId);
+
+      // Assert
       expect(result).toBe(false);
     });
   });
