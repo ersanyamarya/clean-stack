@@ -4,7 +4,7 @@ import { createContext, trpcRouter } from './trpc_router';
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
-import { createCacheStore, gerRedisCacheProvider } from '@clean-stack/platform-features/cache';
+import { createCacheStore, getRedisCacheProvider } from '@clean-stack/platform-features/cache';
 import { createRedisConnector, getRedisClient } from '@clean-stack/redis';
 import Router from '@koa/router';
 import { createKoaMiddleware } from 'trpc-koa-adapter';
@@ -37,7 +37,7 @@ async function main() {
 
   const { name: redisName, healthCheck: redisHealthCheck } = await redisConnector.connect();
   const redisClient = getRedisClient();
-  const redisProvider = gerRedisCacheProvider(redisClient);
+  const redisProvider = getRedisCacheProvider(redisClient);
   const cacheStore = createCacheStore(redisProvider);
 
   const koaApp = await getKoaServer({
