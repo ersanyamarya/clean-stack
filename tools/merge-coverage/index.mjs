@@ -181,7 +181,7 @@ try {
     projectCoverage[category].fileCount++;
   });
 
-  logger.info('Generating reports...');
+  logger.info('Generating enhanced reports...');
   const overallMetrics = calculateOverallMetrics(projectCoverage);
   fs.writeFileSync(overviewReportFile, generateOverviewHtml(projectCoverage, getPercentage, overallMetrics));
 
@@ -206,14 +206,17 @@ try {
     fs.unlinkSync(detailsReportFile);
   }
 
-  // Clean up
+  // Clean up temporary files
   coverageFiles.forEach(file => {
     const newFileName = file.replaceAll('/', '-');
     execSync(`rm ${coverageDir}/${newFileName}`);
   });
   execSync(`rm -rf ${outputFile}`);
 
-  logger.info('Starting HTTP server...');
+  logger.info('✅ Coverage report generated successfully!');
+  logger.info('Starting HTTP server on port 9999...');
+  logger.info('Press Ctrl+C to stop the server');
+
   execSync(`${httpServerPath} ./coverage -p 9999 -o`, {
     stdio: 'inherit',
   });
