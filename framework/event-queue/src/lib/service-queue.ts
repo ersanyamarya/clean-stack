@@ -21,12 +21,9 @@ const DEFAULT_JOB_OPTIONS = {
  */
 const validateQueueData = <Q extends AllQueueNames>(queueName: Q, data: QueDataSchema<Q>) => {
   // eslint-disable-next-line security/detect-object-injection
-  const currentJob = queueList[queueName];
-  if (!currentJob) {
-    throw new Error(`Queue ${queueName} not found`);
-  }
+  const currentQueue = queueList[queueName];
 
-  const dataValidation = currentJob.safeParse(data);
+  const dataValidation = currentQueue.safeParse(data);
   if (!dataValidation.success) {
     throw new Error(`Invalid data for queue ${queueName}: ${dataValidation.error.errors.map(error => error.message).join(', ')}`);
   }

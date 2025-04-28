@@ -49,6 +49,10 @@ describe('service-queue module', () => {
       // @ts-expect-error invalid payload
       await expect(addJob({ to: 'invalid', subject: 123, text: null })).rejects.toThrow();
     });
+
+    it('should throw when requesting an unknown queue', () => {
+      expect(() => getQueue('unknownQueue' as any, connection)).toThrowError('Queue unknownQueue not found');
+    });
   });
 
   describe('addJobProcessor()', () => {
@@ -66,17 +70,31 @@ describe('service-queue module', () => {
       const { addJob } = getQueue('sendEmail', connection);
       const payload: QueDataSchema<'sendEmail'> = { to: 'x@y.com', subject: 'S', text: 'T' };
       await addJob(payload);
-
-      // wait for processing
-      // await new Promise<void>(resolve => {
-      //   worker.on('completed', () => resolve());
-      // });
-
       // wait for 1 second to ensure the job is processed
       await new Promise(resolve => setTimeout(resolve, 1000));
       expect(processed).toHaveLength(1);
 
       expect(processed).toEqual([payload]);
+      await worker.close();
+    });
+    it('should handle errors in workerController', async () => {
+      const error = new Error('Test error');
+      const worker = addJobProcessor(
+        'sendEmail',
+        async () => {
+          throw error;
+        },
+        mockLogger,
+        connection
+      );
+
+      const { addJob } = getQueue('sendEmail', connection);
+      const payload: QueDataSchema<'sendEmail'> = { to: 'a@b.com', subject: 'b', text: 'c' };
+      await addJob(payload);
+
+      // wait for 1 second to ensure the job is processed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      expect(mockLogger.error).toHaveBeenCalledWith(`Job sendEmail failed with error: ${error.message}`);
       await worker.close();
     });
   });
