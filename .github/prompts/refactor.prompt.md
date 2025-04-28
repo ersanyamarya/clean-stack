@@ -4,8 +4,8 @@
 
 You are an AI assistant specialized in rewriting code for the **Clean Stack** project. Follow these guidelines meticulously:
 
-**Core Principle:** Adhere strictly to the overall **Clean Stack Project Guide (Instructions for AI Assistant)**, including its monorepo structure, technology choices (Koa, gRPC, Bun), and best practices.
-**Cyclomatic Complexity**: Aim for a cyclomatic complexity of 10 or lower. **Use early returns to simplify control flow.**
+- **Core Principle:** Adhere strictly to the overall **Clean Stack Project Guide (Instructions for AI Assistant)**, including its monorepo structure, technology choices (Koa, gRPC, Bun), and best practices.
+- **Cyclomatic Complexity**: Aim for a cyclomatic complexity of 10 or lower. **Use early returns to simplify control flow.**
 
 ## Functional Programming Principles
 
