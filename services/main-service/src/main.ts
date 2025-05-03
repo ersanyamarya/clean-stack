@@ -1,11 +1,11 @@
 import { mainLogger, telemetrySdk } from './init';
 import { createContext, trpcRouter } from './trpc_router';
 
+import { createRedisConnector, getRedisClient } from '@clean-stack/connectors/redis';
 import { errorHandler } from '@clean-stack/custom-errors';
 import { ErrorCallback, getKoaServer, setupRootRoute } from '@clean-stack/framework/koa-server-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import { createCacheStore, getRedisCacheProvider } from '@clean-stack/platform-features/cache';
-import { createRedisConnector, getRedisClient } from '@clean-stack/redis';
 import Router from '@koa/router';
 import { createKoaMiddleware } from 'trpc-koa-adapter';
 import { config } from './config';

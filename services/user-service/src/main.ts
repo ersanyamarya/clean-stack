@@ -7,9 +7,9 @@ import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 
 import { userServiceServer } from './service';
 
+import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/connectors/mongodb-connector';
 import { createUserMongoRepository } from '@clean-stack/domain_user';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
-import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
 import { Connection } from 'mongoose';
 import { config } from './config';
 

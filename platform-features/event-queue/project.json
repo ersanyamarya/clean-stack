@@ -1,17 +1,16 @@
 {
   "name": "event-queue",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "framework/event-queue/src",
+  "sourceRoot": "platform-features/event-queue/src",
   "projectType": "library",
   "tags": [],
-  "// targets": "to see all targets run: nx show project event-queue --web",
   "targets": {
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
       "watch": true,
       "options": {
-        "reportsDirectory": "../../coverage/framework/event-queue"
+        "reportsDirectory": "../../coverage/platform-features/event-queue"
       }
     }
   }
