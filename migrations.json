@@ -43,6 +43,23 @@
       "subject": "feat(event-queue): Initialize event queue library with BullMQ integration"
     },
     "targetVersion": "latest",
-    "confirmedPackageUpdates": true
+    "confirmedPackageUpdates": true,
+    "runningMigrations": [
+      "remove-legacy-cache"
+    ],
+    "completedMigrations": {
+      "remove-legacy-cache": {
+        "type": "successful",
+        "name": "remove-legacy-cache",
+        "changedFiles": [
+          {
+            "path": "nx.json",
+            "type": "UPDATE"
+          }
+        ],
+        "ref": "279f69d78c670ee5732a90815fa7ef8b8bfd2019",
+        "nextSteps": []
+      }
+    }
   }
 }
