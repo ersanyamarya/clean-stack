@@ -44,9 +44,6 @@
     },
     "targetVersion": "latest",
     "confirmedPackageUpdates": true,
-    "runningMigrations": [
-      "remove-legacy-cache"
-    ],
     "completedMigrations": {
       "remove-legacy-cache": {
         "type": "successful",
@@ -57,9 +54,45 @@
             "type": "UPDATE"
           }
         ],
-        "ref": "279f69d78c670ee5732a90815fa7ef8b8bfd2019",
+        "ref": "f1fab8aad1cf5f9e472a952e22b1ae12cbc51ee7",
+        "nextSteps": []
+      },
+      "remove-custom-tasks-runner": {
+        "type": "successful",
+        "name": "remove-custom-tasks-runner",
+        "changedFiles": [],
+        "ref": "f1fab8aad1cf5f9e472a952e22b1ae12cbc51ee7",
+        "nextSteps": []
+      },
+      "release-version-config-changes": {
+        "type": "successful",
+        "name": "release-version-config-changes",
+        "changedFiles": [],
+        "ref": "f1fab8aad1cf5f9e472a952e22b1ae12cbc51ee7",
+        "nextSteps": []
+      },
+      "release-changelog-config-changes": {
+        "type": "successful",
+        "name": "release-changelog-config-changes",
+        "changedFiles": [],
+        "ref": "f1fab8aad1cf5f9e472a952e22b1ae12cbc51ee7",
+        "nextSteps": []
+      },
+      "update-21-0-0-update-babel-loose": {
+        "type": "successful",
+        "name": "update-21-0-0-update-babel-loose",
+        "changedFiles": [
+          {
+            "path": "tsconfig.base.json",
+            "type": "UPDATE"
+          }
+        ],
+        "ref": "89bdfbf59739b99dd4fc20f81d9fa64e37104cbe",
         "nextSteps": []
       }
-    }
+    },
+    "runningMigrations": [
+      "update-21-0-0-update-babel-loose"
+    ]
   }
 }
