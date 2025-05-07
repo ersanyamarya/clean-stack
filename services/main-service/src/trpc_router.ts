@@ -6,8 +6,8 @@ import { listUsers } from './service-clients/user-service';
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
+import { mongooseSchemaToText } from '@clean-stack/connectors/mongodb-connector';
 import { pedestrianSchema } from '@clean-stack/domain_pedestrian_data';
-import { mongooseSchemaToText } from '@clean-stack/mongodb-connector';
 import { initTRPC } from '@trpc/server';
 import { CreateTrpcKoaContextOptions } from 'trpc-koa-adapter';
 import { z } from 'zod';
