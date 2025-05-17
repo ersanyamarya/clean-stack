@@ -16,8 +16,11 @@ const DEFAULT_JOB_OPTIONS = {
 } as const;
 
 /**
- * Validates queue data against its schema
- * @throws {AppError} If validation fails
+ * Validates the data against the schema for the specified queue
+ * @param queueName - The name of the queue
+ * @param data - The data to validate
+ * @returns The validated data
+ * @throws Error if the data is invalid
  */
 const validateQueueData = <Q extends AllQueueNames>(queueName: Q, data: QueDataSchema<Q>) => {
   // eslint-disable-next-line security/detect-object-injection
