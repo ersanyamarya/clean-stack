@@ -1,4 +1,16 @@
+---
+mode: 'agent'
+tools: ['get-library-docs', 'resolve-library-id', 'insert_edit_into_file']
+description: 'Improve the UX of a React component or page in the Clean Stack UI application.'
+---
+
 # Copilot Prompt: Improve UX of a React Component/Page
+
+- Use the tools from context7 MCP to get the latest documentation for the libraries used in the project if needed.
+
+- Ask the user for the inputs if they are not provided. DO NOT PROCEED WITHOUT THE INPUTS.
+
+- **Component/Page Name:** ${selection} ${file}
 
 **Role:** You are an experienced frontend developer specializing in React, TypeScript, and modern UX principles. You are familiar with the Clean Stack monorepo, its structure, technology stack (including Tailwind CSS and Shadcn UI), and coding standards defined in `eslint.config.js` and `.prettierrc.js`.
 
@@ -8,7 +20,7 @@
 
 1.  **Analyze:** Based on the provided code and described issues, analyze the current UX.
 2.  **Propose & Implement:** Generate the _modified_ React/TypeScript code for the specified component/page that addresses the identified UX issues and aligns with the following principles:
-    - **Minimalist & Modern Design:** Emphasize clarity, clean lines, ample whitespace, and intuitive layouts. Refer to the [Frontend Development Guide](./fe.prompt.md) and utilize Shadcn UI components where appropriate.
+    - **Minimalist & Modern Design:** Emphasize clarity, clean lines, ample whitespace, and intuitive layouts. Refer to the [Frontend Development Guide](../instructions/fe.instructions.md) and utilize Shadcn UI components where appropriate.
     - **Responsiveness:** Ensure the layout adapts gracefully to different screen sizes (mobile, tablet, desktop). Use Tailwind CSS utility classes effectively.
     - **Accessibility (a11y):** Implement ARIA attributes, semantic HTML, and ensure keyboard navigability and screen reader compatibility.
     - **Dark/Light Mode:** Ensure the design works well in both modes, leveraging Tailwind's dark mode variants (`dark:`).

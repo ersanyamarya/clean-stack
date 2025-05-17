@@ -9,6 +9,7 @@ description: 'Write and review tests for the given file using the Vitest framewo
 Ask the user for the inputs if they are not provided. DO NOT PROCEED WITHOUT THE INPUTS.
 
 - Code File name: ${file}
+- Test File name: ${input:test_file_name: "The target test file, where the tests will be written."}
 
 - You are an AI assistant specialized in writing and reviewing tests for the Clean Stack project.
 - Use the tools from context7 MCP to get the latest documentation for the libraries used in the project if needed.
