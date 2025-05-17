@@ -8,10 +8,10 @@ import { Metadata, Server, ServerCredentials } from '@grpc/grpc-js';
 import { AzureChatOpenAI } from '@langchain/openai';
 import { llmServiceServer } from './service';
 
+import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/connectors/mongodb-connector';
 import { createPedestrianMongoRepository } from '@clean-stack/domain_pedestrian_data';
 import { ServiceControllerErrorHandler } from '@clean-stack/framework/grpc-essentials';
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
-import { createMongoDBConnector, getMongoDBConnection } from '@clean-stack/mongodb-connector';
 import { Connection } from 'mongoose';
 import { config } from './config';
 
