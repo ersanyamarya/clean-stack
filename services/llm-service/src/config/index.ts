@@ -3,57 +3,31 @@ import { z } from 'zod';
 
 const configSchema = z.object({
   service: z.object({
-    name: z.string(),
-    version: z.string(),
+    name: z.string().describe('LLM_SERVICE_NAME'),
+    version: z.string().describe('LLM_SERVICE_VERSION'),
   }),
   server: z.object({
-    host: z.string(),
-    port: numberTransformSchema,
+    host: z.string().describe('LLM_SERVICE_HOST'),
+    port: numberTransformSchema.describe('LLM_SERVICE_PORT'),
   }),
-  otelCollectorUrl: z.string(),
-  mongoConnectionUri: z.string(),
+  otelCollectorUrl: z.string().describe('OTEL_COLLECTOR_ADDRESS'),
+  mongoConnectionUri: z.string().describe('MONGO_CONNECTION_URI'),
   azureOpenAi: z.object({
-    model: z.string(),
-    azureOpenAIApiKey: z.string(),
-    azureOpenAIApiInstanceName: z.string(),
-    azureOpenAIApiDeploymentName: z.string(),
-    azureOpenAIApiVersion: z.string(),
-    maxTokens: numberTransformSchema,
-    timeout: numberTransformSchema,
-    maxRetries: numberTransformSchema,
+    model: z.string().describe('AZURE_OPENAI_MODEL'),
+    azureOpenAIApiKey: z.string().describe('AZURE_OPENAI_API_KEY'),
+    azureOpenAIApiInstanceName: z.string().describe('AZURE_OPENAI_API_INSTANCE_NAME'),
+    azureOpenAIApiDeploymentName: z.string().describe('AZURE_OPENAI_API_DEPLOYMENT_NAME'),
+    azureOpenAIApiVersion: z.string().describe('AZURE_OPENAI_API_VERSION'),
+    maxTokens: numberTransformSchema.describe('AZURE_OPENAI_MAX_TOKENS'),
+    timeout: numberTransformSchema.describe('AZURE_OPENAI_TIMEOUT'),
+    maxRetries: numberTransformSchema.describe('AZURE_OPENAI_MAX_RETRIES'),
   }),
+  address: z.string().describe('$LLM_SERVICE_HOST:$LLM_SERVICE_PORT'),
 });
 
-const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
-  service: {
-    name: 'LLM_SERVICE_NAME',
-    version: 'LLM_SERVICE_VERSION',
-  },
-  server: {
-    host: 'LLM_SERVICE_HOST',
-    port: 'LLM_SERVICE_PORT',
-  },
-  otelCollectorUrl: 'OTEL_COLLECTOR_ADDRESS',
-  mongoConnectionUri: 'MONGO_CONNECTION_URI',
-  azureOpenAi: {
-    model: 'AZURE_OPENAI_MODEL',
-    azureOpenAIApiKey: 'AZURE_OPENAI_API_KEY',
-    azureOpenAIApiInstanceName: 'AZURE_OPENAI_API_INSTANCE_NAME',
-    azureOpenAIApiDeploymentName: 'AZURE_OPENAI_API_DEPLOYMENT_NAME',
-    azureOpenAIApiVersion: 'AZURE_OPENAI_API_VERSION',
-    maxTokens: 'AZURE_OPENAI_MAX_TOKENS',
-    timeout: 'AZURE_OPENAI_TIMEOUT',
-    maxRetries: 'AZURE_OPENAI_MAX_RETRIES',
-  },
-};
-
-type AppConfig = z.infer<typeof configSchema> & {
-  address: string;
-};
-
-export let config: AppConfig;
+export let config: z.infer<typeof configSchema>;
 
 export const loadConfig = () => {
-  const envConfig = loadConfigFromEnv(configSchema, configMapping);
-  config = { ...envConfig, address: `${envConfig.server.host}:${envConfig.server.port}` };
+  const envConfig = loadConfigFromEnv(configSchema);
+  config = envConfig;
 };

@@ -3,37 +3,21 @@ import { z } from 'zod';
 
 const configSchema = z.object({
   service: z.object({
-    name: z.string(),
-    version: z.string(),
+    name: z.string().describe('USER_SERVICE_NAME'),
+    version: z.string().describe('USER_SERVICE_VERSION'),
   }),
   server: z.object({
-    host: z.string(),
-    port: numberTransformSchema,
+    host: z.string().describe('USER_SERVICE_HOST'),
+    port: numberTransformSchema.describe('USER_SERVICE_PORT'),
   }),
-  otelCollectorUrl: z.string(),
-  mongoConnectionUri: z.string(),
+  otelCollectorUrl: z.string().describe('OTEL_COLLECTOR_ADDRESS'),
+  mongoConnectionUri: z.string().describe('MONGO_CONNECTION_URI'),
+  address: z.string().describe('$USER_SERVICE_HOST:$USER_SERVICE_PORT'),
 });
 
-const configMapping: Record<keyof z.infer<typeof configSchema>, unknown> = {
-  service: {
-    name: 'USER_SERVICE_NAME',
-    version: 'USER_SERVICE_VERSION',
-  },
-  server: {
-    host: 'USER_SERVICE_HOST',
-    port: 'USER_SERVICE_PORT',
-  },
-  otelCollectorUrl: 'OTEL_COLLECTOR_ADDRESS',
-  mongoConnectionUri: 'MONGO_CONNECTION_URI',
-};
-
-type AppConfig = z.infer<typeof configSchema> & {
-  address: string;
-};
-
-export let config: AppConfig;
+export let config: z.infer<typeof configSchema>;
 
 export const loadConfig = () => {
-  const envConfig = loadConfigFromEnv(configSchema, configMapping);
-  config = { ...envConfig, address: `${envConfig.server.host}:${envConfig.server.port}` };
+  const envConfig = loadConfigFromEnv(configSchema);
+  config = envConfig;
 };
