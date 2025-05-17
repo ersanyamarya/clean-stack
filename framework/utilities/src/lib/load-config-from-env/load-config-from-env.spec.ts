@@ -1,107 +1,146 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
-import { loadConfigFromEnv } from '.';
-import { booleanTransformSchema, numberTransformSchema, stringArrayTransformSchema } from '../custom-zod-types';
-// Define a schema with Zod
-const configSchema = z.object({
-  service: z.object({
-    name: z.string(),
-    version: z.string(),
-  }),
-  server: z.object({
-    port: numberTransformSchema,
-    url: z.string(),
-  }),
-  nodeEnv: z.string().default('development'),
-  features: stringArrayTransformSchema.optional(),
-  isFeatureEnabled: booleanTransformSchema.optional(),
-});
+import { loadConfigFromEnv } from './index';
 
-// Nested environment variable mapping
-const environmentMapping = {
-  service: {
-    name: 'TEST_SERVICE_NAME',
-    version: 'TEST_SERVICE_VERSION',
-  },
-  server: {
-    port: 'TEST_SERVICE_PORT',
-    url: 'TEST_SERVICE_URL',
-  },
-  nodeEnv: 'NODE_ENV',
-  features: 'FEATURES',
-  isFeatureEnabled: 'IS_FEATURE_ENABLED',
-};
-
-// Set up the test suite
 describe('loadConfigFromEnv', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
-    process.env['TEST_SERVICE_NAME'] = 'MyService';
-    process.env['TEST_SERVICE_VERSION'] = '1.0.0';
-    process.env['TEST_SERVICE_PORT'] = '8080';
-    process.env['TEST_SERVICE_URL'] = 'http://localhost';
-    process.env['NODE_ENV'] = 'production';
-    process.env['FEATURES'] = 'feature1,feature2';
-    process.env['IS_FEATURE_ENABLED'] = 'true';
+    process.env = { ...originalEnv };
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
-  describe('with valid environment variables', () => {
-    it('should load configuration correctly from env', () => {
-      const config = loadConfigFromEnv(configSchema, environmentMapping);
+  afterEach(() => {
+    process.env = originalEnv;
+    vi.restoreAllMocks();
+  });
 
-      expect(config.service.name).toBe('MyService');
-      expect(config.service.version).toBe('1.0.0');
-      expect(config.server.port).toBe(8080);
-      expect(config.server.url).toBe('http://localhost');
-      expect(config.nodeEnv).toBe('production');
-      expect(config.features).toEqual(['feature1', 'feature2']);
-      expect(config.isFeatureEnabled).toBe(true);
+  // Happy Path Tests
+  describe('when loading simple environment variables', () => {
+    it('loads values from environment variables with matching keys', () => {
+      // Arrange
+      // Arrange
+      process.env['PORT'] = '3000';
+      process.env['HOST'] = 'localhost';
+      const schema = z.object({
+        port: z.string().describe('PORT'),
+        host: z.string().describe('HOST'),
+      });
+
+      // Act
+      const config = loadConfigFromEnv(schema);
+
+      // Assert
+      expect(config).toEqual({
+        port: '3000',
+        host: 'localhost',
+      });
+    });
+
+    it('uses default values when environment variables are not set', () => {
+      // Arrange
+      const schema = z.object({
+        port: z.string().default('8080').describe('PORT'),
+        host: z.string().default('127.0.0.1').describe('HOST'),
+      });
+
+      // Act
+      const config = loadConfigFromEnv(schema);
+
+      // Assert
+      expect(config).toEqual({
+        port: '8080',
+        host: '127.0.0.1',
+      });
     });
   });
 
-  describe('with invalid environment variables', () => {
-    it('should throw an error for invalid number', () => {
-      process.env['TEST_SERVICE_PORT'] = 'not-a-number';
-      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid env value for port');
+  describe('when interpolating environment variables', () => {
+    it('interpolates environment variables in values', () => {
+      // Arrange
+      process.env['BASE_URL'] = 'http://example.com';
+      process.env['API_PATH'] = '/api';
+      const schema = z.object({
+        apiUrl: z.string().describe('$BASE_URL$API_PATH'),
+      });
+
+      // Act
+      const config = loadConfigFromEnv(schema);
+
+      // Assert
+      expect(config).toEqual({
+        apiUrl: 'http://example.com/api',
+      });
     });
 
-    it('should throw an error for invalid boolean', () => {
-      process.env['IS_FEATURE_ENABLED'] = 'not-a-boolean';
-      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid boolean');
+    it('leaves unmatched variables unchanged', () => {
+      // Arrange
+      process.env['BASE_URL'] = 'http://example.com';
+      const schema = z.object({
+        apiUrl: z.string().describe('$BASE_URL$UNDEFINED_VAR'),
+      });
+
+      // Act
+      const config = loadConfigFromEnv(schema);
+
+      // Assert
+      expect(config).toEqual({
+        apiUrl: 'http://example.com$UNDEFINED_VAR',
+      });
     });
   });
 
-  describe('with default values', () => {
-    it('should use default values when environment variables are not set', () => {
-      delete process.env['NODE_ENV'];
-      const config = loadConfigFromEnv(configSchema, environmentMapping);
+  describe('when handling nested objects', () => {
+    it('loads nested configuration objects', () => {
+      // Arrange
+      process.env['DB_HOST'] = 'localhost';
+      process.env['DB_PORT'] = '27017';
+      process.env['DB_NAME'] = 'testdb';
+      const schema = z.object({
+        database: z.object({
+          host: z.string().describe('DB_HOST'),
+          port: z.string().describe('DB_PORT'),
+          name: z.string().describe('DB_NAME'),
+        }),
+      });
 
-      expect(config.nodeEnv).toBe('development');
-    });
-  });
+      // Act
+      const config = loadConfigFromEnv(schema);
 
-  describe('with missing environment variables', () => {
-    it('should throw an error for missing required variables', () => {
-      delete process.env['TEST_SERVICE_NAME'];
-      expect(() => loadConfigFromEnv(configSchema, environmentMapping)).toThrow('Invalid env value for name');
-    });
-
-    it('should use the Key to uppercase if environmentMapping is missing a key', () => {
-      const eventsMappingWithoutFeatures = {
-        service: {
-          name: 'TEST_SERVICE_NAME',
-          version: 'TEST_SERVICE_VERSION',
+      // Assert
+      expect(config).toEqual({
+        database: {
+          host: 'localhost',
+          port: '27017',
+          name: 'testdb',
         },
-        server: {
-          port: 'TEST_SERVICE_PORT',
-          url: 'TEST_SERVICE_URL',
-        },
-        nodeEnv: 'NODE_ENV',
-        isFeatureEnabled: 'IS_FEATURE_ENABLED',
-      };
+      });
+    });
+  });
 
-      const config = loadConfigFromEnv(configSchema, eventsMappingWithoutFeatures);
+  // Sad Path Tests
+  describe('when validation fails', () => {
+    it('throws error for missing required variables', () => {
+      // Arrange
+      const schema = z.object({
+        requiredValue: z.string().describe('REQUIRED_VALUE'),
+      });
 
-      expect(config.features).toEqual(['feature1', 'feature2']);
+      // Act & Assert
+      expect(() => loadConfigFromEnv(schema)).toThrow('Environment variable validation failed');
+      expect(console.error).toHaveBeenCalled();
+    });
+
+    it('throws error with formatted validation messages', () => {
+      // Arrange
+      const schema = z.object({
+        port: z.number().describe('PORT'),
+      });
+      process.env['PORT'] = 'not-a-number';
+
+      // Act & Assert
+      expect(() => loadConfigFromEnv(schema)).toThrow('Environment variable validation failed');
+      expect(console.error).toHaveBeenCalled();
     });
   });
 });

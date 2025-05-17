@@ -58,40 +58,4 @@ bun run format
 
 **Always ensure code is formatted according to `.prettierrc.js` before finalizing suggestions.**
 
-## Best Practices
-
-1.  **Module Organization**
-
-    - Keep related code together.
-    - Follow the single responsibility principle.
-    - Maintain clear boundaries between modules.
-
-2.  **File Naming**
-
-    - Use kebab-case for files.
-    - Append `.spec.ts` for test files.
-    - Use meaningful names.
-
-3.  **Code Structure**
-
-    - **Export the public API through `index.ts`.**
-    - **Keep implementation details private (not exported from `index.ts`).**
-    - **Document public interfaces using JSDoc.**
-
-## Coding Standards for a Great TypeScript Project
-
-- **Functional Programming & Dependency Inversion**: **Prefer functional programming patterns and dependency inversion.** Write pure functions where possible. **Inject dependencies; avoid creating them directly within functions/classes.**
-- **Code Reusability & Testability**: **Design code for reusability and testability.** Break down complex logic into smaller, testable units. Isolate side effects.
-- **Type Safety**: **Enable and respect `strict` mode.** **Avoid using `any`; prefer `unknown` or specific types.** Use `readonly` where appropriate for immutability.
-- **Code Organization**: Group related files into modules. Use `index.ts` for public exports. Keep APIs minimal.
-- **Cyclomatic Complexity**: Aim for a cyclomatic complexity of 10 or lower. **Use early returns to simplify control flow.**
-- **Naming Conventions**: Use `PascalCase` for classes/types/interfaces, `camelCase` for variables/functions. **Avoid prefixing interfaces with `I` unless necessary for clarity.**
-- **Error Handling**: **Use custom error classes (see `@clean-stack/custom-errors`) for domain-specific errors.** Handle all promises correctly (`.catch` or `try/catch` with `await`).
-- **Testing**: **Write unit tests using Vitest for critical logic.** Use descriptive names and mock dependencies.
-- **Documentation**: **Add JSDoc comments for all public exports.** Add inline comments for complex logic.
-- **Linting and Formatting**: **Adhere strictly to ESLint (`eslint.config.js`) and Prettier (`.prettierrc.js`) configurations.**
-- **Performance**: Avoid unnecessary computations. Consider lazy loading.
-- **Version Control**: (Guidance for human developers) Commit small, focused changes with clear messages.
-- **Dependencies**: **Do not add new dependencies unless explicitly instructed.**
-
 Make use of the NX MCP server when needed.

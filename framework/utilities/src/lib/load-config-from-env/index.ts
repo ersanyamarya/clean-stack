@@ -1,47 +1,61 @@
 /* eslint-disable security/detect-object-injection */
-import { z, ZodObject, ZodRawShape } from 'zod';
+import { z } from 'zod';
 
-/**
- * The function `loadConfigFromEnv` loads configuration values from environment variables based on a
- * specified schema and mapping.
- * @param schema - The `schema` parameter in the `loadConfigFromEnv` function is a Zod schema that
- * defines the shape of the configuration object you want to load from environment variables. It
- * specifies the structure of the configuration object and the types of its properties.
- * @param {EnvMapping} envMapping - The `envMapping` parameter is a mapping object that associates
- * configuration keys with their corresponding environment variable names. It allows you to specify
- * custom environment variable names for each configuration key. If a key is not found in the
- * `envMapping`, the function will default to using the uppercase version of the key as
- * @returns The `loadConfigFromEnv` function returns a configuration object inferred from the provided
- * Zod schema. The shape of the returned object matches the shape defined in the Zod schema passed to
- * the function.
- */
-export function loadConfigFromEnv<ConfigShape extends ZodRawShape, EnvMapping extends Record<string, unknown>>(
-  schema: ZodObject<ConfigShape>,
-  envMapping: EnvMapping
-): z.infer<typeof schema> {
-  const config: Record<string, unknown> = {};
+type EnvConfig = Record<string, unknown>;
 
-  for (const key in schema.shape) {
-    const envKey = envMapping[key] || key.toUpperCase(); // Use the mapping or default to uppercase key
+function interpolateEnvVariables(envKey: string): string {
+  const varRegex = /\$(\w+)/g;
+  const matches = envKey.match(varRegex);
+  if (!matches) return envKey;
 
-    const schemaType = schema.shape[key];
-
-    if (isZodObject(schemaType)) {
-      // Recursively handle nested configurations
-      config[key] = loadConfigFromEnv(schemaType, envMapping[key] as Record<string, unknown>);
-    } else {
-      const envValue = process.env[envKey as string];
-      // Parse the environment variable or use the default
-      const data = schemaType.safeParse(envValue);
-      if (data.success) config[key] = data.data;
-      else throw new Error(`Invalid env value for ${key}/${envKey}: ${data.error.errors[0].message}`);
-    }
-  }
-
-  return config as z.infer<typeof schema>;
+  return matches.reduce((acc, match) => {
+    const envVar = process.env[match.slice(1)];
+    return envVar ? acc.replace(match, envVar) : acc;
+  }, envKey);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isZodObject(schemaType: any): schemaType is ZodObject<any> {
-  return !!schemaType._def.shape;
+function processEnvValue(key: string, value: z.ZodTypeAny): string | undefined {
+  const envKey = value.description || key;
+
+  if (envKey.includes('$')) {
+    return interpolateEnvVariables(envKey);
+  }
+
+  const envValue = process.env[envKey];
+  if (envValue) return envValue;
+  if (value instanceof z.ZodDefault) return value._def.defaultValue();
+  return undefined;
+}
+
+function formatValidationErrors(error: z.ZodError): string {
+  const { fieldErrors } = error.flatten();
+  return Object.entries(fieldErrors)
+    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : ''}`)
+    .join('\n');
+}
+
+export function loadConfigFromEnv<T extends z.ZodRawShape>(schema: z.ZodObject<T>): z.infer<typeof schema> {
+  const envs = Object.entries(schema.shape).reduce((acc, [key, value]) => {
+    if (value instanceof z.ZodObject) {
+      acc[key] = loadConfigFromEnv(value);
+      return acc;
+    }
+
+    const envValue = processEnvValue(key, value);
+    if (envValue !== undefined) {
+      acc[key] = envValue;
+    }
+
+    return acc;
+  }, {} as EnvConfig);
+
+  const env = schema.safeParse(envs);
+
+  if (!env.success) {
+    const errorMessage = formatValidationErrors(env.error);
+    console.error(errorMessage);
+    throw new Error(`Environment variable validation failed:\n${errorMessage}`);
+  }
+
+  return env.data;
 }
