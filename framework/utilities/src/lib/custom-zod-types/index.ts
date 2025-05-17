@@ -15,7 +15,12 @@ export const numberTransformSchema = z.coerce.number({
   required_error: 'Number is required',
 });
 
-export const booleanTransformSchema = z.coerce.boolean({
-  invalid_type_error: 'Invalid boolean',
-  required_error: 'Boolean is required',
-});
+export const booleanTransformSchema = z
+  .string()
+  .transform(val => {
+    if (val === 'true' || val === 'True') return true;
+    if (val === 'false' || val === 'False') return false;
+    // if (val === 'yes' || val === 'Yes') return true;
+    return val;
+  })
+  .refine(val => typeof val === 'boolean', { message: 'Invalid boolean' });

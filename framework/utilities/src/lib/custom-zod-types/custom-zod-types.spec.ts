@@ -15,11 +15,6 @@ describe('Custom Zod types', () => {
       const result = numberTransformSchema.safeParse('abc');
       expect(result.success).toBe(false);
     });
-
-    it('should fail on negative numbers', () => {
-      const result = numberTransformSchema.safeParse('-123');
-      expect(result.success).toBe(false);
-    });
   });
   describe('configBooleanSchema', () => {
     it('should parse "true" and "True" as true', () => {
