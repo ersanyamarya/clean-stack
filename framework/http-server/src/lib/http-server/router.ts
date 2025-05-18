@@ -24,13 +24,13 @@ export type Handler<Query = unknown, Body = unknown> = (
 
 // Route registration with schemas
 // Use unknown for the registry to avoid type conflicts between different routes
-type RouteEntry<Query = unknown, Body = unknown> = {
+export type RouteEntry<Query = unknown, Body = unknown> = {
   handler: Handler<Query, Body>;
   querySchema?: ZodSchema<Query>;
   bodySchema?: ZodSchema<Body>;
 };
 
-const routes: Record<string, unknown> = {};
+export const routes: Record<string, RouteEntry<any, any>> = {};
 
 export function getRoutes(baseURL: string) {
   return Object.keys(routes).reduce(
