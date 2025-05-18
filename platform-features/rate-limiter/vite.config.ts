@@ -18,7 +18,7 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts', '*.config.js'],
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts', '*.config.js', '*.config.cjs'],
       enabled: true,
       reportsDirectory: '../../coverage/platform-features/rate-limiter',
       provider: 'v8',
