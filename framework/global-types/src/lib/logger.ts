@@ -22,3 +22,11 @@ export type Logger = {
   error: (...params: unknown[]) => void;
   debug: (...params: unknown[]) => void;
 };
+
+export const consoleLogger: Logger = {
+  child: () => consoleLogger,
+  info: (...params: unknown[]) => console.info(...params),
+  warn: (...params: unknown[]) => console.warn(...params),
+  error: (...params: unknown[]) => console.error(...params),
+  debug: (...params: unknown[]) => console.debug(...params),
+};

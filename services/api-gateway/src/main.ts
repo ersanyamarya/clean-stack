@@ -1,8 +1,12 @@
-import * as http2 from 'http';
-import { AddressInfo, Socket } from 'net';
-import { parse } from 'url';
-type Protocol = 'http' | 'https';
+import { gracefulShutdown } from '@clean-stack/framework/utilities';
+import { mainLogger, telemetrySdk } from './init';
 
+import { createHttpServer } from '@clean-stack/http-server';
+import * as http2 from 'http';
+import { Socket } from 'net';
+import { parse } from 'url';
+import { config } from './config';
+type Protocol = 'http' | 'https';
 const server = http2.createServer(async (req, res) => {
   const protocol: Protocol = (req.socket as any).encrypted ? 'https' : 'http';
 
@@ -42,10 +46,10 @@ const server = http2.createServer(async (req, res) => {
   res.end(JSON.stringify(info));
 });
 
-server.listen(3000, '0.0.0.0', () => {
-  const serverHost: AddressInfo = server.address() as AddressInfo;
-  console.log(`✅ Secure HTTP/2 server running at http://${serverHost?.address}:${serverHost?.port}/apple/monkey/?id=123&name=monkey&age=2500`);
-});
+// server.listen(3000, '0.0.0.0', () => {
+//   const serverHost: AddressInfo = server.address() as AddressInfo;
+//   console.log(`✅ Secure HTTP/2 server running at http://${serverHost?.address}:${serverHost?.port}/apple/monkey/?id=123&name=monkey&age=2500`);
+// });
 
 const extractCookies = (cookieHeader: string): Record<string, string> => {
   const cookies: Record<string, string> = {};
@@ -165,3 +169,34 @@ function parseUrlEncoded(rawData: string): Record<string, string> {
   }
   return result;
 }
+async function main() {
+  const server2 = createHttpServer(
+    {
+      port: config.server.port,
+      host: config.server.host,
+      onRequest: (req, res, context) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(context));
+      },
+    },
+    mainLogger
+  );
+
+  const onsShutdown = async () => {
+    mainLogger.info('Shutting down server');
+    server2.close();
+    telemetrySdk.shutdown();
+  };
+
+  gracefulShutdown(mainLogger, onsShutdown);
+}
+
+main().catch(error => {
+  if (error instanceof Error) {
+    console.error(error.message);
+    process.exit(1);
+  } else {
+    console.error('An unknown error occurred');
+    process.exit(1);
+  }
+});
