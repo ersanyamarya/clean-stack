@@ -8,7 +8,6 @@
     "test": {
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
-      "watch": true,
       "options": {
         "reportsDirectory": "../../coverage/framework/koa-server-essentials"
       }

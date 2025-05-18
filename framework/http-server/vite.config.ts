@@ -17,8 +17,11 @@ export default defineConfig(() => ({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
+      enabled: true,
+      exclude: ['**/*.d.ts', '**/*.spec.*', 'src/index.ts', '*.config.ts', '*.config.js'],
       reportsDirectory: '../../coverage/framework/http-server',
       provider: 'v8' as const,
+      reporter: ['json', 'text'],
     },
   },
 }));
