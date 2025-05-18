@@ -1,25 +1,36 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import httpStatusCodes from 'http-status-codes';
+import { ZodSchema } from 'zod';
 import { HTTP_METHODS, METHODS_WITH_BODY } from './meta-data';
 import { getRequestBody } from './request-body';
-export type RouteContext<Query = unknown, Body = unknown> = {
+
+export type RouteContext<Query = unknown, Body = unknown, Cookie = unknown> = {
   method: HTTP_METHODS;
   pathName: string;
-  cookie: string | undefined;
+  sessionCookie: Cookie | undefined;
   query: Query | undefined;
   body: Body | undefined;
+  authToken: string;
+  refreshToken: string;
+  devToken: string;
 };
 
-type Handler<Query = unknown, Body = unknown> = (
+// Handler now receives validated types
+export type Handler<Query = unknown, Body = unknown> = (
+  context: RouteContext<Query, Body>,
   req: IncomingMessage,
-  res: ServerResponse,
-  context: RouteContext<Query, Body>
+  res: ServerResponse
 ) => Promise<Record<string, unknown>> | undefined;
 
-type Route = {
-  [key: string]: Handler;
+// Route registration with schemas
+// Use unknown for the registry to avoid type conflicts between different routes
+type RouteEntry<Query = unknown, Body = unknown> = {
+  handler: Handler<Query, Body>;
+  querySchema?: ZodSchema<Query>;
+  bodySchema?: ZodSchema<Body>;
 };
-const routes: Route = {};
+
+const routes: Record<string, unknown> = {};
 
 export function getRoutes(baseURL: string) {
   return Object.keys(routes).reduce(
@@ -35,42 +46,76 @@ export function getRoutes(baseURL: string) {
   );
 }
 
-export function addRoute(method: HTTP_METHODS, path: string, handler: Route['handler']) {
-  routes[`${method}:${path}`] = handler;
-  console.log(`routes: ${JSON.stringify(routes)}`);
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+};
+// Add route with optional query/body schemas
+export function addRoute<Query = unknown, Body = unknown>(
+  method: HTTP_METHODS,
+  path: string,
+  handler: Handler<Query, Body>,
+  options?: { querySchema?: ZodSchema<Query>; bodySchema?: ZodSchema<Body> }
+) {
+  routes[`${method}:${path}`] = {
+    handler,
+    querySchema: options?.querySchema,
+    bodySchema: options?.bodySchema,
+  } as RouteEntry<Query, Body>;
 }
 
-export async function handleRequest(req: IncomingMessage, res: ServerResponse, context: RouteContext) {
-  const { method, pathName } = context;
+export async function handleRequest(req: IncomingMessage, res: ServerResponse, context: Prettify<RouteContext>) {
+  const { method, pathName, query } = context;
 
-  const route = routes[`${method}:${pathName}`];
+  const routeEntry = routes[`${method}:${pathName}`] as RouteEntry;
 
-  if (route) {
-    if (METHODS_WITH_BODY.includes(method)) {
-      try {
-        const body = await getRequestBody(req).json<Record<string, unknown>>();
-        context.body = body;
-      } catch {
-        sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, 'Invalid JSON');
+  if (!routeEntry) {
+    sendErrorResponse(res, httpStatusCodes.NOT_FOUND, 'Not Found');
+    return;
+  }
+
+  // Validate query if schema provided
+  if (routeEntry.querySchema) {
+    const result = routeEntry.querySchema.safeParse(query);
+    if (!result.success) {
+      sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, {
+        error: 'Invalid query',
+        details: result.error.flatten(),
+      });
+      return;
+    }
+    context.query = result.data;
+  }
+
+  // Validate body if schema provided
+  if (METHODS_WITH_BODY.includes(method) && routeEntry.bodySchema) {
+    try {
+      const body = await getRequestBody(req).json<unknown>();
+      const result = routeEntry.bodySchema.safeParse(body);
+      if (!result.success) {
+        sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, {
+          error: 'Invalid body',
+          details: result.error.flatten(),
+        });
         return;
       }
+      context.body = result.data;
+    } catch {
+      sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, 'Invalid JSON');
+      return;
     }
-
-    const response = await route(req, res, context);
-    if (response) {
-      sendResponse(res, httpStatusCodes.OK, response);
-    } else {
-      sendErrorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error');
-    }
-  } else {
-    sendErrorResponse(res, httpStatusCodes.NOT_FOUND, 'Not Found');
   }
-  return routes;
+
+  const response = await routeEntry.handler(context, req, res);
+  if (response) {
+    sendResponse(res, httpStatusCodes.OK, response);
+  } else {
+    sendErrorResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+  }
 }
 
-export function sendErrorResponse(res: ServerResponse, statusCode: number, message: string) {
+export function sendErrorResponse(res: ServerResponse, statusCode: number, message: unknown) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ error: message }));
+  res.end(JSON.stringify(typeof message === 'string' ? { error: message } : message));
 }
 
 export function sendResponse(res: ServerResponse, statusCode: number, data: unknown) {
