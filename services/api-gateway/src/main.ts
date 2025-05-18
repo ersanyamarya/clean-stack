@@ -1,7 +1,7 @@
 import { gracefulShutdown } from '@clean-stack/framework/utilities';
 import { mainLogger, telemetrySdk } from './init';
 
-import { addRoute, clearAllCookies, createHttpServer, getRoutes } from '@clean-stack/http-server';
+import { addRoute, clearAllCookies, createHttpServer, getRoutes, setCookie } from '@clean-stack/http-server';
 import { z } from 'zod';
 import { config } from './config';
 
@@ -40,14 +40,14 @@ async function main() {
     async (context, req, res) => {
       clearAllCookies(req, res);
 
-      // const query = context.query;
-      // Object.keys(query).forEach(key => {
-      //   setCookie(res, key, query[key], { httpOnly: true, secure: true, sameSite: 'None' });
-      // });
+      const query = context.query;
+      Object.keys(query).forEach(key => {
+        setCookie(res, key, query[key], { httpOnly: true, secure: true, sameSite: 'None' });
+      });
       return {
         status: 'ok',
         context,
-        // routes: getRoutes(context.pathName),
+        routes: getRoutes(context.pathName),
       };
     },
     {
