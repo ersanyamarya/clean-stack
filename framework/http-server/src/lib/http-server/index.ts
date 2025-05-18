@@ -1,8 +1,7 @@
 import { Logger } from '@clean-stack/framework/global-types';
 import * as http from 'http';
 import httpStatusCodes from 'http-status-codes';
-import { ALLOWED_METHODS, extractRequestMeta, METHODS_WITH_BODY } from './meta-data';
-import { getRequestBody } from './request-body';
+import { ALLOWED_METHODS, extractRequestMeta } from './meta-data';
 import { handleRequest, RouteContext, sendErrorResponse } from './router';
 export { addRoute, getRoutes } from './router';
 type HttpServerOptions = {
@@ -18,11 +17,19 @@ export function createHttpServer(options: HttpServerOptions, logger: Logger) {
       sendErrorResponse(res, httpStatusCodes.METHOD_NOT_ALLOWED, `Method Not Allowed. Allowed methods: ${allowedMethodsString}`);
       return;
     }
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Dev-Token');
+      res.setHeader('Access-Control-Allow-Methods', allowedMethodsString);
+    }
+
     if (method === 'OPTIONS') {
       res.writeHead(httpStatusCodes.OK, { 'Access-Control-Allow-Methods': allowedMethodsString });
       res.end();
       return;
     }
+
     const context: RouteContext = {
       method,
       pathName: pathname,
@@ -30,22 +37,6 @@ export function createHttpServer(options: HttpServerOptions, logger: Logger) {
       query,
       body: undefined,
     };
-
-    if (METHODS_WITH_BODY.includes(method)) {
-      try {
-        const body = await getRequestBody(req).json<Record<string, unknown>>();
-        context.body = body;
-      } catch {
-        sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, 'Invalid JSON');
-        return;
-      }
-    }
-    if (origin) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Dev-Token');
-      res.setHeader('Access-Control-Allow-Methods', allowedMethodsString);
-    }
     res.setHeader('Set-Cookie', 'name=monkey; HttpOnly; Secure; SameSite=None');
 
     await handleRequest(req, res, context);

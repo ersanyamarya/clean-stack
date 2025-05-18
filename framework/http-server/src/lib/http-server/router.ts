@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import httpStatusCodes from 'http-status-codes';
-import { HTTP_METHODS } from './meta-data';
+import { HTTP_METHODS, METHODS_WITH_BODY } from './meta-data';
+import { getRequestBody } from './request-body';
 export type RouteContext<Query = unknown, Body = unknown> = {
   method: HTTP_METHODS;
   pathName: string;
@@ -43,11 +44,18 @@ export async function handleRequest(req: IncomingMessage, res: ServerResponse, c
   const { method, pathName } = context;
 
   const route = routes[`${method}:${pathName}`];
-  console.log(`routes: ${JSON.stringify(routes)}`);
-
-  console.log(`Route: ${method}:${pathName}`);
 
   if (route) {
+    if (METHODS_WITH_BODY.includes(method)) {
+      try {
+        const body = await getRequestBody(req).json<Record<string, unknown>>();
+        context.body = body;
+      } catch {
+        sendErrorResponse(res, httpStatusCodes.BAD_REQUEST, 'Invalid JSON');
+        return;
+      }
+    }
+
     const response = await route(req, res, context);
     if (response) {
       sendResponse(res, httpStatusCodes.OK, response);
