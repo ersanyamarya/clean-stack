@@ -1,0 +1,64 @@
+{
+  "name": "api-gateway",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/api-gateway/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/services/api-gateway",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "services/api-gateway/src/main.ts",
+        "tsConfig": "services/api-gateway/tsconfig.app.json",
+        "assets": ["services/api-gateway/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "api-gateway:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "api-gateway:build:development"
+        },
+        "production": {
+          "buildTarget": "api-gateway:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f services/api-gateway/Dockerfile . -t api-gateway"
+    }
+  }
+}
