@@ -12,6 +12,6 @@
     "paths": {
       "@site/*": ["./*"]
     },
-    "module": "esnext"
+    "module": "nodenext"
   }
 }

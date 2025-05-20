@@ -31,7 +31,7 @@
           "bundle": true,
           "generateLockfile": true,
           "esbuildOptions": {
-            "sourcemap": false,
+            "sourcemap": true,
             "outExtension": {
               ".js": ".js"
             }

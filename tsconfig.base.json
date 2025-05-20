@@ -9,8 +9,7 @@
     "importHelpers": true,
     "jsx": "react-jsx",
     "lib": ["es2020", "dom"],
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "nodenext",
     "paths": {
       "@clean-stack/components/*": ["frontend-libs/components/src/ui/*"],
       "@clean-stack/connectors/mongodb-connector": ["connectors/database/mongodb-connector/src/index.ts"],
