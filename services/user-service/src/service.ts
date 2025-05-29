@@ -40,7 +40,15 @@ export function userServiceServer(userRepository: UserRepository, errorHandler: 
         logger.info('Listing users');
         const { page, limit } = request;
 
-        const users = await userRepository.listUsers({});
+        const res = await userRepository.paginateUsers(
+          {},
+          {
+            page: page || 1,
+            limit: limit || 10,
+          }
+        );
+
+        const users = res.data;
 
         const total = users.length;
         return { users: users.map(user => UserGenericResponse.fromJSON(user)), total };
