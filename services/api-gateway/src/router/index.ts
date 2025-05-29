@@ -1,49 +1,50 @@
+import { grpcClientPromisify } from '@clean-stack/framework/grpc-essentials';
+import { ListUsersRequest, ListUsersResponse } from '@clean-stack/grpc-proto/user';
 import { RequestContext } from '@clean-stack/http-server';
 import { os } from '@orpc/server';
-import { z } from 'zod';
-
+import z from 'zod';
+import { listUsers } from '../service-clients/user-service';
 // Define schemas and routes
-export const PlanetSchema = z.object({
-  id: z.number().int().min(1),
-  name: z.string(),
-  description: z.string().optional(),
-});
 
 const base = os.$context<RequestContext>();
 
-export const listPlanet = base
+export const getAllUsers = base
   .route({
     method: 'GET',
-    path: '/planets',
+    path: '/user/getAll',
   })
   .input(
     z.object({
       limit: z.number().int().min(1).max(100).optional(),
-      cursor: z.number().int().min(0).default(0),
+      page: z.number().int().min(1).optional(),
     })
   )
-  .output(z.array(PlanetSchema).describe('List of planets'))
+  .output(
+    z.object({
+      users: z.array(
+        z.object({
+          firstName: z.string(),
+          lastName: z.string(),
+          email: z.string().email(),
+          photoUrl: z.string().optional(),
+          id: z.string(),
+          createdAt: z.date().optional(),
+          updatedAt: z.date().optional(),
+        })
+      ),
+    })
+  )
   .handler(async ({ input }) => {
-    // your list code here
-    return [{ id: 1, name: 'name' }];
-  });
+    const { limit = 10, page = 1 } = input;
+    console.log({ limit, page });
 
-export const findPlanet = base
-  .route({
-    method: 'GET',
-    path: '/planets/{id}',
-  })
-  .input(z.object({ id: z.coerce.number().int().min(1) }))
-  .output(PlanetSchema.describe('Applee'))
-  .handler(async ({ input, context }) => {
-    // your find code here
-    return { id: 1, name: 'name', cookies: context };
+    const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit, page });
+    return users;
   });
 
 export const router = {
-  planet: {
-    list: listPlanet,
-    find: findPlanet,
+  user: {
+    getAll: getAllUsers,
   },
 };
 

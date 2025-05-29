@@ -4,8 +4,15 @@ import { config } from './config/index';
 import { mainLogger, telemetrySdk } from './init';
 import { createOrpcServer } from './orpc';
 import { router } from './router';
+import clients from './service-clients';
 async function main() {
   exceptions(mainLogger);
+
+  clients.forEach(client => {
+    mainLogger.info(`Connecting to client: ${client.name}`);
+    client.connect();
+  });
+
   const orpcServerHandler = await createOrpcServer(router);
 
   const gatewayServer = createHttpServer(
@@ -43,6 +50,10 @@ async function main() {
     mainLogger.info('Shutting down server');
     gatewayServer.close();
     telemetrySdk.shutdown();
+    clients.forEach(client => {
+      mainLogger.warn(`Closing client: ${client.name}`);
+      client.close();
+    });
   });
 }
 
