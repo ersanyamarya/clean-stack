@@ -13,6 +13,12 @@ export const getAllUsers = base
     method: 'GET',
     path: '/user/getAll',
   })
+  .errors({
+    NOT_FOUND: {
+      code: 404,
+      message: 'Resource not found',
+    },
+  })
   .input(
     z.object({
       limit: z.number().int().min(1).max(100).optional(),
@@ -34,10 +40,10 @@ export const getAllUsers = base
       ),
     })
   )
-  .handler(async ({ input }) => {
-    const { limit = 10, page = 1 } = input;
-    console.log({ limit, page });
 
+  .handler(async ({ input, errors }) => {
+    const { limit = 10, page = 1 } = input;
+    throw errors.NOT_FOUND;
     const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit, page });
     return users;
   });

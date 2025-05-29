@@ -1,7 +1,8 @@
+import { mainLogger, telemetrySdk } from './init';
+
 import { exceptions, gracefulShutdown } from '@clean-stack/framework/utilities';
 import { createHttpServer, sendResponse, setCookie } from '@clean-stack/http-server';
 import { config } from './config/index';
-import { mainLogger, telemetrySdk } from './init';
 import { createOrpcServer } from './orpc';
 import { router } from './router';
 import clients from './service-clients';

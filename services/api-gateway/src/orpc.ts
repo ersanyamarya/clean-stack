@@ -1,7 +1,7 @@
 import { RequestContext, sendResponse } from '@clean-stack/http-server';
 import { OpenAPIGenerator } from '@orpc/openapi';
 import { OpenAPIHandler } from '@orpc/openapi/node';
-import { ContractRouter, Router } from '@orpc/server';
+import { ContractRouter, onError, Router } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/node';
 import { CORSPlugin } from '@orpc/server/plugins';
 import { ZodSmartCoercionPlugin, ZodToJsonSchemaConverter } from '@orpc/zod';
@@ -13,6 +13,11 @@ export const createOrpcServer = async <T extends { [k: string]: ContractRouter<u
   });
   const openApiHandler = new OpenAPIHandler<RequestContext>(router, {
     plugins: [new CORSPlugin(), new ZodSmartCoercionPlugin()],
+    interceptors: [
+      onError(error => {
+        console.error(error);
+      }),
+    ],
   });
   const openAPIGenerator = new OpenAPIGenerator({
     schemaConverters: [new ZodToJsonSchemaConverter()],
