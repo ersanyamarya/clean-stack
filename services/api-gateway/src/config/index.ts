@@ -9,10 +9,10 @@ const configSchema = z.object({
   server: z.object({
     host: z.string().describe('API_GATEWAY_SERVICE_HOST'),
     port: numberTransformSchema.describe('API_GATEWAY_SERVICE_PORT'),
+    address: z.string().describe('API_GATEWAY_SERVICE_ADDRESS'),
   }),
   otelCollectorUrl: z.string().describe('OTEL_COLLECTOR_ADDRESS'),
   mongoConnectionUri: z.string().describe('MONGO_CONNECTION_URI'),
-  address: z.string().describe('$API_GATEWAY_SERVICE_HOST:$API_GATEWAY_SERVICE_PORT'),
 });
 
 export let config: z.infer<typeof configSchema>;
