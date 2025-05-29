@@ -1,15 +1,23 @@
-// HTTP server implementation for Clean Stack framework
-// Follows functional programming and low cyclomatic complexity principles
-
 import { Logger } from '@clean-stack/framework/global-types';
 import * as http from 'http';
+import { ServerResponse } from 'http';
 import httpStatusCodes from 'http-status-codes';
 import { extractCookies } from './cookies';
 import type { HTTP_METHODS } from './meta-data';
 import { ALLOWED_METHODS, extractRequestMeta } from './meta-data';
-import { handleRequest, RouteContext, sendErrorResponse } from './router';
 export { clearAllCookies, setCookie } from './cookies';
-export { addRoute, getRoutes } from './router';
+
+export type RequestContext = {
+  method: HTTP_METHODS;
+  pathName: string;
+  sessionCookie: Record<string, string> | undefined;
+  query: Record<string, unknown> | undefined;
+  body: unknown;
+  baseURL: string;
+  authToken: string | undefined;
+  refreshToken: string | undefined;
+  devToken: string | undefined;
+};
 
 /**
  * Options for creating the HTTP server.
@@ -17,6 +25,7 @@ export { addRoute, getRoutes } from './router';
 type HttpServerOptions = {
   port: number;
   host: string;
+  serverAddress?: string;
 };
 
 /**
@@ -59,7 +68,11 @@ const isMethodAllowed = (method: string) => ALLOWED_METHODS.includes(method as H
  * @param options - Server options (port, host)
  * @param logger - Logger instance
  */
-export function createHttpServer(options: HttpServerOptions, logger: Logger) {
+export function createHttpServer(
+  options: HttpServerOptions,
+  handleRequest: (req: http.IncomingMessage, res: http.ServerResponse, context: RequestContext) => Promise<void>,
+  logger: Logger
+) {
   const server = http.createServer(async (req, res) => {
     // Extract request meta-data (method, path, headers, etc.)
     const meta = extractRequestMeta(req);
@@ -82,24 +95,38 @@ export function createHttpServer(options: HttpServerOptions, logger: Logger) {
     const devToken = meta.DevToken || sessionCookie['devToken'];
 
     // Build route context for downstream handlers
-    const context: RouteContext = {
+    const context: RequestContext = {
       method: meta.method,
       pathName: meta.pathname,
       sessionCookie,
       query: meta.query,
       body: undefined,
+      baseURL: meta.baseURL,
       authToken,
       refreshToken,
       devToken,
     };
 
-    // Delegate to the main request handler
     await handleRequest(req, res, context);
   });
 
   // Start listening on the specified host/port
   server.listen(options.port, options.host, () => {
-    logger.info(`HTTP server listening on ${options.host}:${options.port}`);
+    if (options.serverAddress) {
+      logger.info(`HTTP server listening on ${options.serverAddress}`);
+    } else {
+      logger.info(`HTTP server listening on ${options.host}:${options.port}`);
+    }
   });
   return server;
+}
+
+export function sendErrorResponse(res: ServerResponse, statusCode: number, message: unknown) {
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(typeof message === 'string' ? { error: message } : message));
+}
+
+export function sendResponse(res: ServerResponse, statusCode: number, data: unknown) {
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(data));
 }

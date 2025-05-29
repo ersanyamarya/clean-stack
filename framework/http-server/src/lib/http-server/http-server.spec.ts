@@ -1,72 +1,111 @@
-import { Logger } from '@clean-stack/framework/global-types';
+import type { Logger } from '@clean-stack/framework/global-types';
+import type { IncomingMessage, Server, ServerResponse } from 'http';
 import http from 'http';
-import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { createHttpServer } from './index';
+import supertest from 'supertest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createHttpServer, sendErrorResponse, sendResponse } from './index';
 
-// Mock logger
-const infoMock = vi.fn();
-const logger: Logger = {
-  info: infoMock,
+// Mocks
+const mockLogger: Logger = {
+  info: vi.fn(),
   error: vi.fn(),
   warn: vi.fn(),
   debug: vi.fn(),
-  child: () => logger,
+  child: vi.fn(() => mockLogger),
 };
 
-const HOST = '127.0.0.1';
-const PORT = 0; // Use 0 for dynamic port assignment
-
-let server: http.Server;
-let address: string;
-
-beforeAll(async () => {
-  server = createHttpServer({ port: PORT, host: HOST }, logger);
-  await new Promise<void>(resolve => {
-    server.on('listening', () => {
-      const addr = server.address();
-      if (typeof addr === 'object' && addr && 'port' in addr) {
-        address = `http://${HOST}:${addr.port}`;
-      }
-      resolve();
-    });
-  });
-});
-
-afterAll(async () => {
-  await new Promise<void>(resolve => server.close(() => resolve()));
-});
+type MinimalContext = Record<string, unknown>;
 
 describe('createHttpServer', () => {
-  describe('when receiving a valid GET request', () => {
-    it('responds with 404 for unknown route and sets CORS headers', async () => {
-      const res = await request(address).get('/unknown').set('Origin', 'http://test-origin.com').expect(404);
-      expect(res.headers['access-control-allow-origin']).toBe('http://test-origin.com');
-      expect(res.headers['access-control-allow-credentials']).toBe('true');
-      expect(res.headers['access-control-allow-headers']).toContain('Content-Type');
-      expect(res.headers['access-control-allow-methods']).toBeDefined();
+  let server: Server | undefined;
+  const port = 0;
+  const host = '127.0.0.1';
+  let handleRequest: (req: IncomingMessage, res: ServerResponse, ctx: MinimalContext) => Promise<void>;
+
+  beforeEach(() => {
+    handleRequest = vi.fn(async (req, res) => {
+      res.statusCode = 200;
+      res.end('ok');
     });
   });
 
-  describe('when receiving a disallowed HTTP method', () => {
-    it('responds with 405 Method Not Allowed', async () => {
-      const res = await request(address).patch('/any').expect(405);
-      expect(res.text).toContain('Method Not Allowed');
+  afterEach(async () => {
+    if (server) await new Promise(res => (server as Server).close(res));
+    vi.clearAllMocks();
+  });
+
+  describe('when started with valid options', () => {
+    it('returns an HTTP server instance', () => {
+      server = createHttpServer({ port, host }, handleRequest, mockLogger);
+      expect(server).toBeInstanceOf(http.Server);
     });
   });
 
-  describe('when receiving an OPTIONS request (CORS preflight)', () => {
-    it('responds with 200 and CORS headers', async () => {
-      const res = await request(address).options('/any').set('Origin', 'http://test-origin.com').expect(200);
-      expect(res.headers['access-control-allow-methods']).toBeDefined();
+  describe('when receiving a valid request', () => {
+    it('invokes handleRequest and returns expected response', async () => {
+      server = createHttpServer({ port, host }, handleRequest, mockLogger);
+      await new Promise(resolve => (server as Server).listen(0, host, () => resolve(undefined)));
+      const response = await supertest(server as Server).get('/test');
+      expect(response.text).toBe('ok');
+      expect(handleRequest).toHaveBeenCalled();
     });
   });
 
-  describe('when server starts', () => {
-    it('calls logger.info with listening message', () => {
-      expect(infoMock).toHaveBeenCalled();
-      const call = infoMock.mock.calls.find(args => typeof args[0] === 'string' && args[0].includes('HTTP server listening'));
-      expect(call).toBeDefined();
+  describe('when receiving a request with a disallowed method', () => {
+    it('returns 405 Method Not Allowed', async () => {
+      server = createHttpServer({ port, host }, handleRequest, mockLogger);
+      await new Promise(resolve => (server as Server).listen(0, host, () => resolve(undefined)));
+      const response = await supertest(server as Server).trace('/test');
+      expect(response.status).toBe(405);
+      expect(response.body.error).toMatch(/Method Not Allowed/);
+      expect(handleRequest).not.toHaveBeenCalled();
     });
+  });
+
+  describe('when receiving an OPTIONS request', () => {
+    it('returns 200 and CORS headers', async () => {
+      server = createHttpServer({ port, host }, handleRequest, mockLogger);
+      await new Promise(resolve => (server as Server).listen(0, host, () => resolve(undefined)));
+      const response = await supertest(server as Server)
+        .options('/test')
+        .set('Origin', 'http://localhost');
+      expect(response.status).toBe(200);
+      expect(response.headers['access-control-allow-origin']).toBe('http://localhost');
+      expect(handleRequest).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('sendErrorResponse', () => {
+  it('sends a JSON error response with the given status code and message', () => {
+    const res = {
+      writeHead: vi.fn(),
+      end: vi.fn(),
+    } as Partial<ServerResponse> as ServerResponse;
+    sendErrorResponse(res, 400, 'Bad Request');
+    expect(res.writeHead).toHaveBeenCalledWith(400, { 'Content-Type': 'application/json' });
+    expect(res.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Bad Request' }));
+  });
+
+  it('sends a JSON error response with an object message', () => {
+    const res = {
+      writeHead: vi.fn(),
+      end: vi.fn(),
+    } as Partial<ServerResponse> as ServerResponse;
+    sendErrorResponse(res, 500, { error: 'Internal Error', code: 123 });
+    expect(res.writeHead).toHaveBeenCalledWith(500, { 'Content-Type': 'application/json' });
+    expect(res.end).toHaveBeenCalledWith(JSON.stringify({ error: 'Internal Error', code: 123 }));
+  });
+});
+
+describe('sendResponse', () => {
+  it('sends a JSON response with the given status code and data', () => {
+    const res = {
+      writeHead: vi.fn(),
+      end: vi.fn(),
+    } as Partial<ServerResponse> as ServerResponse;
+    sendResponse(res, 200, { success: true });
+    expect(res.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'application/json' });
+    expect(res.end).toHaveBeenCalledWith(JSON.stringify({ success: true }));
   });
 });
