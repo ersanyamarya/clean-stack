@@ -1,5 +1,6 @@
 import { Logger } from '@clean-stack/framework/global-types';
 import { ConnectionOptions, Queue, Worker } from 'bullmq';
+import { BullMQOtel } from 'bullmq-otel';
 import { AllQueueNames, QueDataSchema, queueList } from '../queues';
 
 /**
@@ -37,7 +38,7 @@ const validateQueueData = <Q extends AllQueueNames>(queueName: Q, data: QueDataS
 /**
  * Creates a queue instance with job management capabilities
  */
-export const getQueue = <Q extends AllQueueNames>(queueName: Q, connection: ConnectionOptions) => {
+export const getQueue = <Q extends AllQueueNames>(queueName: Q, connection: ConnectionOptions, serviceName: string) => {
   if (!Object.prototype.hasOwnProperty.call(queueList, queueName)) {
     throw new Error(`Queue ${queueName} not found`);
   }
@@ -45,6 +46,7 @@ export const getQueue = <Q extends AllQueueNames>(queueName: Q, connection: Conn
   const queue = new Queue(queueName, {
     connection,
     defaultJobOptions: DEFAULT_JOB_OPTIONS,
+    telemetry: new BullMQOtel(serviceName),
   });
 
   const addJob = async (data: QueDataSchema<Q>, jobName?: string) => {
@@ -62,7 +64,8 @@ export const addJobProcessor = <Q extends AllQueueNames>(
   queueName: Q,
   workerController: (data: QueDataSchema<Q>) => Promise<void>,
   logger: Logger,
-  connection: ConnectionOptions
+  connection: ConnectionOptions,
+  serviceName: string
 ) => {
   const worker = new Worker<QueDataSchema<Q>, void, Q>(
     queueName,
@@ -70,7 +73,13 @@ export const addJobProcessor = <Q extends AllQueueNames>(
       const validatedData = validateQueueData(queueName, job.data);
       await workerController(validatedData);
     },
-    { connection }
+    {
+      connection,
+      telemetry: new BullMQOtel(serviceName),
+      autorun: true,
+      concurrency: 1, // Adjust concurrency as needed
+      lockDuration: 30000, // Lock duration for job processing
+    }
   );
 
   // Event handlers for observability

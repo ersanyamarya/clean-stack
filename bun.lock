@@ -44,6 +44,7 @@
         "@trpc/server": "^11.0.0",
         "appwrite": "^17.0.1",
         "bullmq": "^5.51.1",
+        "bullmq-otel": "^1.0.1",
         "class-variance-authority": "^0.7.1",
         "classnames": "^2.5.1",
         "clsx": "^2.1.1",
@@ -2061,6 +2062,8 @@
     "buffer-from": ["buffer-from@1.1.2", "", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
 
     "bullmq": ["bullmq@5.51.1", "", { "dependencies": { "cron-parser": "^4.9.0", "ioredis": "^5.4.1", "msgpackr": "^1.11.2", "node-abort-controller": "^3.1.1", "semver": "^7.5.4", "tslib": "^2.0.0", "uuid": "^9.0.0" } }, "sha512-JEZokH5Sb6p66HRjbfQjPNYuSilDRcB8UREmJzOBqTTaJFza8I92vsBF3J/zmtzd7KVv3dxhZyH9CYSLOJALRA=="],
+
+    "bullmq-otel": ["bullmq-otel@1.0.1", "", { "dependencies": { "@opentelemetry/api": "^1.9.0", "bullmq": "^5.22.0" } }, "sha512-9SSBA/iq8bFUJ9I5bDwv1UmtbJAmIGHt796g5lsYZWasqouTqkFA3+Z/n17mCc8VzfxxygCCCBsXdC1mICbxdw=="],
 
     "bytes": ["bytes@3.0.0", "", {}, "sha512-pMhOfFDPiv9t5jjIXkHosWmkSyQbvsgEVNkz0ERHbuLh2T/7j4Mqqpz523Fe8MVY89KC6Sh/QfS2sM+SjgFDcw=="],
 
