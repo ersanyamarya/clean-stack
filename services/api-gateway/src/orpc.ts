@@ -1,12 +1,12 @@
+import { errorHandler } from '@clean-stack/custom-errors';
 import { RequestContext, sendResponse } from '@clean-stack/http-server';
 import { OpenAPIGenerator } from '@orpc/openapi';
 import { OpenAPIHandler } from '@orpc/openapi/node';
-import { ContractRouter, onError, Router } from '@orpc/server';
+import { ContractRouter, onError, ORPCError, Router } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/node';
 import { CORSPlugin } from '@orpc/server/plugins';
 import { ZodSmartCoercionPlugin, ZodToJsonSchemaConverter } from '@orpc/zod';
 import { IncomingMessage, ServerResponse } from 'http';
-
 export const createOrpcServer = async <T extends { [k: string]: ContractRouter<unknown> }>(router: Router<T, RequestContext>) => {
   const rpcHandler = new RPCHandler<RequestContext>(router, {
     plugins: [new CORSPlugin()],
@@ -15,7 +15,20 @@ export const createOrpcServer = async <T extends { [k: string]: ContractRouter<u
     plugins: [new CORSPlugin(), new ZodSmartCoercionPlugin()],
     interceptors: [
       onError(error => {
-        console.error(error);
+        const errorData = errorHandler(error, (error: unknown) => {
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
+            name: 'InternalServerError',
+            message: 'An internal server error occurred',
+            status: 500,
+            errorCode: 'INTERNAL_SERVER_ERROR',
+          });
+        });
+
+        throw new ORPCError(errorData.errorCode, {
+          name: errorData.name,
+          message: errorData.message,
+          status: errorData.status,
+        });
       }),
     ],
   });
@@ -24,7 +37,7 @@ export const createOrpcServer = async <T extends { [k: string]: ContractRouter<u
   });
   const spec = await openAPIGenerator.generate(router, {
     info: {
-      title: 'My Playground',
+      title: 'ORPC Playground',
       version: '1.0.0',
     },
     servers: [{ url: '/api' }], // Should use absolute URLs in production
@@ -60,7 +73,7 @@ export const createOrpcServer = async <T extends { [k: string]: ContractRouter<u
       <!doctype html>
       <html>
         <head>
-          <title>My Client</title>
+          <title>ORPC Playground</title>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" type="image/svg+xml" href="https://orpc.unnoq.com/icon.svg" />

@@ -13,6 +13,8 @@ const configSchema = z.object({
   }),
   otelCollectorUrl: z.string().describe('OTEL_COLLECTOR_ADDRESS'),
   mongoConnectionUri: z.string().describe('MONGO_CONNECTION_URI'),
+  userServiceAddress: z.string().describe('USER_SERVICE_ADDRESS'),
+  llmServiceAddress: z.string().describe('LLM_SERVICE_ADDRESS'),
 });
 
 export let config: z.infer<typeof configSchema>;

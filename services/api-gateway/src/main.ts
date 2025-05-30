@@ -11,7 +11,7 @@ async function main() {
 
   clients.forEach(client => {
     mainLogger.info(`Connecting to client: ${client.name}`);
-    client.connect();
+    client.initializeConnection();
   });
 
   const orpcServerHandler = await createOrpcServer(router);

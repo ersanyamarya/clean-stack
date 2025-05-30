@@ -1,5 +1,7 @@
+import { ServiceError, status } from '@grpc/grpc-js';
 import { APP_ERROR_CODE_KEYS, AppError, isAppError } from '../app-error';
-
+import { isGrpcServiceError } from '../grpc-error';
+import { defaultGrpcErrorCode, grpcErrorCodes } from '../grpc-error/codes';
 export type ErrorHandlerReturnType = {
   name: string;
   status: number;
@@ -31,6 +33,22 @@ export const allowedErrors: AllowedError[] = [
         status: appError.statusCode,
         message: appError.context,
         errorCode: appError.errorCode,
+      };
+    },
+  },
+  // ServiceError is a type from gRPC that represents an error that occurred during a gRPC call.
+  {
+    check: isGrpcServiceError,
+    process: (error: unknown): ErrorHandlerReturnType => {
+      const grpcError = error as ServiceError;
+      const grpcErrorCode = grpcErrorCodes[grpcError.code] || defaultGrpcErrorCode;
+      const message = grpcErrorCode.en;
+
+      return {
+        name: 'ServiceError',
+        status: grpcErrorCode.statusCode,
+        message,
+        errorCode: status[grpcError.code] || 'UNKNOWN',
       };
     },
   },

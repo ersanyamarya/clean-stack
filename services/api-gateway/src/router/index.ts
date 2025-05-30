@@ -43,7 +43,10 @@ export const getAllUsers = base
 
   .handler(async ({ input, errors }) => {
     const { limit = 10, page = 1 } = input;
-    throw errors.NOT_FOUND;
+    // throw new AppError('RESOURCE_NOT_FOUND', {
+    //   context: { limit, page },
+    //   metadata: { resource: 'Users' },
+    // });
     const users = await grpcClientPromisify<ListUsersRequest, ListUsersResponse>(listUsers())({ limit, page });
     return users;
   });

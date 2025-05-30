@@ -1,17 +1,18 @@
 import { ServiceLLMClient } from '@clean-stack/grpc-proto/llm';
 import { credentials } from '@grpc/grpc-js';
 
-const LLM_SERVICE_ADDRESS = 'localhost:9902';
+import { config } from '../config';
+const llmServiceAddress = config.llmServiceAddress;
 
 let llm_service_client: ServiceLLMClient;
 
 export default {
-  connect: () => {
-    llm_service_client = new ServiceLLMClient(LLM_SERVICE_ADDRESS, credentials.createInsecure());
+  initializeConnection: () => {
+    llm_service_client = new ServiceLLMClient(llmServiceAddress, credentials.createInsecure());
   },
   close: () => llm_service_client.close(),
   name: 'llm-service',
-  address: LLM_SERVICE_ADDRESS,
+  address: llmServiceAddress,
 };
 
 const checkClientInitialized = () => {
