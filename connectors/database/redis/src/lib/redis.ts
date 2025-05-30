@@ -1,5 +1,5 @@
 import { ConnectorFactory, HealthCheck } from '@clean-stack/framework/global-types';
-import { createClient, RedisClientType } from 'redis';
+import Redis from 'ioredis';
 
 export type RedisConfig = {
   url: string;
@@ -7,23 +7,19 @@ export type RedisConfig = {
   maxRetries?: number;
   retryInterval?: number;
 };
-let redisClient: RedisClientType;
+let redisClient: Redis;
 export const createRedisConnector: ConnectorFactory<RedisConfig> = (logger, { url, name, maxRetries = 20, retryInterval = 500 }) => {
   let status: HealthCheck['status'] = 'disconnected';
   return {
     async connect() {
-      redisClient = createClient({
-        url,
-        name,
-        socket: {
-          reconnectStrategy: function (retries, cause) {
-            if (retries > maxRetries) {
-              logger.error(cause.message);
-              return false;
-            } else {
-              return retries * retryInterval;
-            }
-          },
+      redisClient = new Redis(url, {
+        maxRetriesPerRequest: maxRetries,
+        retryStrategy: times => {
+          if (times > maxRetries) {
+            logger.error(`Max retries reached: ${times}`);
+            return null;
+          }
+          return times * retryInterval;
         },
       });
       redisClient.on('error', error => {
@@ -32,10 +28,6 @@ export const createRedisConnector: ConnectorFactory<RedisConfig> = (logger, { ur
       });
       redisClient.on('connect', () => {
         logger.info('Connected to Redis');
-        status = 'connected';
-      });
-      redisClient.on('reconnect', () => {
-        logger.warn('Reconnected to Redis');
         status = 'connected';
       });
       redisClient.on('reconnecting', () => {
@@ -50,19 +42,19 @@ export const createRedisConnector: ConnectorFactory<RedisConfig> = (logger, { ur
       await redisClient.connect();
 
       return {
-        name: 'redis',
+        name,
         healthCheck: async () => {
           try {
             await redisClient.ping();
             return { status, connected: status === 'connected' };
-          } catch (error) {
+          } catch {
             return { status: 'disconnected' };
           }
         },
       };
     },
     async disconnect() {
-      await redisClient.disconnect();
+      await redisClient.quit();
     },
   };
 };

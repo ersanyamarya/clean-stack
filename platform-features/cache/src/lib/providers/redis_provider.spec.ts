@@ -1,10 +1,10 @@
-import { RedisClientType } from 'redis';
+import Redis from 'ioredis';
 import { describe, Mocked, vi } from 'vitest';
 import { CacheProvider } from '../cache';
 import { getRedisCacheProvider } from './redis';
 
 describe('getRedisCacheProvider', () => {
-  let mockClient: Mocked<RedisClientType>;
+  let mockClient: Mocked<Redis>;
   let cacheProvider: CacheProvider;
 
   beforeEach(() => {
@@ -12,9 +12,9 @@ describe('getRedisCacheProvider', () => {
       set: vi.fn(),
       get: vi.fn(),
       del: vi.fn(),
-      flushAll: vi.fn(),
+      flushall: vi.fn(),
       keys: vi.fn(),
-    } as unknown as Mocked<RedisClientType>;
+    } as unknown as Mocked<Redis>;
 
     cacheProvider = getRedisCacheProvider(mockClient);
   });
@@ -31,7 +31,7 @@ describe('getRedisCacheProvider', () => {
   describe('when setting a key with TTL', () => {
     it('calls client.set with EX option', async () => {
       await cacheProvider.set('key2', 'value2', 60);
-      expect(mockClient.set).toHaveBeenCalledWith('key2', 'value2', { EX: 60 });
+      expect(mockClient.set).toHaveBeenCalledWith('key2', 'value2', 'EX', 60);
     });
   });
 
@@ -55,18 +55,18 @@ describe('getRedisCacheProvider', () => {
 
   // Happy Path: delete multiple keys
   describe('when deleting multiple keys', () => {
-    it('calls client.del with array of keys', async () => {
+    it('calls client.del with spread keys', async () => {
       const keys = ['a', 'b', 'c'];
       await cacheProvider.deleteManyKeys(keys);
-      expect(mockClient.del).toHaveBeenCalledWith(keys);
+      expect(mockClient.del).toHaveBeenCalledWith(...keys);
     });
   });
 
   // Happy Path: clear cache
   describe('when clearing the cache', () => {
-    it('calls client.flushAll', async () => {
+    it('calls client.flushall', async () => {
       await cacheProvider.clear();
-      expect(mockClient.flushAll).toHaveBeenCalled();
+      expect(mockClient.flushall).toHaveBeenCalled();
     });
   });
 
