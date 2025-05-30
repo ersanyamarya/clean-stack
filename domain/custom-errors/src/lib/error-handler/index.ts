@@ -1,7 +1,7 @@
 import { ServiceError, status } from '@grpc/grpc-js';
 import { APP_ERROR_CODE_KEYS, AppError, isAppError } from '../app-error';
-import { isGrpcServiceError } from '../grpc-error';
-import { defaultGrpcErrorCode, grpcErrorCodes } from '../grpc-error/codes';
+import { defaultGrpcErrorCode, grpcErrorCodes, isGrpcServiceError } from '../grpc-error';
+
 export type ErrorHandlerReturnType = {
   name: string;
   status: number;
@@ -26,7 +26,7 @@ export type AllowedError = {
 export const allowedErrors: AllowedError[] = [
   {
     check: isAppError,
-    process: (error: unknown) => {
+    process: (error: unknown): ErrorHandlerReturnType => {
       const appError = error as AppError<APP_ERROR_CODE_KEYS>;
       return {
         name: 'AppError',

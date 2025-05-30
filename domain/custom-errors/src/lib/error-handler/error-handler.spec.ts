@@ -58,4 +58,26 @@ describe('errorHandler', () => {
       errorCode: 'INTERNAL_SERVER_ERROR',
     });
   });
+
+  it('handles gRPC ServiceError correctly', () => {
+    // Arrange: create an Error instance and set its prototype to mimic ServiceError
+    const grpcError = new Error('gRPC error') as import('@grpc/grpc-js').ServiceError & { code: number; details: string };
+    grpcError.name = 'ServiceError';
+    grpcError.code = 5; // NOT_FOUND
+    grpcError.details = 'Resource not found';
+    Object.setPrototypeOf(grpcError, Object.create(Error.prototype));
+    const mockOnUnhandledError = vi.fn();
+
+    // Act
+    const result: ErrorHandlerReturnType = errorHandler(grpcError, mockOnUnhandledError);
+
+    // Assert
+    expect(mockOnUnhandledError).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      name: 'ServiceError',
+      status: 404, // grpcErrorCodes[5].statusCode
+      message: expect.any(String), // message from grpcErrorCodes[5].en
+      errorCode: 'NOT_FOUND',
+    });
+  });
 });

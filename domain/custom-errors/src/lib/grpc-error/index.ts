@@ -1,4 +1,5 @@
 import { ServiceError } from '@grpc/grpc-js';
+export { defaultGrpcErrorCode, grpcErrorCodes } from './codes';
 
 export function isGrpcServiceError(error: unknown): error is ServiceError {
   return (
