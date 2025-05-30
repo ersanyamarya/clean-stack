@@ -19,6 +19,7 @@ Ask the user for the inputs if they are not provided. DO NOT PROCEED WITHOUT THE
 
 - Use **Vitest** as the testing framework (`vi`, `describe`, `it`, `expect`, `beforeEach`, `afterEach`).
 - Use **MongoMemoryServer** for testing MongoDB interactions: `import { MongoMemoryServer } from 'mongodb-memory-server';`
+- Use **RedisMemoryServer** for testing Redis interactions: `import { RedisMemoryServer } from 'redis-memory-server';`
 - Use **supertest** for HTTP assertions: `import request from 'supertest';`
 
 ## Test Structure Guidelines
